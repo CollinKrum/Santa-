@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Santa's Command Center</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(to bottom right, #450a0a, #7f1d1d, #14532d);
+      min-height: 100vh;
+      color: white;
+      padding: 20px;
+    }
+
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-5deg); }
+      75% { transform: rotate(5deg); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(-100px) translateX(0); opacity: 0; }
+      50% { transform: translateY(50vh) translateX(30px); opacity: 0.2; }
+      100% { transform: translateY(110vh) translateX(0); opacity: 0; }
+    }
+
+    .snowflake {
+      position: fixed;
+      top: -50px;
+      color: white;
+      font-size: 20px;
+      opacity: 0.2;
+      pointer-events: none;
+      animation: float linear infinite;
+      z-index: 1;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .santa-icon {
+      display: inline-block;
+      font-size: 64px;
+      animation: wiggle 2s ease-in-out infinite;
+    }
+
+    .subtitle {
+      color: #fecaca;
+      font-size: 18px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .name-input-section {
+      background: linear-gradient(to right, #dc2626, #ef4444, #16a34a);
+      padding: 24px;
+    }
+
+    .name-input-section label {
+      display: block;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .name-input-section input {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: none;
+      font-size: 18px;
+      outline: none;
+    }
+
+    .tabs {
+      display: flex;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .tab:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .tab.active {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(to right, #dc2626, #16a34a);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .tab-icon {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .tab-content {
+      padding: 24px;
+      min-height: 500px;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    /* Soundboard */
+    .voice-selector {
+      margin-bottom: 20px;
+    }
+
+    .voice-selector select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 14px;
+    }
+
+    .voice-selector select option {
+      background: #1f2937;
+      color: white;
+    }
+
+    .message-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-radius: 16px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .message-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .message-btn:active {
+      transform: scale(0.95);
+    }
+
+    .message-btn.nice { background: linear-gradient(135deg, #10b981, #059669); }
+    .message-btn.naughty { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .message-btn.neutral { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+
+    .speaking-indicator {
+      margin-top: 16px;
+      padding: 16px;
+      background: linear-gradient(135deg, #dc2626, #16a34a);
+      border-radius: 16px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* Report Card */
+    .generate-btn {
+      width: 100%;
+      padding: 24px;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(135deg, #dc2626, #ef4444, #16a34a);
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 24px;
+      transition: transform 0.2s;
+    }
+
+    .generate-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .report-card {
+      background: white;
+      color: #1f2937;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .report-header {
+      background: linear-gradient(135deg, #dc2626, #16a34a);
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .report-content {
+      padding: 24px;
+    }
+
+    .report-scores {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .score-box {
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .score-box.nice { background: #d1fae5; }
+    .score-box.naughty { background: #fee2e2; }
+
+    .score-number {
+      font-size: 48px;
+      font-weight: bold;
+    }
+
+    .deeds-section {
+      background: #f3f4f6;
+      padding: 16px;
+      border-radius: 12px;
+      margin: 16px 0;
+    }
+
+    /* Santa Cam */
+    .cam-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .cam-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .cam-button {
+      padding: 20px;
+      border-radius: 16px;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+      text-align: center;
+    }
+
+    .cam-button:hover {
+      transform: scale(1.05);
+    }
+
+    .cam-emoji {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .cam-title {
+      font-size: 14px;
+      display: block;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal.open {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 1000px;
+      background: #000;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: #1f1f1f;
+    }
+
+    .close-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .video-container {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+    }
+
+    .video-container video {
+      width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      display: block;
+    }
+
+    .video-controls {
+      padding: 16px;
+      background: #1f1f1f;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .control-btn {
+      background: #374151;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .control-btn:hover {
+      background: #4b5563;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      opacity: 0.6;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating snowflakes -->
+  <div id="snowflakes"></div>
+
+  <div class="container">
+    <div class="header">
+      <div style="position: relative; display: inline-block;">
+        <span class="santa-icon">🎅</span>
+        <span style="position: absolute; top: -10px; right: -10px; font-size: 32px;">✨</span>
+      </div>
+      <h1>Santa's Command Center</h1>
+      <p class="subtitle">Live from the North Pole</p>
+    </div>
+
+    <div class="card">
+      <!-- Name Input -->
+      <div class="name-input-section">
+        <label>CHILD'S NAME</label>
+        <input type="text" id="childName" placeholder="Enter name here..." />
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab('soundboard')">
+          <span class="tab-icon">🔊</span>
+          <span>Soundboard</span>
+        </button>
+        <button class="tab" onclick="switchTab('report')">
+          <span class="tab-icon">📄</span>
+          <span>Report Card</span>
+        </button>
+        <button class="tab" onclick="switchTab('cam')">
+          <span class="tab-icon">📹</span>
+          <span>Santa Cam</span>
+        </button>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Soundboard -->
+        <div id="soundboard" class="tab-pane active">
+          <div class="voice-selector">
+            <select id="voiceSelect">
+              <option>Select Santa's Voice</option>
+            </select>
+          </div>
+
+          <div class="message-buttons" id="messageButtons"></div>
+
+          <div id="speakingIndicator" style="display: none;" class="speaking-indicator">
+            🔊 Santa is speaking...
+          </div>
+        </div>
+
+        <!-- Report Card -->
+        <div id="report" class="tab-pane">
+          <button class="generate-btn" onclick="generateReport()">
+            ✨ Generate Report Card
+          </button>
+          <div id="reportResult"></div>
+        </div>
+
+        <!-- Santa Cam -->
+        <div id="cam" class="tab-pane">
+          <div class="cam-grid">
+            <button class="cam-button" style="background: linear-gradient(135deg, #d97706, #ea580c);" onclick="openCam('workshop')">
+              <span class="cam-emoji">🎁</span>
+              <span class="cam-title">Workshop</span>
+            </button>
+            <button class="cam-button" style="background: linear-gradient(135deg, #dc2626, #991b1b);" onclick="openCam('office')">
+              <span class="cam-emoji">📋</span>
+              <span class="cam-title">Office</span>
+            </button>
+            <button class="cam-button" style="background: linear-gradient(135deg, #475569, #334155);" onclick="openCam('stable')">
+              <span class="cam-emoji">🦌</span>
+              <span class="cam-title">Stable</span>
+            </button>
+            <button class="cam-button" style="background: linear-gradient(135deg, #ec4899, #be185d);" onclick="openCam('kitchen')">
+              <span class="cam-emoji">🍪</span>
+              <span class="cam-title">Kitchen</span>
+            </button>
+            <button class="cam-button" style="background: linear-gradient(135deg, #2563eb, #1e40af);" onclick="openCam('mailroom')">
+              <span class="cam-emoji">✉️</span>
+              <span class="cam-title">Mail Room</span>
+            </button>
+            <button class="cam-button" style="background: linear-gradient(135deg, #059669, #047857);" onclick="openCam('lab')">
+              <span class="cam-emoji">🧸</span>
+              <span class="cam-title">Toy Lab</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Made with holiday magic & Christmas spirit<br>
+      © 2024 North Pole Technologies
+    </div>
+  </div>
+
+  <!-- Video Modal -->
+  <div id="videoModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span id="modalTitle">Santa Cam</span>
+        <button class="close-btn" onclick="closeModal()">Close</button>
+      </div>
+      <div class="video-container">
+        <video id="modalVideo" autoplay loop playsinline></video>
+      </div>
+      <div class="video-controls">
+        <button class="control-btn" id="muteBtn" onclick="toggleMute()">🔊 Unmute</button>
+        <button class="control-btn" onclick="restartVideo()">↻ Restart</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Create snowflakes
+    const snowflakesContainer = document.getElementById('snowflakes');
+    for (let i = 0; i < 20; i++) {
+      const snowflake = document.createElement('div');
+      snowflake.className = 'snowflake';
+      snowflake.textContent = '❄';
+      snowflake.style.left = Math.random() * 100 + '%';
+      snowflake.style.animationDelay = Math.random() * 5 + 's';
+      snowflake.style.animationDuration = Math.random() * 10 + 15 + 's';
+      snowflakesContainer.appendChild(snowflake);
+    }
+
+    // Tab switching
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      
+      event.target.closest('.tab').classList.add('active');
+      document.getElementById(tabName).classList.add('active');
+    }
+
+    // Soundboard
+    const messages = [
+      { text: "Ho ho ho! You've been very good today, {name}!", type: "nice", emoji: "🎅" },
+      { text: "{name}, you're on the nice list this year!", type: "nice", emoji: "⭐" },
+      { text: "Wonderful job, {name}! Keep up the good work!", type: "nice", emoji: "🌟" },
+      { text: "Santa sees you being kind, {name}!", type: "nice", emoji: "💚" },
+      { text: "{name}, I'm watching you... heading towards the naughty list!", type: "naughty", emoji: "👀" },
+      { text: "Ho ho... oh no, {name}! Better watch out!", type: "naughty", emoji: "⚠️" },
+      { text: "{name}, that behavior might get you coal for Christmas!", type: "naughty", emoji: "🪨" },
+      { text: "Careful, {name}! You're skating on thin ice!", type: "naughty", emoji: "❄️" },
+      { text: "Merry Christmas, {name}! Have a magical holiday!", type: "nice", emoji: "🎄" },
+      { text: "{name}, have you been naughty or nice this year?", type: "neutral", emoji: "🎅" },
+    ];
+
+    const messageButtonsContainer = document.getElementById('messageButtons');
+    messages.forEach((msg, idx) => {
+      const btn = document.createElement('button');
+      btn.className = `message-btn ${msg.type}`;
+      btn.innerHTML = `
+        <span>${msg.text.replace('{name}', '<strong>{name}</strong>')}</span>
+        <span style="font-size: 30px;">${msg.emoji}</span>
+      `;
+      btn.onclick = () => speakMessage(msg.text);
+      messageButtonsContainer.appendChild(btn);
+    });
+
+    // Voice setup
+    const voiceSelect = document.getElementById('voiceSelect');
+    function loadVoices() {
+      const voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
+      voiceSelect.innerHTML = '<option>Select Santa\'s Voice</option>';
+      voices.forEach(voice => {
+        const option = document.createElement('option');
+        option.value = voice.name;
+        option.textContent = voice.name;
+        voiceSelect.appendChild(option);
+      });
+    }
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+
+    function speakMessage(text) {
+      const name = document.getElementById('childName').value.trim() || 'little one';
+      const personalized = text.replace('{name}', name);
+      
+      speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(personalized);
+      
+      const voices = speechSynthesis.getVoices();
+      const selectedVoice = voices.find(v => v.name === voiceSelect.value);
+      if (selectedVoice) utterance.voice = selectedVoice;
+      
+      utterance.pitch = 1.0;
+      utterance.rate = 0.95;
+      
+      const indicator = document.getElementById('speakingIndicator');
+      indicator.style.display = 'block';
+      utterance.onend = () => indicator.style.display = 'none';
+      
+      speechSynthesis.speak(utterance);
+    }
+
+    // Report Card
+    function generateReport() {
+      const name = document.getElementById('childName').value.trim() || 'this child';
+      const niceScore = Math.floor(Math.random() * 40) + 60;
+      const naughtyScore = 100 - niceScore;
+      
+      const status = niceScore >= 75 ? 'NICE LIST' : niceScore >= 60 ? 'WATCH LIST' : 'NAUGHTY LIST';
+      const statusEmoji = niceScore >= 75 ? '⭐' : niceScore >= 60 ? '⚠️' : '🎅';
+      
+      const goodDeeds = [
+        'Shared toys with siblings',
+        'Helped with chores',
+        'Was kind to classmates',
+        'Did homework on time'
+      ];
+      
+      const naughtyDeeds = [
+        'Argued with siblings',
+        'Didn\'t listen the first time'
+      ];
+      
+      document.getElementById('reportResult').innerHTML = `
+        <div class="report-card">
+          <div class="report-header">
+            <div style="font-size: 40px; margin-bottom: 8px;">🎄</div>
+            <h2 style="font-size: 24px; font-weight: bold;">OFFICIAL SANTA REPORT</h2>
+            <p style="font-size: 14px; margin-top: 4px;">North Pole • ${new Date().toLocaleDateString()}</p>
+          </div>
+          <div class="report-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+              <h3 style="font-size: 24px; font-weight: bold;">${name}</h3>
+              <span style="background: ${status.includes('NICE') ? '#10b981' : status.includes('WATCH') ? '#fbbf24' : '#ef4444'}; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px;">
+                ${statusEmoji} ${status}
+              </span>
+            </div>
+            <div class="report-scores">
+              <div class="score-box nice">
+                <div class="score-number" style="color: #059669;">${niceScore}%</div>
+                <div style="font-size: 14px; font-weight: 600; color: #059669;">Nice Score</div>
+              </div>
+              <div class="score-box naughty">
+                <div class="score-number" style="color: #dc2626;">${naughtyScore}%</div>
+                <div style="font-size: 14px; font-weight: 600; color: #dc2626;">Naughty Score</div>
+              </div>
+            </div>
+            <div class="deeds-section">
+              <h4 style="font-weight: bold; margin-bottom: 8px;">⭐ Good Deeds</h4>
+              ${goodDeeds.map(deed => `<div>✓ ${deed}</div>`).join('')}
+            </div>
+            <div class="deeds-section">
+              <h4 style="font-weight: bold; margin-bottom: 8px;">⚠️ Areas to Improve</h4>
+              ${naughtyDeeds.map(deed => `<div>• ${deed}</div>`).join('')}
+            </div>
+            <p style="text-align: center; font-size: 12px; color: #6b7280; margin-top: 16px; font-style: italic;">
+              Report generated by Santa's Elf Monitoring System™
+            </p>
+          </div>
+        </div>
+      `;
+    }
+
+    // Santa Cam
+    const camScenes = {
+      workshop: { src: 'workshop.mp4', title: "Santa's Workshop" },
+      office: { src: 'office.mp4', title: "Santa's Office" },
+      stable: { src: 'stable.mp4', title: 'Reindeer Stable' },
+      kitchen: { src: 'kitchen.mp4', title: "Mrs. Claus' Kitchen" },
+      mailroom: { src: 'mailroom.mp4', title: 'Mail Room' },
+      lab: { src: 'lab.mp4', title: 'Toy Testing Lab' }
+    };
+
+    function openCam(key) {
+      const modal = document.getElementById('videoModal');
+      const video = document.getElementById('modalVideo');
+      const title = document.getElementById('modalTitle');
+      const muteBtn = document.getElementById('muteBtn');
+      
+      video.src = camScenes[key].src;
+      title.textContent = camScenes[key].title;
+      video.muted = false; // Start unmuted
+      muteBtn.textContent = '🔊 Mute';
+      modal.classList.add('open');
+      
+      // Try to play with sound
+      video.play().catch(() => {
+        // If autoplay with sound fails, mute and try again
+        video.muted = true;
+        muteBtn.textContent = '🔇 Unmute';
+        video.play();
+      });
+    }
+
+    function toggleMute() {
+      const video = document.getElementById('modalVideo');
+      const muteBtn = document.getElementById('muteBtn');
+      video.muted = !video.muted;
+      muteBtn.textContent = video.muted ? '🔇 Unmute' : '🔊 Mute';
+    }
+
+    function restartVideo() {
+      const video = document.getElementById('modalVideo');
+      video.currentTime = 0;
+      video.play();
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('videoModal');
+      const video = document.getElementById('modalVideo');
+      video.pause();
+      modal.classList.remove('open');
+    }
+
+    // Close modal on background click
+    document.getElementById('videoModal').addEventListener('click', (e) => {
+      if (e.target.id === 'videoModal') closeModal();
+    });
+  </script>
+</body>
+</html>
