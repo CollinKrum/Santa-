@@ -1,4 +1,6 @@
 export default async function handler(req, res) {
+  console.log('Santa voice function called');
+
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -20,8 +22,16 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Text is required' });
   }
 
+  if (!process.env.ELEVENLABS_API_KEY) {
+    console.error('ELEVENLABS_API_KEY not found');
+    return res.status(500).json({ error: 'API key not configured' });
+  }
+
   try {
-    const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/gvU4yEv29ZpMc9IXoZcd', {
+    console.log('Calling ElevenLabs API...');
+    
+    // Using your custom voice ID
+    const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/qcCzblsmCNtnHtRI0C5j', {
       method: 'POST',
       headers: {
         'Accept': 'audio/mpeg',
@@ -40,10 +50,14 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const error = await response.text();
-      console.error('ElevenLabs error:', error);
-      return res.status(response.status).json({ error: 'ElevenLabs API request failed' });
+      console.error('ElevenLabs API error:', response.status, error);
+      return res.status(response.status).json({ 
+        error: 'ElevenLabs API request failed',
+        details: error
+      });
     }
 
+    console.log('Success! Sending audio...');
     const audioBuffer = await response.arrayBuffer();
     
     res.setHeader('Content-Type', 'audio/mpeg');
@@ -51,6 +65,9 @@ export default async function handler(req, res) {
     
   } catch (error) {
     console.error('Error generating voice:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message
+    });
   }
 }
