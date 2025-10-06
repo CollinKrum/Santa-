@@ -30,7 +30,6 @@ export default async function handler(req, res) {
   try {
     console.log('Calling ElevenLabs API...');
     
-    // Using your custom voice ID
     const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/qcCzblsmCNtnHtRI0C5j', {
       method: 'POST',
       headers: {
@@ -39,11 +38,13 @@ export default async function handler(req, res) {
         'xi-api-key': process.env.ELEVENLABS_API_KEY
       },
       body: JSON.stringify({
-        text: text,
-        model_id: 'eleven_monolingual_v1',
+        text: `<prosody rate="85%" pitch="-10%">${text}</prosody>`,
+        model_id: 'eleven_turbo_v2_5',
         voice_settings: {
-          stability: 0.1,
-          similarity_boost: 0.25
+          stability: 0.3,
+          similarity_boost: 0.75,
+          style: 0.2,
+          use_speaker_boost: true
         }
       })
     });
