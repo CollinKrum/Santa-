@@ -550,16 +550,34 @@
     ];
 
     const messageButtonsContainer = document.getElementById('messageButtons');
+
+    // Function to update button text dynamically
+    function updateButtonText() {
+      const name = document.getElementById('childName').value.trim() || 'little one';
+      const buttons = document.querySelectorAll('.message-btn');
+      buttons.forEach((btn, idx) => {
+        const msg = messages[idx];
+        const buttonText = btn.querySelector('.btn-text');
+        if (buttonText) {
+          buttonText.innerHTML = msg.text.replace(/{name}/g, `<strong>${name}</strong>`);
+        }
+      });
+    }
+
+    // Create buttons
     messages.forEach((msg, idx) => {
       const btn = document.createElement('button');
       btn.className = `message-btn ${msg.type}`;
       btn.innerHTML = `
-        <span>${msg.text.replace('{name}', '<strong>{name}</strong>')}</span>
+        <span class="btn-text">${msg.text.replace(/{name}/g, '<strong>little one</strong>')}</span>
         <span style="font-size: 30px;">${msg.emoji}</span>
       `;
       btn.onclick = () => speakMessage(msg.text);
       messageButtonsContainer.appendChild(btn);
     });
+
+    // Update button text when name changes
+    document.getElementById('childName').addEventListener('input', updateButtonText);
 
     // ElevenLabs TTS Function using serverless backend
     async function speakMessage(text) {
