@@ -157,26 +157,6 @@
       display: block;
     }
 
-    /* Soundboard */
-    .voice-selector {
-      margin-bottom: 20px;
-    }
-
-    .voice-selector select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 12px;
-      border: 2px solid rgba(255, 255, 255, 0.2);
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      font-size: 14px;
-    }
-
-    .voice-selector select option {
-      background: #1f2937;
-      color: white;
-    }
-
     .message-buttons {
       display: flex;
       flex-direction: column;
@@ -195,14 +175,21 @@
       color: white;
       cursor: pointer;
       transition: transform 0.2s;
+      position: relative;
     }
 
-    .message-btn:hover {
+    .message-btn:hover:not(:disabled) {
       transform: scale(1.05);
     }
 
-    .message-btn:active {
+    .message-btn:active:not(:disabled) {
       transform: scale(0.95);
+    }
+
+    .message-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
     }
 
     .message-btn.nice { background: linear-gradient(135deg, #10b981, #059669); }
@@ -216,9 +203,14 @@
       border-radius: 16px;
       text-align: center;
       font-weight: bold;
+      animation: pulse 1.5s ease-in-out infinite;
     }
 
-    /* Report Card */
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
     .generate-btn {
       width: 100%;
       padding: 24px;
@@ -283,7 +275,6 @@
       margin: 16px 0;
     }
 
-    /* Santa Cam */
     .cam-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -322,7 +313,6 @@
       display: block;
     }
 
-    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -411,7 +401,6 @@
   </style>
 </head>
 <body>
-  <!-- Floating snowflakes -->
   <div id="snowflakes"></div>
 
   <div class="container">
@@ -421,7 +410,7 @@
         <span style="position: absolute; top: -10px; right: -10px; font-size: 32px;">✨</span>
       </div>
       <h1>Santa's Command Center</h1>
-      <p class="subtitle">Live from the North Pole</p>
+      <p class="subtitle">Live from the North Pole • Powered by ElevenLabs AI</p>
     </div>
 
     <div class="card">
@@ -451,12 +440,6 @@
       <div class="tab-content">
         <!-- Soundboard -->
         <div id="soundboard" class="tab-pane active">
-          <div class="voice-selector">
-            <select id="voiceSelect">
-              <option>Select Santa's Voice</option>
-            </select>
-          </div>
-
           <div class="message-buttons" id="messageButtons"></div>
 
           <div id="speakingIndicator" style="display: none;" class="speaking-indicator">
@@ -528,6 +511,9 @@
   </div>
 
   <script>
+    // Global state
+    let currentAudio = null;
+
     // Create snowflakes
     const snowflakesContainer = document.getElementById('snowflakes');
     for (let i = 0; i < 20; i++) {
@@ -549,7 +535,7 @@
       document.getElementById(tabName).classList.add('active');
     }
 
-    // Soundboard
+    // Soundboard Messages
     const messages = [
       { text: "Ho ho ho! You've been very good today, {name}!", type: "nice", emoji: "🎅" },
       { text: "{name}, you're on the nice list this year!", type: "nice", emoji: "⭐" },
@@ -575,40 +561,63 @@
       messageButtonsContainer.appendChild(btn);
     });
 
-    // Voice setup
-    const voiceSelect = document.getElementById('voiceSelect');
-    function loadVoices() {
-      const voices = speechSynthesis.getVoices().filter(v => v.lang.startsWith('en'));
-      voiceSelect.innerHTML = '<option>Select Santa\'s Voice</option>';
-      voices.forEach(voice => {
-        const option = document.createElement('option');
-        option.value = voice.name;
-        option.textContent = voice.name;
-        voiceSelect.appendChild(option);
-      });
-    }
-    loadVoices();
-    speechSynthesis.onvoiceschanged = loadVoices;
-
-    function speakMessage(text) {
+    // ElevenLabs TTS Function using serverless backend
+    async function speakMessage(text) {
       const name = document.getElementById('childName').value.trim() || 'little one';
-      const personalized = text.replace('{name}', name);
-      
-      speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(personalized);
-      
-      const voices = speechSynthesis.getVoices();
-      const selectedVoice = voices.find(v => v.name === voiceSelect.value);
-      if (selectedVoice) utterance.voice = selectedVoice;
-      
-      utterance.pitch = 1.0;
-      utterance.rate = 0.95;
-      
+      const personalized = text.replace(/{name}/g, name);
+
+      // Stop any current audio
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+      }
+
+      // Disable all buttons
+      const buttons = document.querySelectorAll('.message-btn');
+      buttons.forEach(btn => btn.disabled = true);
+
       const indicator = document.getElementById('speakingIndicator');
       indicator.style.display = 'block';
-      utterance.onend = () => indicator.style.display = 'none';
-      
-      speechSynthesis.speak(utterance);
+
+      try {
+        // Call YOUR serverless function
+        const response = await fetch('/api/santa-voice', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: personalized
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+        }
+
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        currentAudio = new Audio(audioUrl);
+        currentAudio.onended = () => {
+          indicator.style.display = 'none';
+          buttons.forEach(btn => btn.disabled = false);
+          currentAudio = null;
+        };
+        currentAudio.onerror = () => {
+          indicator.style.display = 'none';
+          buttons.forEach(btn => btn.disabled = false);
+          alert('Error playing audio');
+        };
+        
+        await currentAudio.play();
+
+      } catch (error) {
+        console.error('Error generating Santa voice:', error);
+        indicator.style.display = 'none';
+        buttons.forEach(btn => btn.disabled = false);
+        alert('Error generating Santa voice. Please try again.\n\n' + error.message);
+      }
     }
 
     // Report Card
@@ -690,13 +699,11 @@
       
       video.src = camScenes[key].src;
       title.textContent = camScenes[key].title;
-      video.muted = false; // Start unmuted
+      video.muted = false;
       muteBtn.textContent = '🔊 Mute';
       modal.classList.add('open');
       
-      // Try to play with sound
       video.play().catch(() => {
-        // If autoplay with sound fails, mute and try again
         video.muted = true;
         muteBtn.textContent = '🔇 Unmute';
         video.play();
