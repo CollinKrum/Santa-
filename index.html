@@ -639,66 +639,110 @@
     }
 
     // Report Card
-    function generateReport() {
-      const name = document.getElementById('childName').value.trim() || 'this child';
-      const niceScore = Math.floor(Math.random() * 40) + 60;
-      const naughtyScore = 100 - niceScore;
-      
-      const status = niceScore >= 75 ? 'NICE LIST' : niceScore >= 60 ? 'WATCH LIST' : 'NAUGHTY LIST';
-      const statusEmoji = niceScore >= 75 ? '⭐' : niceScore >= 60 ? '⚠️' : '🎅';
-      
-      const goodDeeds = [
-        'Shared toys with siblings',
-        'Helped with chores',
-        'Was kind to classmates',
-        'Did homework on time'
-      ];
-      
-      const naughtyDeeds = [
-        'Argued with siblings',
-        'Didn\'t listen the first time'
-      ];
-      
-      document.getElementById('reportResult').innerHTML = `
-        <div class="report-card">
-          <div class="report-header">
-            <div style="font-size: 40px; margin-bottom: 8px;">🎄</div>
-            <h2 style="font-size: 24px; font-weight: bold;">OFFICIAL SANTA REPORT</h2>
-            <p style="font-size: 14px; margin-top: 4px;">North Pole • ${new Date().toLocaleDateString()}</p>
+function generateReport() {
+  const name = document.getElementById('childName').value.trim() || 'this child';
+  const niceScore = Math.floor(Math.random() * 40) + 60;
+  const naughtyScore = 100 - niceScore;
+  
+  const status = niceScore >= 75 ? 'NICE LIST' : niceScore >= 60 ? 'WATCH LIST' : 'NAUGHTY LIST';
+  const statusEmoji = niceScore >= 75 ? '⭐' : niceScore >= 60 ? '⚠️' : '🎅';
+  
+  // Arrays of possible good deeds
+  const allGoodDeeds = [
+    'Shared toys with siblings',
+    'Helped with chores without being asked',
+    'Was kind to classmates',
+    'Did homework on time',
+    'Cleaned their room',
+    'Said please and thank you',
+    'Helped a friend in need',
+    'Was respectful to adults',
+    'Took care of a pet',
+    'Made their bed every morning',
+    'Ate vegetables without complaining',
+    'Brushed teeth without reminders',
+    'Helped carry groceries',
+    'Shared snacks with others',
+    'Was patient while waiting',
+    'Used kind words',
+    'Helped set the dinner table',
+    'Picked up after themselves',
+    'Was a good sport in games',
+    'Showed empathy to others'
+  ];
+  
+  // Arrays of possible areas to improve
+  const allNaughtyDeeds = [
+    'Argued with siblings',
+    'Didn\'t listen the first time',
+    'Left toys scattered around',
+    'Complained about bedtime',
+    'Forgot to do assigned chores',
+    'Talked back occasionally',
+    'Needed reminders to clean up',
+    'Interrupted adults talking',
+    'Was grumpy in the morning',
+    'Fought over screen time',
+    'Didn\'t finish dinner',
+    'Procrastinated on homework',
+    'Made excuses for mistakes',
+    'Whined about going outside',
+    'Refused to share sometimes',
+    'Was too rough with pets',
+    'Stayed up past bedtime',
+    'Complained about chores',
+    'Left wet towels on the floor',
+    'Needed multiple reminders'
+  ];
+  
+  // Randomly select 4 good deeds
+  const shuffledGood = [...allGoodDeeds].sort(() => 0.5 - Math.random());
+  const goodDeeds = shuffledGood.slice(0, 4);
+  
+  // Randomly select 2-3 areas to improve
+  const shuffledBad = [...allNaughtyDeeds].sort(() => 0.5 - Math.random());
+  const improvementCount = Math.floor(Math.random() * 2) + 2; // 2 or 3 items
+  const naughtyDeeds = shuffledBad.slice(0, improvementCount);
+  
+  document.getElementById('reportResult').innerHTML = `
+    <div class="report-card">
+      <div class="report-header">
+        <div style="font-size: 40px; margin-bottom: 8px;">🎄</div>
+        <h2 style="font-size: 24px; font-weight: bold;">OFFICIAL SANTA REPORT</h2>
+        <p style="font-size: 14px; margin-top: 4px;">North Pole • ${new Date().toLocaleDateString()}</p>
+      </div>
+      <div class="report-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3 style="font-size: 24px; font-weight: bold;">${name}</h3>
+          <span style="background: ${status.includes('NICE') ? '#10b981' : status.includes('WATCH') ? '#fbbf24' : '#ef4444'}; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px;">
+            ${statusEmoji} ${status}
+          </span>
+        </div>
+        <div class="report-scores">
+          <div class="score-box nice">
+            <div class="score-number" style="color: #059669;">${niceScore}%</div>
+            <div style="font-size: 14px; font-weight: 600; color: #059669;">Nice Score</div>
           </div>
-          <div class="report-content">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-              <h3 style="font-size: 24px; font-weight: bold;">${name}</h3>
-              <span style="background: ${status.includes('NICE') ? '#10b981' : status.includes('WATCH') ? '#fbbf24' : '#ef4444'}; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px;">
-                ${statusEmoji} ${status}
-              </span>
-            </div>
-            <div class="report-scores">
-              <div class="score-box nice">
-                <div class="score-number" style="color: #059669;">${niceScore}%</div>
-                <div style="font-size: 14px; font-weight: 600; color: #059669;">Nice Score</div>
-              </div>
-              <div class="score-box naughty">
-                <div class="score-number" style="color: #dc2626;">${naughtyScore}%</div>
-                <div style="font-size: 14px; font-weight: 600; color: #dc2626;">Naughty Score</div>
-              </div>
-            </div>
-            <div class="deeds-section">
-              <h4 style="font-weight: bold; margin-bottom: 8px;">⭐ Good Deeds</h4>
-              ${goodDeeds.map(deed => `<div>✓ ${deed}</div>`).join('')}
-            </div>
-            <div class="deeds-section">
-              <h4 style="font-weight: bold; margin-bottom: 8px;">⚠️ Areas to Improve</h4>
-              ${naughtyDeeds.map(deed => `<div>• ${deed}</div>`).join('')}
-            </div>
-            <p style="text-align: center; font-size: 12px; color: #6b7280; margin-top: 16px; font-style: italic;">
-              Report generated by Santa's Elf Monitoring System™
-            </p>
+          <div class="score-box naughty">
+            <div class="score-number" style="color: #dc2626;">${naughtyScore}%</div>
+            <div style="font-size: 14px; font-weight: 600; color: #dc2626;">Naughty Score</div>
           </div>
         </div>
-      `;
-    }
-
+        <div class="deeds-section">
+          <h4 style="font-weight: bold; margin-bottom: 8px;">⭐ Good Deeds</h4>
+          ${goodDeeds.map(deed => `<div>✓ ${deed}</div>`).join('')}
+        </div>
+        <div class="deeds-section">
+          <h4 style="font-weight: bold; margin-bottom: 8px;">⚠️ Areas to Improve</h4>
+          ${naughtyDeeds.map(deed => `<div>• ${deed}</div>`).join('')}
+        </div>
+        <p style="text-align: center; font-size: 12px; color: #6b7280; margin-top: 16px; font-style: italic;">
+          Report generated by Santa's Elf Monitoring System™
+        </p>
+      </div>
+    </div>
+  `;
+}
     // Santa Cam
     const camScenes = {
       workshop: { src: 'workshop.mp4', title: "Santa's Workshop" },
