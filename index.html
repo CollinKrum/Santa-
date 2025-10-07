@@ -743,34 +743,57 @@ function generateReport() {
     </div>
   `;
 }
-    // Santa Cam
-    const camScenes = {
-      workshop: { src: 'workshop.mp4', title: "Santa's Workshop" },
-      office: { src: 'office.mp4', title: "Santa's Office" },
-      stable: { src: 'stable.mp4', title: 'Reindeer Stable' },
-      kitchen: { src: 'kitchen.mp4', title: "Mrs. Claus' Kitchen" },
-      mailroom: { src: 'mailroom.mp4', title: 'Mail Room' },
-      lab: { src: 'lab.mp4', title: 'Toy Testing Lab' }
-    };
-
-    function openCam(key) {
-      const modal = document.getElementById('videoModal');
-      const video = document.getElementById('modalVideo');
-      const title = document.getElementById('modalTitle');
-      const muteBtn = document.getElementById('muteBtn');
-      
-      video.src = camScenes[key].src;
-      title.textContent = camScenes[key].title;
-      video.muted = false;
-      muteBtn.textContent = '🔊 Mute';
-      modal.classList.add('open');
-      
-      video.play().catch(() => {
-        video.muted = true;
-        muteBtn.textContent = '🔇 Unmute';
-        video.play();
-      });
-    }
+const camScenes = {
+  workshop: {
+    title: "Santa's Workshop",
+    videos: ['workshop1.mp4', 'workshop2.mp4', 'workshop3.mp4', 'workshop4.mp4']
+  },
+  office: {
+    title: "Santa's Office",
+    videos: ['office1.mp4', 'office2.mp4, 'office3.mp4', 'office4.mp4']
+  },
+  stable: {
+    title: 'Reindeer Stable',
+    videos: ['stable1.mp4', 'stable2.mp4', 'stable3.mp4', 'stable4.mp4']
+  },
+  kitchen: {
+    title: "Mrs. Claus' Kitchen",
+    videos: ['kitchen1.mp4', 'kitchen2.mp4', 'kitchen3.mp4', 'kitchen4.mp4']
+  },
+  mailroom: {
+    title: 'Mail Room',
+    videos: ['mailroom1.mp4', 'mailroom2.mp4', 'mailroom3.mp4', 'mailroom4.mp4']
+  },
+  lab: {
+    title: 'Toy Testing Lab',
+    videos: ['lab1.mp4', 'lab2.mp4', 'lab3.mp4', 'lab4.mp4']
+  }
+};
+function openCam(key) {
+  const modal = document.getElementById('videoModal');
+  const video = document.getElementById('modalVideo');
+  const title = document.getElementById('modalTitle');
+  const muteBtn = document.getElementById('muteBtn');
+  
+  // Get the scene data
+  const scene = camScenes[key];
+  
+  // Pick a random video from the array
+  const randomIndex = Math.floor(Math.random() * scene.videos.length);
+  const randomVideo = scene.videos[randomIndex];
+  
+  video.src = randomVideo;
+  title.textContent = scene.title;
+  video.muted = false;
+  muteBtn.textContent = '🔊 Mute';
+  modal.classList.add('open');
+  
+  video.play().catch(() => {
+    video.muted = true;
+    muteBtn.textContent = '🔇 Unmute';
+    video.play();
+  });
+}
 
     function toggleMute() {
       const video = document.getElementById('modalVideo');
