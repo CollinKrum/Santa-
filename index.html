@@ -168,7 +168,9 @@
               <div style="height:10px"></div>
               <div class="field">
                 <label for="letterBody">YOUR LETTER</label>
-                <textarea id="letterBody" class="textarea" maxlength="1200" placeholder="Dear Santa,\nThis year I have...\n"></textarea>
+                <textarea id="letterBody" class="textarea" maxlength="1200" placeholder="Dear Santa,
+This year I have...
+"></textarea>
                 <div class="counter"><span id="charCount">0</span>/1200</div>
               </div>
               <div class="actions">
@@ -356,7 +358,7 @@
     function closeModal(){ const m=document.getElementById('videoModal'); const v=document.getElementById('modalVideo'); v.pause(); m.classList.remove('open'); }
     document.getElementById('videoModal').addEventListener('click',e=>{ if(e.target.id==='videoModal') closeModal(); });
 
-    // ===== Chat with Santa =====
+    // ===== Chat with Santa (typed) =====
     const chatMessagesEl = document.getElementById('chatMessages');
     const chatInputEl = document.getElementById('chatInput');
     let chatHistory = [];
@@ -415,21 +417,89 @@
       const audio = new Audio(url); await audio.play();
     }
 
-    // Mic (Web Speech API)
-    let rec; let listening=false;
-    function toggleMic(){
-      if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
-        alert('Speech recognition not supported on this browser.');
-        return;
+    // ===== Mic recording (MediaRecorder -> /api/transcribe -> chat) =====
+    let mediaStream, mediaRecorder, chunks = [], isRecording = false;
+
+    async function toggleMic(){
+      try {
+        if (!isRecording) {
+          mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+            ? "audio/webm;codecs=opus"
+            : (MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp3");
+
+          mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mime });
+          chunks = [];
+          mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
+          mediaRecorder.onstop = async () => {
+            const blob = new Blob(chunks, { type: mime });
+            const base64 = await blobToBase64(blob);
+
+            // 1) Transcribe speech
+            const tr = await fetch("/api/transcribe", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ audioBase64: base64, mime })
+            });
+            const trData = await tr.json();
+            const text = (trData.text || "").trim();
+
+            if (text) {
+              const name = document.getElementById('childName').value.trim() || 'little one';
+              addBubble('user', text);
+              chatHistory.push({ role: 'user', content: text });
+
+              const res = await fetch('/api/santa-reply', {
+                method:'POST',
+                headers:{ 'Content-Type':'application/json' },
+                body: JSON.stringify({ name, history: chatHistory.slice(-8) })
+              });
+              const data = await res.json();
+              const reply = data.reply || "Ho ho ho! Santa hears you loud and clear!";
+              addBubble('assistant', reply);
+              chatHistory.push({ role: 'assistant', content: reply });
+              try { await speakWithSantaVoice(reply); } catch(_) {}
+            } else {
+              addBubble('assistant', "Hmm, I couldn't hear that. Could you try again, please?");
+            }
+
+            cleanupStream();
+            document.getElementById('micBtn').textContent = '🎙️ Speak';
+            isRecording = false;
+          };
+
+          mediaRecorder.start();
+          isRecording = true;
+          document.getElementById('micBtn').textContent = '🛑 Stop';
+        } else {
+          mediaRecorder.stop();
+        }
+      } catch (err) {
+        console.error(err);
+        alert("Microphone error. Please allow mic access and try again.");
+        cleanupStream();
+        document.getElementById('micBtn').textContent = '🎙️ Speak';
+        isRecording = false;
       }
-      if(!rec){
-        const R = window.SpeechRecognition || window.webkitSpeechRecognition;
-        rec = new R(); rec.lang='en-US'; rec.continuous=false; rec.interimResults=false;
-        rec.onresult=(e)=>{ const t=e.results[0][0].transcript; chatInputEl.value = t; sendChat(); };
-        rec.onerror=()=>{ listening=false; document.getElementById('micBtn').textContent='🎙️ Speak'; };
-        rec.onend=()=>{ listening=false; document.getElementById('micBtn').textContent='🎙️ Speak'; };
+    }
+
+    function cleanupStream(){
+      if (mediaStream) {
+        mediaStream.getTracks().forEach(t => t.stop());
+        mediaStream = null;
       }
-      if(!listening){ listening=true; rec.start(); document.getElementById('micBtn').textContent='🛑 Stop'; } else { rec.stop(); }
+    }
+
+    function blobToBase64(blob){
+      return new Promise((resolve, reject) => {
+        const r = new FileReader();
+        r.onloadend = () => {
+          const dataUrl = r.result; // "data:<mime>;base64,AAAA"
+          resolve(String(dataUrl).split(",")[1] || "");
+        };
+        r.onerror = reject;
+        r.readAsDataURL(blob);
+      });
     }
 
     // ===== Letters to Santa =====
