@@ -1,10 +1,16 @@
 {
   "name": "santa-command-center",
   "version": "1.0.0",
-  "description": "Santa's Command Center with ElevenLabs voice",
+  "description": "Santa's Command Center with ElevenLabs voice + chat",
+  "type": "module",
+  "engines": { "node": ">=18" },
   "scripts": {
     "dev": "vercel dev"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {
+    "openai": "^4.57.0"
+  },
+  "devDependencies": {
+    "vercel": "^39.0.0"
+  }
 }
