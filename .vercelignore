@@ -1,0 +1,12 @@
+# keep deploys lean
+node_modules
+.git
+.gitignore
+.vscode
+.vercel
+*.psd
+*.ai
+*.zip
+*.map
+.DS_Store
+Thumbs.db
