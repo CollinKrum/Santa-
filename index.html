@@ -7,11 +7,7 @@
   <title>Santa's Command Center</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(to bottom right, #450a0a, #7f1d1d, #14532d);
-      min-height: 100vh; color: white; padding: 20px;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: linear-gradient(to bottom right, #450a0a, #7f1d1d, #14532d); min-height: 100vh; color: white; padding: 20px; }
     @keyframes wiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-5deg)} 75%{transform:rotate(5deg)} }
     @keyframes float { 0%{transform:translateY(-100px) translateX(0);opacity:0} 50%{transform:translateY(50vh) translateX(30px);opacity:.2} 100%{transform:translateY(110vh) translateX(0);opacity:0} }
     .snowflake { position: fixed; top: -50px; color: white; font-size: 20px; opacity: .2; pointer-events:none; animation: float linear infinite; z-index:1; }
@@ -33,7 +29,6 @@
     .tab-content{ padding:24px; min-height: 520px; }
     .tab-pane{ display:none; }
     .tab-pane.active{ display:block; }
-
     .message-buttons{ display:flex; flex-direction:column; gap:12px; }
     .message-btn{ display:flex; justify-content:space-between; align-items:center; padding:20px; border-radius:16px; border:none; font-size:16px; font-weight:700; color:white; cursor:pointer; transition:transform .2s; position:relative; }
     .message-btn:hover:not(:disabled){ transform:scale(1.05); }
@@ -42,12 +37,10 @@
     .message-btn.nice{ background:linear-gradient(135deg,#10b981,#059669); }
     .message-btn.naughty{ background:linear-gradient(135deg,#ef4444,#dc2626); }
     .message-btn.neutral{ background:linear-gradient(135deg,#3b82f6,#2563eb); }
-
     .speaking-indicator{ margin-top:16px; padding:16px; background:linear-gradient(135deg,#dc2626,#16a34a); border-radius:16px; text-align:center; font-weight:bold; animation:pulse 1.5s ease-in-out infinite; }
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
     .generate-btn{ width:100%; padding:24px; border-radius:16px; border:none; background:linear-gradient(135deg,#dc2626,#ef4444,#16a34a); color:white; font-size:18px; font-weight:bold; cursor:pointer; margin-bottom:24px; transition:transform .2s; }
     .generate-btn:hover{ transform:scale(1.05); }
-
     .report-card{ background:white; color:#1f2937; border-radius:20px; overflow:hidden; }
     .report-header{ background:linear-gradient(135deg,#dc2626,#16a34a); color:white; padding:24px; text-align:center; }
     .report-content{ padding:24px; }
@@ -57,14 +50,12 @@
     .score-box.naughty{ background:#fee2e2; }
     .score-number{ font-size:48px; font-weight:bold; }
     .deeds-section{ background:#f3f4f6; padding:16px; border-radius:12px; margin:16px 0; }
-
     .cam-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
     @media (min-width:640px){ .cam-grid{ grid-template-columns: repeat(3, 1fr); }}
     .cam-button{ padding:20px; border-radius:16px; border:none; color:white; font-weight:bold; cursor:pointer; transition:transform .2s; text-align:center; }
     .cam-button:hover{ transform:scale(1.05); }
     .cam-emoji{ font-size:40px; display:block; margin-bottom:8px; }
     .cam-title{ font-size:14px; display:block; }
-
     .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:1000; padding:20px; }
     .modal.open{ display:flex; align-items:center; justify-content:center; }
     .modal-content{ width:100%; max-width:1000px; background:#000; border-radius:16px; overflow:hidden; }
@@ -75,17 +66,13 @@
     .video-controls{ padding:16px; background:#1f1f1f; display:flex; gap:12px; justify-content:center; }
     .control-btn{ background:#374151; color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px; }
     .control-btn:hover{ background:#4b5563; }
-
     .footer{ text-align:center; margin-top:40px; opacity:.6; font-size:14px; }
-
-    /* Letters to Santa styles */
+    /* Letters to Santa */
     .letter-grid{ display:grid; gap:16px; grid-template-columns:1fr; }
     @media(min-width:900px){ .letter-grid{ grid-template-columns: 1.1fr .9fr; } }
     .field{ display:flex; flex-direction:column; gap:8px; }
     .field label{ font-size:12px; letter-spacing:.08em; font-weight:800; opacity:.9; }
-    .input, .textarea{
-      background: rgba(255,255,255,.9); color:#111827; border:none; border-radius:14px; padding:14px 16px; font-size:16px; outline:none;
-    }
+    .input, .textarea{ background: rgba(255,255,255,.9); color:#111827; border:none; border-radius:14px; padding:14px 16px; font-size:16px; outline:none; }
     .textarea{ min-height:180px; resize:vertical; }
     .pill-row{ display:flex; gap:8px; flex-wrap:wrap; }
     .pill{ background: rgba(255,255,255,.85); color:#111827; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:700; }
@@ -95,11 +82,7 @@
     .btn.secondary{ background:#2563eb; }
     .btn.ghost{ background:transparent; border:1px solid rgba(255,255,255,.3); }
     .counter{ font-size:12px; opacity:.8; text-align:right; }
-    .preview{
-      background: #faf7e8; color:#2b2b2b; border-radius:16px; padding:18px; min-height:240px; position:relative; box-shadow: inset 0 0 0 2px rgba(0,0,0,.05);
-      background-image: linear-gradient(to bottom, rgba(0,0,0,.04) 1px, transparent 1px);
-      background-size: 100% 28px; /* notebook lines */
-    }
+    .preview{ background: #faf7e8; color:#2b2b2b; border-radius:16px; padding:18px; min-height:240px; position:relative; box-shadow: inset 0 0 0 2px rgba(0,0,0,.05); background-image: linear-gradient(to bottom, rgba(0,0,0,.04) 1px, transparent 1px); background-size: 100% 28px; }
     .preview h3{ margin-bottom:8px; color:#7c2d12; }
     .preview small{ color:#6b7280; }
     .letter-list{ margin-top:16px; display:flex; flex-direction:column; gap:10px; }
@@ -120,33 +103,29 @@
     </div>
 
     <div class="card">
-      <!-- Name Input -->
       <div class="name-input-section">
         <label>CHILD'S NAME</label>
         <input type="text" id="childName" placeholder="Enter name here..." />
       </div>
 
-      <!-- Tabs -->
       <div class="tabs">
         <button class="tab active" onclick="switchTab(event,'soundboard')">
-          <span class="tab-icon">🔊</span>
-          <span>Soundboard</span>
+          <span class="tab-icon">🔊</span><span>Soundboard</span>
         </button>
         <button class="tab" onclick="switchTab(event,'report')">
-          <span class="tab-icon">📄</span>
-          <span>Report Card</span>
+          <span class="tab-icon">📄</span><span>Report Card</span>
         </button>
         <button class="tab" onclick="switchTab(event,'cam')">
-          <span class="tab-icon">📹</span>
-          <span>Santa Cam</span>
+          <span class="tab-icon">📹</span><span>Santa Cam</span>
         </button>
         <button class="tab" onclick="switchTab(event,'letter')">
-          <span class="tab-icon">✍️</span>
-          <span>Letter to Santa</span>
+          <span class="tab-icon">✍️</span><span>Letter to Santa</span>
+        </button>
+        <button class="tab" onclick="switchTab(event,'chat')">
+          <span class="tab-icon">💬</span><span>Chat</span>
         </button>
       </div>
 
-      <!-- Tab Content -->
       <div class="tab-content">
         <!-- Soundboard -->
         <div id="soundboard" class="tab-pane active">
@@ -154,13 +133,13 @@
           <div id="speakingIndicator" style="display:none" class="speaking-indicator">🔊 Santa is speaking...</div>
         </div>
 
-        <!-- Report Card -->
+        <!-- Report -->
         <div id="report" class="tab-pane">
           <button class="generate-btn" onclick="generateReport()">✨ Generate Report Card</button>
           <div id="reportResult"></div>
         </div>
 
-        <!-- Santa Cam -->
+        <!-- Cam -->
         <div id="cam" class="tab-pane">
           <div class="cam-grid">
             <button class="cam-button" style="background:linear-gradient(135deg,#d97706,#ea580c);" onclick="openCam('workshop')"><span class="cam-emoji">🎁</span><span class="cam-title">Workshop</span></button>
@@ -214,6 +193,17 @@
             </div>
           </div>
         </div>
+
+        <!-- Chat with Santa -->
+        <div id="chat" class="tab-pane">
+          <div id="chatMessages" style="display:flex; flex-direction:column; gap:10px; max-height:420px; overflow:auto; padding-bottom:10px;"></div>
+          <form onsubmit="event.preventDefault(); sendChat();" style="display:flex; gap:8px; margin-top:10px;">
+            <input id="chatInput" class="input" type="text" placeholder="Ask Santa anything (be kind!)" style="flex:1;">
+            <button type="button" class="btn ghost" id="micBtn" onclick="toggleMic()">🎙️ Speak</button>
+            <button type="submit" class="btn">Send</button>
+          </form>
+          <div class="hint" style="margin-top:8px">For privacy, nothing is stored on the server unless you implement it. Audio responses are generated on the fly with your ElevenLabs voice.</div>
+        </div>
       </div>
     </div>
 
@@ -222,7 +212,6 @@
     </div>
   </div>
 
-  <!-- Video Modal -->
   <div id="videoModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -238,14 +227,20 @@
   </div>
 
   <script>
-    // Global state
     let currentAudio = null;
 
-    // Snowflakes
+    // Snow
     const snowflakesContainer = document.getElementById('snowflakes');
-    for (let i = 0; i < 20; i++) { const s = document.createElement('div'); s.className='snowflake'; s.textContent='❄'; s.style.left=Math.random()*100+'%'; s.style.animationDelay=Math.random()*5+'s'; s.style.animationDuration=(Math.random()*10+15)+'s'; snowflakesContainer.appendChild(s); }
+    for (let i = 0; i < 20; i++) {
+      const s = document.createElement('div');
+      s.className='snowflake'; s.textContent='❄';
+      s.style.left=Math.random()*100+'%';
+      s.style.animationDelay=Math.random()*5+'s';
+      s.style.animationDuration=(Math.random()*10+15)+'s';
+      snowflakesContainer.appendChild(s);
+    }
 
-    // Tab switching (fix: pass event)
+    // Tabs
     function switchTab(ev, tabName){
       document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
       document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
@@ -268,15 +263,17 @@
     ];
 
     const messageButtonsContainer = document.getElementById('messageButtons');
+
     function updateButtonText(){
       const name = document.getElementById('childName').value.trim() || 'little one';
       document.querySelectorAll('.message-btn').forEach((btn, idx)=>{
         const msg = messages[idx]; const span = btn.querySelector('.btn-text');
         if(span){ span.innerHTML = msg.text.replace(/{name}/g, `<strong>${name}</strong>`); }
       });
-      // keep letters FROM in sync
       const fromEl = document.getElementById('letterFrom');
-      if(fromEl && (!fromEl.dataset.touched || fromEl.value === '')) { fromEl.value = name; updateLetterPreview(); }
+      if(fromEl && (!fromEl.dataset.touched || fromEl.value === '')) {
+        fromEl.value = name; updateLetterPreview();
+      }
     }
 
     messages.forEach(msg=>{
@@ -303,7 +300,7 @@
         currentAudio.onended = ()=>{ indicator.style.display='none'; buttons.forEach(b=>b.disabled=false); currentAudio=null; };
         currentAudio.onerror = ()=>{ indicator.style.display='none'; buttons.forEach(b=>b.disabled=false); alert('Error playing audio'); };
         await currentAudio.play();
-      } catch(err){ console.error(err); indicator.style.display='none'; buttons.forEach(b=>b.disabled=false); alert('Error generating Santa voice. Please try again.\n\n'+err.message); }
+      } catch(err){ console.error(err); indicator.style.display='none'; buttons.forEach(b=>b.disabled=false); alert('Error generating Santa voice.\n\n'+err.message); }
     }
 
     // Report Card
@@ -339,7 +336,7 @@
         </div>`;
     }
 
-    // Santa Cam
+    // Cam
     const camScenes={
       workshop:{ title:"Santa's Workshop", videos:['workshop1.mp4','workshop2.mp4','workshop3.mp4','workshop4.mp4'] },
       office:{ title:"Santa's Office", videos:['office1.mp4','office2.mp4','office3.mp4','office4.mp4'] },
@@ -359,7 +356,83 @@
     function closeModal(){ const m=document.getElementById('videoModal'); const v=document.getElementById('modalVideo'); v.pause(); m.classList.remove('open'); }
     document.getElementById('videoModal').addEventListener('click',e=>{ if(e.target.id==='videoModal') closeModal(); });
 
-    // ===== Letters to Santa logic =====
+    // ===== Chat with Santa =====
+    const chatMessagesEl = document.getElementById('chatMessages');
+    const chatInputEl = document.getElementById('chatInput');
+    let chatHistory = [];
+
+    function addBubble(role, text){
+      const wrap = document.createElement('div');
+      wrap.style.display = 'flex';
+      wrap.style.justifyContent = role==='user' ? 'flex-end' : 'flex-start';
+      const bubble = document.createElement('div');
+      bubble.textContent = text;
+      bubble.style.maxWidth = '75%';
+      bubble.style.padding = '10px 12px';
+      bubble.style.borderRadius = '14px';
+      bubble.style.background = role==='user' ? 'rgba(59,130,246,.9)' : 'rgba(255,255,255,.1)';
+      bubble.style.border = role==='user' ? 'none' : '1px solid rgba(255,255,255,.15)';
+      wrap.appendChild(bubble);
+      chatMessagesEl.appendChild(wrap);
+      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
+    }
+
+    async function sendChat(){
+      const text = chatInputEl.value.trim();
+      if(!text) return;
+      const name = document.getElementById('childName').value.trim() || 'little one';
+      addBubble('user', text);
+      chatInputEl.value = '';
+      chatHistory.push({ role: 'user', content: text });
+
+      try{
+        const res = await fetch('/api/santa-reply', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify({ name, history: chatHistory.slice(-8) })
+        });
+        if(!res.ok) throw new Error('Santa is busy feeding the reindeer.');
+        const data = await res.json();
+        const reply = data.reply || "Ho ho ho! Santa hears you loud and clear!";
+        addBubble('assistant', reply);
+        chatHistory.push({ role: 'assistant', content: reply });
+        try{ await speakWithSantaVoice(reply); } catch(e){}
+      } catch(err){
+        addBubble('assistant', 'Sorry, my elves are fixing the connection. Try again!');
+        console.error(err);
+      }
+    }
+
+    async function speakWithSantaVoice(text){
+      const res = await fetch('/api/santa-voice', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ text })
+      });
+      if(!res.ok) throw new Error('TTS failed');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url); await audio.play();
+    }
+
+    // Mic (Web Speech API)
+    let rec; let listening=false;
+    function toggleMic(){
+      if(!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)){
+        alert('Speech recognition not supported on this browser.');
+        return;
+      }
+      if(!rec){
+        const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+        rec = new R(); rec.lang='en-US'; rec.continuous=false; rec.interimResults=false;
+        rec.onresult=(e)=>{ const t=e.results[0][0].transcript; chatInputEl.value = t; sendChat(); };
+        rec.onerror=()=>{ listening=false; document.getElementById('micBtn').textContent='🎙️ Speak'; };
+        rec.onend=()=>{ listening=false; document.getElementById('micBtn').textContent='🎙️ Speak'; };
+      }
+      if(!listening){ listening=true; rec.start(); document.getElementById('micBtn').textContent='🛑 Stop'; } else { rec.stop(); }
+    }
+
+    // ===== Letters to Santa =====
     const fromEl = document.getElementById('letterFrom');
     const wishEl = document.getElementById('wishlist');
     const bodyEl = document.getElementById('letterBody');
@@ -369,7 +442,6 @@
     const previewBox = document.getElementById('letterPreview');
     const listBox = document.getElementById('lettersList');
 
-    // Prefill FROM with childName initially
     const initialName = document.getElementById('childName').value.trim();
     if(initialName){ fromEl.value = initialName; }
     fromEl.addEventListener('input', ()=>{ fromEl.dataset.touched = '1'; updateLetterPreview(); });
@@ -390,19 +462,19 @@
     function getStoredLetters(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch{ return []; } }
     function setStoredLetters(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
 
-    function saveLetter(){
-      const entry = buildLetterObject();
-      const letters = getStoredLetters(); letters.unshift(entry); setStoredLetters(letters);
-      renderLetters();
-      alert('Saved! This letter is stored only on this device.');
-    }
-
     function buildLetterObject(){
       const from = (fromEl.value || document.getElementById('childName').value || '').trim();
       const wishlist = (wishEl.value||'').trim();
       const body = (bodyEl.value||'').trim();
       const now = new Date();
       return { id: `${now.getTime()}`, from, wishlist, body, createdAt: now.toISOString() };
+    }
+
+    function saveLetter(){
+      const entry = buildLetterObject();
+      const letters = getStoredLetters(); letters.unshift(entry); setStoredLetters(letters);
+      renderLetters();
+      alert('Saved! This letter is stored only on this device.');
     }
 
     function downloadLetter(){
@@ -426,9 +498,8 @@
       const entry = buildLetterObject();
       const text = `Dear Santa,\n\n${entry.body}\n\nFrom, ${entry.from || '—'}\nWishlist: ${entry.wishlist || '—'}`;
       if(navigator.share){
-        try{ await navigator.share({ title: 'Letter to Santa', text }); } catch(e){ /* user canceled */ }
+        try{ await navigator.share({ title: 'Letter to Santa', text }); } catch(e){}
       } else {
-        // Fallback: mailto draft
         const subject = encodeURIComponent('Letter to Santa');
         const body = encodeURIComponent(text);
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
@@ -437,16 +508,19 @@
 
     function renderLetters(){
       const letters = getStoredLetters();
-      listBox.innerHTML = letters.map(l=>{
+      const html = letters.map(l=>{
         const date = new Date(l.createdAt).toLocaleString();
         return `<div class="letter-item"><div><b>${l.from||'—'}</b><div class="hint">${date}</div></div><div class="pill-row"><span class="pill">Saved</span><button class="btn ghost" onclick="restoreLetter('${l.id}')">Open</button><button class="btn ghost" onclick="deleteLetter('${l.id}')">Delete</button></div></div>`;
       }).join('');
+      document.getElementById('lettersList').innerHTML = html;
     }
 
     function restoreLetter(id){
       const l = getStoredLetters().find(x=>x.id===id); if(!l) return;
-      fromEl.value = l.from||''; wishEl.value = l.wishlist||''; bodyEl.value = l.body||''; updateLetterPreview();
-      // Switch to Letter tab if not already
+      document.getElementById('letterFrom').value = l.from||'';
+      document.getElementById('wishlist').value = l.wishlist||'';
+      document.getElementById('letterBody').value = l.body||'';
+      updateLetterPreview();
       const letterTabBtn = Array.from(document.querySelectorAll('.tab')).find(b=>b.textContent.includes('Letter'));
       if(letterTabBtn){ switchTab({target:letterTabBtn}, 'letter'); }
     }
@@ -455,7 +529,7 @@
       const rest = getStoredLetters().filter(x=>x.id!==id); setStoredLetters(rest); renderLetters();
     }
 
-    // Initial render
+    // Init
     updateButtonText();
     updateLetterPreview();
     renderLetters();
