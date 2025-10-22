@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     ];
 
     const resp = await client.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-4o-mini",     // You can upgrade to "gpt-4o" for extra polish
       messages,
       temperature: 0.8,
       max_tokens: 120
