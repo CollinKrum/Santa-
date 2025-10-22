@@ -121,9 +121,6 @@
         <button class="tab" onclick="switchTab(event,'letter')">
           <span class="tab-icon">✍️</span><span>Letter to Santa</span>
         </button>
-        <button class="tab" onclick="switchTab(event,'chat')">
-          <span class="tab-icon">💬</span><span>Chat</span>
-        </button>
       </div>
 
       <div class="tab-content">
@@ -194,17 +191,6 @@ This year I have...
               <div class="letter-list" id="lettersList"></div>
             </div>
           </div>
-        </div>
-
-        <!-- Chat with Santa -->
-        <div id="chat" class="tab-pane">
-          <div id="chatMessages" style="display:flex; flex-direction:column; gap:10px; max-height:420px; overflow:auto; padding-bottom:10px;"></div>
-          <form onsubmit="event.preventDefault(); sendChat();" style="display:flex; gap:8px; margin-top:10px;">
-            <input id="chatInput" class="input" type="text" placeholder="Ask Santa anything (be kind!)" style="flex:1;">
-            <button type="button" class="btn ghost" id="micBtn" onclick="toggleMic()">🎙️ Speak</button>
-            <button type="submit" class="btn">Send</button>
-          </form>
-          <div class="hint" style="margin-top:8px">For privacy, nothing is stored on the server unless you implement it. Audio responses are generated on the fly with your ElevenLabs voice.</div>
         </div>
       </div>
     </div>
@@ -357,150 +343,6 @@ This year I have...
     function restartVideo(){ const v=document.getElementById('modalVideo'); v.currentTime=0; v.play(); }
     function closeModal(){ const m=document.getElementById('videoModal'); const v=document.getElementById('modalVideo'); v.pause(); m.classList.remove('open'); }
     document.getElementById('videoModal').addEventListener('click',e=>{ if(e.target.id==='videoModal') closeModal(); });
-
-    // ===== Chat with Santa (typed) =====
-    const chatMessagesEl = document.getElementById('chatMessages');
-    const chatInputEl = document.getElementById('chatInput');
-    let chatHistory = [];
-
-    function addBubble(role, text){
-      const wrap = document.createElement('div');
-      wrap.style.display = 'flex';
-      wrap.style.justifyContent = role==='user' ? 'flex-end' : 'flex-start';
-      const bubble = document.createElement('div');
-      bubble.textContent = text;
-      bubble.style.maxWidth = '75%';
-      bubble.style.padding = '10px 12px';
-      bubble.style.borderRadius = '14px';
-      bubble.style.background = role==='user' ? 'rgba(59,130,246,.9)' : 'rgba(255,255,255,.1)';
-      bubble.style.border = role==='user' ? 'none' : '1px solid rgba(255,255,255,.15)';
-      wrap.appendChild(bubble);
-      chatMessagesEl.appendChild(wrap);
-      chatMessagesEl.scrollTop = chatMessagesEl.scrollHeight;
-    }
-
-    async function sendChat(){
-      const text = chatInputEl.value.trim();
-      if(!text) return;
-      const name = document.getElementById('childName').value.trim() || 'little one';
-      addBubble('user', text);
-      chatInputEl.value = '';
-      chatHistory.push({ role: 'user', content: text });
-
-      try{
-        const res = await fetch('/api/santa-reply', {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json' },
-          body: JSON.stringify({ name, history: chatHistory.slice(-8) })
-        });
-        if(!res.ok) throw new Error('Santa is busy feeding the reindeer.');
-        const data = await res.json();
-        const reply = data.reply || "Ho ho ho! Santa hears you loud and clear!";
-        addBubble('assistant', reply);
-        chatHistory.push({ role: 'assistant', content: reply });
-        try{ await speakWithSantaVoice(reply); } catch(e){}
-      } catch(err){
-        addBubble('assistant', 'Sorry, my elves are fixing the connection. Try again!');
-        console.error(err);
-      }
-    }
-
-    async function speakWithSantaVoice(text){
-      const res = await fetch('/api/santa-voice', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ text })
-      });
-      if(!res.ok) throw new Error('TTS failed');
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url); await audio.play();
-    }
-
-    // ===== Mic recording (MediaRecorder -> /api/transcribe -> chat) =====
-    let mediaStream, mediaRecorder, chunks = [], isRecording = false;
-
-    async function toggleMic(){
-      try {
-        if (!isRecording) {
-          mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-            ? "audio/webm;codecs=opus"
-            : (MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp3");
-
-          mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mime });
-          chunks = [];
-          mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-          mediaRecorder.onstop = async () => {
-            const blob = new Blob(chunks, { type: mime });
-            const base64 = await blobToBase64(blob);
-
-            // 1) Transcribe speech
-            const tr = await fetch("/api/transcribe", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ audioBase64: base64, mime })
-            });
-            const trData = await tr.json();
-            const text = (trData.text || "").trim();
-
-            if (text) {
-              const name = document.getElementById('childName').value.trim() || 'little one';
-              addBubble('user', text);
-              chatHistory.push({ role: 'user', content: text });
-
-              const res = await fetch('/api/santa-reply', {
-                method:'POST',
-                headers:{ 'Content-Type':'application/json' },
-                body: JSON.stringify({ name, history: chatHistory.slice(-8) })
-              });
-              const data = await res.json();
-              const reply = data.reply || "Ho ho ho! Santa hears you loud and clear!";
-              addBubble('assistant', reply);
-              chatHistory.push({ role: 'assistant', content: reply });
-              try { await speakWithSantaVoice(reply); } catch(_) {}
-            } else {
-              addBubble('assistant', "Hmm, I couldn't hear that. Could you try again, please?");
-            }
-
-            cleanupStream();
-            document.getElementById('micBtn').textContent = '🎙️ Speak';
-            isRecording = false;
-          };
-
-          mediaRecorder.start();
-          isRecording = true;
-          document.getElementById('micBtn').textContent = '🛑 Stop';
-        } else {
-          mediaRecorder.stop();
-        }
-      } catch (err) {
-        console.error(err);
-        alert("Microphone error. Please allow mic access and try again.");
-        cleanupStream();
-        document.getElementById('micBtn').textContent = '🎙️ Speak';
-        isRecording = false;
-      }
-    }
-
-    function cleanupStream(){
-      if (mediaStream) {
-        mediaStream.getTracks().forEach(t => t.stop());
-        mediaStream = null;
-      }
-    }
-
-    function blobToBase64(blob){
-      return new Promise((resolve, reject) => {
-        const r = new FileReader();
-        r.onloadend = () => {
-          const dataUrl = r.result; // "data:<mime>;base64,AAAA"
-          resolve(String(dataUrl).split(",")[1] || "");
-        };
-        r.onerror = reject;
-        r.readAsDataURL(blob);
-      });
-    }
 
     // ===== Letters to Santa =====
     const fromEl = document.getElementById('letterFrom');
