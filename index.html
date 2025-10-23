@@ -114,10 +114,49 @@
       pointer-events: none;
     }
     .toast.show { opacity: 1; transform: translateY(0); }
+
+    /* === Christmas Countdown === */
+    .countdown-wrap{
+      position: sticky; top: 0; z-index: 50;
+      margin: 0 auto 16px; max-width: 980px;
+    }
+    .countdown-bar{
+      display:flex; align-items:center; justify-content:center; gap:14px;
+      background: linear-gradient(90deg,#064e3b,#065f46,#166534);
+      border: 1px solid rgba(255,255,255,.15);
+      color: #fff; padding: 10px 14px; border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .countdown-title{
+      font-weight: 800; letter-spacing:.06em; font-size: 13px; opacity:.95; white-space:nowrap;
+    }
+    .countdown-boxes{ display:flex; gap:10px; flex-wrap:wrap; }
+    .time-box{
+      background: rgba(255,255,255,.12);
+      padding: 8px 10px; border-radius: 10px; min-width: 68px; text-align:center;
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .time-box b{ display:block; font-size: 18px; line-height: 1; }
+    .time-box small{ display:block; font-size: 11px; opacity: .85; margin-top: 2px; letter-spacing:.04em; }
+    .countdown-soon{ animation: cdpulse 1.6s ease-in-out infinite; }
+    @keyframes cdpulse { 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.15); } }
   </style>
 </head>
 <body>
   <div id="snowflakes"></div>
+
+  <!-- Christmas Countdown Bar -->
+  <div class="countdown-wrap">
+    <div id="countdownBar" class="countdown-bar" aria-live="polite">
+      <span class="countdown-title">🎄 Christmas Countdown</span>
+      <div class="countdown-boxes">
+        <div class="time-box"><b id="cd-days">00</b><small>Days</small></div>
+        <div class="time-box"><b id="cd-hours">00</b><small>Hours</small></div>
+        <div class="time-box"><b id="cd-mins">00</b><small>Minutes</small></div>
+        <div class="time-box"><b id="cd-secs">00</b><small>Seconds</small></div>
+      </div>
+    </div>
+  </div>
 
   <div class="container">
     <div class="header">
@@ -505,6 +544,52 @@ This year I have...
     function deleteLetter(id){
       const rest = getStoredLetters().filter(x=>x.id!==id); setStoredLetters(rest); renderLetters();
     }
+
+    // === Christmas Countdown ===
+    (function christmasCountdown(){
+      const $days = document.getElementById('cd-days');
+      const $hours = document.getElementById('cd-hours');
+      const $mins = document.getElementById('cd-mins');
+      const $secs = document.getElementById('cd-secs');
+      const $bar = document.getElementById('countdownBar');
+
+      function nextChristmasTarget(now = new Date()){
+        const year = now.getFullYear();
+        const target = new Date(year, 11, 25, 0, 0, 0); // Dec 25 @ 00:00 local
+        return (now > target) ? new Date(year + 1, 11, 25, 0, 0, 0) : target;
+      }
+      function pad(n){ return String(n).padStart(2,'0'); }
+
+      function tick(){
+        const now = new Date();
+        const target = nextChristmasTarget(now);
+        let diff = target - now;
+
+        if (diff <= 0) {
+          $days.textContent = '00'; $hours.textContent = '00';
+          $mins.textContent = '00'; $secs.textContent = '00';
+          $bar.querySelector('.countdown-title').textContent = '🎅 It’s Christmas Day!';
+          $bar.classList.remove('countdown-soon');
+          return;
+        }
+
+        const sec = Math.floor(diff / 1000) % 60;
+        const min = Math.floor(diff / (1000*60)) % 60;
+        const hr  = Math.floor(diff / (1000*60*60)) % 24;
+        const day = Math.floor(diff / (1000*60*60*24));
+
+        $days.textContent  = pad(day);
+        $hours.textContent = pad(hr);
+        $mins.textContent  = pad(min);
+        $secs.textContent  = pad(sec);
+
+        if (day < 7) $bar.classList.add('countdown-soon');
+        else $bar.classList.remove('countdown-soon');
+      }
+
+      tick();
+      setInterval(tick, 1000);
+    })();
 
     // Init
     updateButtonText();
