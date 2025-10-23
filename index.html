@@ -174,6 +174,23 @@
       0%   { transform: translate(var(--x,0), var(--y,0)) rotate(0deg) scale(1); opacity: 1; }
       100% { transform: translate(calc(var(--x,0) + var(--dx,0)), calc(var(--y,0) + var(--dy,200px))) rotate(var(--rot,180deg)) scale(0.9); opacity: 0; }
     }
+
+    /* === Present Catcher (Game) === */
+    .game-wrap { display:grid; gap:12px; grid-template-columns:1fr; }
+    @media(min-width:900px){ .game-wrap{ grid-template-columns:1fr 320px; } }
+    .game-card{ background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:16px; padding:14px; }
+    .game-ui{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    .pill-stat{ background: rgba(255,255,255,.15); padding:8px 10px; border-radius:999px; font-weight:800; font-size:12px; }
+    .game-btn{ background:#16a34a; border:none; color:white; font-weight:800; padding:10px 12px; border-radius:10px; cursor:pointer; }
+    .game-btn.ghost{ background:transparent; border:1px solid rgba(255,255,255,.35); }
+    .canvas-box{ position:relative; background: rgba(0,0,0,.3); border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,.15); }
+    #presentCanvas{ width:100%; height:auto; display:block; }
+    .touch-bar{ display:flex; gap:8px; margin-top:8px; }
+    .touch-btn{ flex:1; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.08); color:#fff; font-weight:800; }
+    .legend{ font-size:12px; opacity:.85; }
+    .hs-list{ display:flex; flex-direction:column; gap:8px; }
+    .hs-item{ background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); padding:10px; border-radius:10px; display:flex; justify-content:space-between; }
+    .muted{ opacity:.8; }
   </style>
 </head>
 <body>
@@ -230,6 +247,9 @@
         </button>
         <button class="tab" onclick="switchTab(event,'elf')">
           <span class="tab-icon">🧝</span><span>Elf Name</span>
+        </button>
+        <button class="tab" onclick="switchTab(event,'present')">
+          <span class="tab-icon">🎁</span><span>Present Catcher</span>
         </button>
       </div>
 
@@ -324,6 +344,42 @@ This year I have...
             </p>
           </div>
         </div>
+
+        <!-- Present Catcher -->
+        <div id="present" class="tab-pane">
+          <div class="game-wrap">
+            <div class="game-card">
+              <div class="game-ui">
+                <div class="pill-stat">🎯 Score: <span id="gScore">0</span></div>
+                <div class="pill-stat">🔥 Streak: <span id="gStreak">0</span>x</div>
+                <div class="pill-stat">🎄 Level: <span id="gLevel">1</span></div>
+                <div class="pill-stat">💖 Lives: <span id="gLives">3</span></div>
+                <div style="display:flex; gap:8px;">
+                  <button class="game-btn" id="gStart">Start</button>
+                  <button class="game-btn ghost" id="gPause">Pause</button>
+                  <button class="game-btn ghost" id="gSound">Sound: On</button>
+                </div>
+              </div>
+              <div style="height:8px"></div>
+              <div class="canvas-box">
+                <canvas id="presentCanvas" width="900" height="520" aria-label="Present Catcher Game"></canvas>
+              </div>
+              <div class="touch-bar">
+                <button class="touch-btn" id="leftBtn">⟵ Left</button>
+                <button class="touch-btn" id="dropBtn">⬇️ Drop</button>
+                <button class="touch-btn" id="rightBtn">Right ⟶</button>
+              </div>
+              <div class="legend">Controls: ← / → to move • ↓ to fast-drop • Space to start/pause • Mobile: use on-screen buttons</div>
+            </div>
+            <div class="game-card">
+              <h3 style="font-size:18px; font-weight:800; margin-bottom:6px;">🏆 High Scores</h3>
+              <div id="hsList" class="hs-list"></div>
+              <button class="game-btn ghost" style="margin-top:8px;" onclick="clearHighScores()">Clear High Scores</button>
+              <p class="muted" style="margin-top:8px; font-size:12px;">Scores are saved only on this device.</p>
+            </div>
+          </div>
+        </div>
+        <!-- /Present Catcher -->
       </div>
     </div>
 
@@ -737,6 +793,402 @@ This year I have...
         displayEl.style.transition = 'all 0.3s ease';
       }, 200);
     }
+
+    // ===== Present Catcher Game =====
+    (function(){
+      const canvas = document.getElementById('presentCanvas');
+      const ctx = canvas.getContext('2d');
+      const DPR = Math.min(window.devicePixelRatio || 1, 2);
+      // Logical size
+      const baseW = 900, baseH = 520;
+
+      // Scale for crisp canvas
+      function fitCanvas(){
+        const rect = canvas.getBoundingClientRect();
+        const w = Math.floor(baseW * DPR);
+        const h = Math.floor(baseH * DPR);
+        canvas.width = w;
+        canvas.height = h;
+        // drawing scale
+        ctx.setTransform(DPR,0,0,DPR,0,0);
+      }
+      fitCanvas();
+      window.addEventListener('resize', fitCanvas);
+
+      // Game state
+      let running = false;
+      let paused = false;
+      let last = 0;
+      let score = 0;
+      let lives = 3;
+      let level = 1;
+      let streak = 0;
+      let fallSpeed = 2.2;
+      let spawnEvery = 900; // ms
+      let sinceSpawn = 0;
+      let presents = [];
+      let particles = [];
+      let keys = { left:false, right:false, down:false };
+      let basket = { x: baseW/2 - 60, y: baseH - 56, w: 120, h: 26, speed: 7.5 };
+
+      // UI elements
+      const elScore = document.getElementById('gScore');
+      const elLives = document.getElementById('gLives');
+      const elLevel = document.getElementById('gLevel');
+      const elStreak = document.getElementById('gStreak');
+      const btnStart = document.getElementById('gStart');
+      const btnPause = document.getElementById('gPause');
+      const btnSound = document.getElementById('gSound');
+      const leftBtn = document.getElementById('leftBtn');
+      const rightBtn = document.getElementById('rightBtn');
+      const dropBtn = document.getElementById('dropBtn');
+
+      // Sounds (WebAudio minimalist beeps)
+      let soundOn = true;
+      let audioCtx = null;
+      function beep(type='catch'){
+        if(!soundOn) return;
+        if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.connect(g); g.connect(audioCtx.destination);
+        if(type==='catch'){ o.frequency.setValueAtTime(880, audioCtx.currentTime); }
+        else if(type==='miss'){ o.frequency.setValueAtTime(140, audioCtx.currentTime); }
+        else { o.frequency.setValueAtTime(520, audioCtx.currentTime); }
+        g.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.18);
+        o.start(); o.stop(audioCtx.currentTime + 0.2);
+      }
+
+      function resetGame(){
+        score = 0; lives = 3; level = 1; streak = 0;
+        fallSpeed = 2.2; spawnEvery = 900; sinceSpawn = 0;
+        presents.length = 0; particles.length = 0;
+        basket.x = baseW/2 - basket.w/2;
+        updateHud();
+      }
+
+      function updateHud(){
+        elScore.textContent = score;
+        elLives.textContent = lives;
+        elLevel.textContent = level;
+        elStreak.textContent = streak;
+      }
+
+      function spawnPresent(){
+        const size = 26 + Math.random()*18;
+        const kinds = [
+          { emoji:'🎁', value: 10, color:'#dc2626' },
+          { emoji:'🧸', value: 14, color:'#059669' },
+          { emoji:'🍪', value: 8,  color:'#f59e0b' },
+          { emoji:'🧦', value: 12, color:'#2563eb' }
+        ];
+        const k = kinds[(Math.random()*kinds.length)|0];
+        const x = 20 + Math.random()*(baseW-40 - size);
+        const rot = (Math.random()*0.04) - 0.02;
+        presents.push({
+          x, y: -size, w:size, h:size, vy: fallSpeed + Math.random()*1.2,
+          emoji: k.emoji, value: k.value, rot: 0, rotv: rot
+        });
+      }
+
+      function drawBackground(){
+        // subtle snowy horizon
+        const grd = ctx.createLinearGradient(0, baseH-140, 0, baseH);
+        grd.addColorStop(0, 'rgba(255,255,255,0.12)');
+        grd.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = grd;
+        ctx.fillRect(0, baseH-140, baseW, 140);
+
+        // floor line
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.fillRect(0, baseH-28, baseW, 2);
+      }
+
+      function drawBasket(){
+        // sleigh-styled basket
+        ctx.save();
+        ctx.translate(basket.x, basket.y);
+        ctx.fillStyle = 'rgba(255,255,255,0.92)';
+        ctx.beginPath();
+        ctx.roundRect(0, 0, basket.w, basket.h, 8);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(220,38,38,.9)';
+        ctx.fillRect(6, 6, basket.w-12, basket.h-12);
+        ctx.restore();
+      }
+
+      function drawPresents(){
+        presents.forEach(p=>{
+          ctx.save();
+          ctx.translate(p.x + p.w/2, p.y + p.h/2);
+          ctx.rotate(p.rot);
+          ctx.font = `${Math.max(20, p.w)}px serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(p.emoji, 0, 0);
+          ctx.restore();
+        });
+      }
+
+      function addParticles(x,y,color='#fff'){
+        for(let i=0;i<8;i++){
+          particles.push({
+            x, y,
+            vx:(Math.random()*2-1)*2.2,
+            vy:(Math.random()*-2.2)-0.6,
+            life: 18 + (Math.random()*8|0),
+            color
+          });
+        }
+      }
+
+      function drawParticles(){
+        for(let i=particles.length-1;i>=0;i--){
+          const a = particles[i];
+          a.x += a.vx;
+          a.y += a.vy;
+          a.vy += 0.08;
+          a.life--;
+          ctx.fillStyle = `rgba(255,255,255,${Math.max(0,a.life/26)})`;
+          ctx.fillRect(a.x, a.y, 2, 2);
+          if(a.life<=0) particles.splice(i,1);
+        }
+      }
+
+      function rectsOverlap(ax, ay, aw, ah, bx, by, bw, bh){
+        return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
+      }
+
+      function missPresent(p){
+        lives--;
+        streak = 0;
+        beep('miss');
+        addParticles(p.x+p.w/2, baseH-20);
+        if(lives<=0){
+          running = false;
+          saveHighScore(score);
+          drawGameOver();
+        } else {
+          flashBanner('Missed! 💥');
+        }
+        updateHud();
+      }
+
+      function catchPresent(p){
+        const gain = p.value * Math.max(1, Math.min(5, Math.floor(streak/5)+1)); // streak multiplier
+        score += gain;
+        streak++;
+        addParticles(p.x+p.w/2, p.y+p.h/2);
+        beep('catch');
+        // level up every 150 pts
+        if(score > level * 150){
+          level++;
+          fallSpeed += 0.5;
+          spawnEvery = Math.max(380, spawnEvery - 60);
+          flashBanner(`Level ${level}! 🎄`);
+        }
+        updateHud();
+      }
+
+      let bannerTimer = 0, bannerText = '';
+      function flashBanner(txt){
+        bannerText = txt; bannerTimer = 60;
+      }
+      function drawBanner(){
+        if(bannerTimer>0){
+          ctx.save();
+          const t = bannerTimer/60;
+          ctx.globalAlpha = Math.min(1, t*1.2);
+          ctx.fillStyle = 'rgba(0,0,0,.4)';
+          ctx.fillRect(baseW*0.25, 30, baseW*0.5, 54);
+          ctx.strokeStyle = 'rgba(255,255,255,.6)';
+          ctx.strokeRect(baseW*0.25, 30, baseW*0.5, 54);
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 24px system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(bannerText, baseW/2, 57);
+          ctx.restore();
+          bannerTimer--;
+        }
+      }
+
+      function drawHUDOverlay(){
+        ctx.save();
+        ctx.font = 'bold 16px system-ui, sans-serif';
+        ctx.fillStyle = 'rgba(255,255,255,.85)';
+        ctx.fillText('← / → Move • ↓ Fast-drop • Space Pause/Start', 16, baseH-8);
+        ctx.restore();
+      }
+
+      function drawGameOver(){
+        ctx.save();
+        ctx.fillStyle = 'rgba(0,0,0,.55)';
+        ctx.fillRect(0,0,baseW,baseH);
+        ctx.fillStyle = '#fff';
+        ctx.textAlign = 'center';
+        ctx.font = 'bold 38px system-ui, sans-serif';
+        ctx.fillText('Game Over', baseW/2, baseH/2 - 12);
+        ctx.font = 'bold 20px system-ui, sans-serif';
+        ctx.fillText(`Score: ${score}`, baseW/2, baseH/2 + 20);
+        ctx.fillText('Press Start to play again', baseW/2, baseH/2 + 48);
+        ctx.restore();
+      }
+
+      function step(dt){
+        if(!running || paused) return;
+        sinceSpawn += dt;
+        if(sinceSpawn >= spawnEvery){
+          sinceSpawn = 0;
+          spawnPresent();
+        }
+        // Basket movement
+        let vx = 0;
+        if(keys.left) vx -= basket.speed;
+        if(keys.right) vx += basket.speed;
+        basket.x += vx;
+        if(keys.down){
+          // cosmetic nudge
+          basket.y = baseH - 50;
+        } else {
+          basket.y = baseH - 56;
+        }
+        basket.x = Math.max(6, Math.min(baseW - basket.w - 6, basket.x));
+
+        // Presents update
+        for(let i=presents.length-1;i>=0;i--){
+          const p = presents[i];
+          p.y += p.vy;
+          p.rot += p.rotv;
+          if(keys.down) p.y += 3; // fast drop
+          // catch?
+          if(rectsOverlap(basket.x, basket.y, basket.w, basket.h, p.x, p.y, p.w, p.h)){
+            catchPresent(p);
+            presents.splice(i,1);
+            continue;
+          }
+          // missed?
+          if(p.y > baseH - 24){
+            missPresent(p);
+            presents.splice(i,1);
+          }
+        }
+      }
+
+      function render(){
+        ctx.clearRect(0,0,baseW,baseH);
+        drawBackground();
+        drawPresents();
+        drawBasket();
+        drawParticles();
+        drawBanner();
+        drawHUDOverlay();
+        if(!running){
+          // idle overlay
+          ctx.save();
+          ctx.fillStyle = 'rgba(0,0,0,.45)';
+          ctx.fillRect(0,0,baseW,baseH);
+          ctx.fillStyle = '#fff';
+          ctx.textAlign='center';
+          ctx.font='bold 28px system-ui, sans-serif';
+          ctx.fillText('🎁 Present Catcher 🎁', baseW/2, baseH/2 - 40);
+          ctx.font='16px system-ui, sans-serif';
+          ctx.fillText('Catch gifts, avoid misses. Build streaks for multipliers!', baseW/2, baseH/2 - 12);
+          ctx.fillText('Press Start or Space to begin', baseW/2, baseH/2 + 16);
+          ctx.restore();
+        } else if(paused){
+          ctx.save();
+          ctx.fillStyle = 'rgba(0,0,0,.45)';
+          ctx.fillRect(0,0,baseW,baseH);
+          ctx.fillStyle = '#fff';
+          ctx.textAlign='center';
+          ctx.font='bold 28px system-ui, sans-serif';
+          ctx.fillText('Paused', baseW/2, baseH/2);
+          ctx.restore();
+        }
+      }
+
+      function loop(ts){
+        if(!last) last = ts;
+        const dt = ts - last; last = ts;
+        if(running && !paused) step(dt);
+        render();
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+
+      // High Scores
+      const HS_KEY = 'presentCatcherHS';
+      function loadHighScores(){
+        try{ return JSON.parse(localStorage.getItem(HS_KEY)||'[]'); }catch{ return []; }
+      }
+      function saveHighScore(val){
+        const arr = loadHighScores();
+        arr.push({ score: val, at: new Date().toISOString() });
+        arr.sort((a,b)=>b.score - a.score);
+        localStorage.setItem(HS_KEY, JSON.stringify(arr.slice(0,10)));
+        renderHighScores();
+      }
+      function renderHighScores(){
+        const box = document.getElementById('hsList');
+        const arr = loadHighScores();
+        if(arr.length===0){ box.innerHTML = '<div class="hs-item"><span>No scores yet</span><span>—</span></div>'; return; }
+        box.innerHTML = arr.map((r,i)=>`<div class="hs-item"><span>#${i+1}</span><span>${r.score}</span></div>`).join('');
+      }
+      window.clearHighScores = function(){
+        localStorage.removeItem(HS_KEY);
+        renderHighScores();
+      }
+      renderHighScores();
+
+      // Controls
+      function startGame(){
+        resetGame();
+        running = true; paused = false;
+        btnPause.textContent = 'Pause';
+      }
+      function togglePause(){
+        if(!running){ startGame(); return; }
+        paused = !paused;
+        btnPause.textContent = paused ? 'Resume' : 'Pause';
+      }
+
+      btnStart.addEventListener('click', startGame);
+      btnPause.addEventListener('click', togglePause);
+      btnSound.addEventListener('click', ()=>{
+        soundOn = !soundOn;
+        btnSound.textContent = `Sound: ${soundOn ? 'On' : 'Off'}`;
+        if(soundOn) beep('ui');
+      });
+
+      document.addEventListener('keydown', (e)=>{
+        if(e.code==='ArrowLeft') keys.left = true;
+        if(e.code==='ArrowRight') keys.right = true;
+        if(e.code==='ArrowDown') keys.down = true;
+        if(e.code==='Space'){ e.preventDefault(); togglePause(); }
+      });
+      document.addEventListener('keyup', (e)=>{
+        if(e.code==='ArrowLeft') keys.left = false;
+        if(e.code==='ArrowRight') keys.right = false;
+        if(e.code==='ArrowDown') keys.down = false;
+      });
+
+      // Touch buttons
+      function bindHold(btn, on, off){
+        let hold = false, tid=null;
+        const start = (ev)=>{ ev.preventDefault(); hold = true; on(); };
+        const end = ()=>{ hold = false; off && off(); };
+        btn.addEventListener('mousedown', start);
+        btn.addEventListener('touchstart', start, {passive:false});
+        ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=>btn.addEventListener(evt, end));
+      }
+      bindHold(leftBtn, ()=>{ keys.left = true; }, ()=>{ keys.left=false; });
+      bindHold(rightBtn, ()=>{ keys.right = true; }, ()=>{ keys.right=false; });
+      bindHold(dropBtn, ()=>{ keys.down = true; }, ()=>{ keys.down=false; });
+
+    })();
+    // ===== /Present Catcher Game =====
 
     // Init
     updateButtonText();
