@@ -158,6 +158,22 @@
     .elf-name-display .subtitle { font-size: 14px; opacity: 0.9; }
     .generate-elf-btn { background: linear-gradient(135deg, #dc2626, #16a34a); color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; transition: transform 0.2s; }
     .generate-elf-btn:hover { transform: scale(1.05); }
+
+    /* === Snowburst Confetti (on Send) === */
+    .burst-layer {
+      position: fixed; inset: 0; pointer-events: none; z-index: 1500;
+      overflow: hidden;
+    }
+    .burst-flake {
+      position: absolute; will-change: transform, opacity;
+      font-size: 18px; opacity: 0.95;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,.25));
+      animation: burst-fall linear forwards;
+    }
+    @keyframes burst-fall {
+      0%   { transform: translate(var(--x,0), var(--y,0)) rotate(0deg) scale(1); opacity: 1; }
+      100% { transform: translate(calc(var(--x,0) + var(--dx,0)), calc(var(--y,0) + var(--dy,200px))) rotate(var(--rot,180deg)) scale(0.9); opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -269,7 +285,7 @@ This year I have...
                 <button class="btn secondary" onclick="downloadLetter()">Download .txt</button>
                 <button class="btn ghost" onclick="printLetter()">Print</button>
                 <button class="btn ghost" onclick="shareLetter()">Share</button>
-                <button class="btn" id="sendBtn" style="background:#dc2626" onclick="sendLetter()">Send to Santa</button>
+                <button class="btn" id="sendBtn" style="background:#dc2626" onclick="sendLetter(event)">Send to Santa</button>
               </div>
               <div class="hint" style="margin-top:10px">Letters are saved only on this device (local storage). Hitting "Send" shows a confirmation and keeps you on this page.</div>
             </div>
@@ -334,11 +350,14 @@ This year I have...
   <!-- Toast -->
   <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
 
+  <!-- Snowburst Layer -->
+  <div id="burstLayer" class="burst-layer" aria-hidden="true"></div>
+
   <script>
     // ===== Global =====
     let currentAudio = null;
 
-    // Snow
+    // Snow background
     const snowflakesContainer = document.getElementById('snowflakes');
     for (let i = 0; i < 20; i++) {
       const s = document.createElement('div');
@@ -539,7 +558,45 @@ This year I have...
       }
     }
 
-    // ===== Fake Send (no external email) =====
+    // ===== Snowburst Confetti (no backend) =====
+    function snowburstAt(x, y) {
+      const layer = document.getElementById('burstLayer');
+      const flakes = ['❄','❅','❆','✸','✻','✼'];
+      const count = 28 + Math.floor(Math.random()*10);
+
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement('div');
+        el.className = 'burst-flake';
+        el.textContent = flakes[Math.floor(Math.random()*flakes.length)];
+        const spread = 160 + Math.random()*120;   // how wide
+        const angle = Math.random() * Math.PI * 2;
+        const dx = Math.cos(angle) * spread;
+        const dy = Math.sin(angle) * (spread * 0.8) + 180 + Math.random()*120;
+
+        el.style.left = `${x}px`;
+        el.style.top  = `${y}px`;
+        el.style.setProperty('--x', '0px');
+        el.style.setProperty('--y', '0px');
+        el.style.setProperty('--dx', `${dx}px`);
+        el.style.setProperty('--dy', `${dy}px`);
+        el.style.setProperty('--rot', `${(Math.random()*360)|0}deg`);
+        el.style.fontSize = `${16 + Math.random()*10}px`;
+        el.style.animationDuration = `${0.9 + Math.random()*0.9}s`;
+        el.style.opacity = `${0.8 + Math.random()*0.2}`;
+
+        layer.appendChild(el);
+        setTimeout(()=> el.remove(), 2000);
+      }
+    }
+
+    function snowburstFromButton(btn) {
+      const rect = btn.getBoundingClientRect();
+      const x = rect.left + rect.width/2 + window.scrollX;
+      const y = rect.top + rect.height/2 + window.scrollY - 10;
+      snowburstAt(x, y);
+    }
+
+    // ===== Fake Send (no external email) + Snowburst =====
     function showToast(message = 'Message sent to Santa! 🎅📬', ms = 2200) {
       const el = document.getElementById('toast');
       if (!el) return alert(message);
@@ -548,7 +605,7 @@ This year I have...
       setTimeout(() => el.classList.remove('show'), ms);
     }
 
-    async function sendLetter(){
+    async function sendLetter(ev){
       const btn = document.getElementById('sendBtn');
       const prevText = btn.textContent;
       btn.disabled = true; btn.textContent = 'Sending…';
@@ -564,7 +621,9 @@ This year I have...
       } catch {}
 
       // Simulate sending delay
-      await new Promise(r => setTimeout(r, 1200));
+      await new Promise(r => setTimeout(r, 900));
+
+      snowburstFromButton(btn);
       showToast('Message sent to Santa! 🎅📬');
 
       btn.disabled = false; btn.textContent = prevText;
@@ -616,7 +675,7 @@ This year I have...
         if (diff <= 0) {
           $days.textContent = '00'; $hours.textContent = '00';
           $mins.textContent = '00'; $secs.textContent = '00';
-          $bar.querySelector('.countdown-title').textContent = '🎅 It's Christmas Day!';
+          $bar.querySelector('.countdown-title').textContent = '🎅 It\'s Christmas Day!';
           $bar.classList.remove('countdown-soon');
           return;
         }
@@ -647,35 +706,29 @@ This year I have...
         'Starlight', 'Snowflake', 'Crystal', 'Glitter', 'Shimmer', 'Dazzle', 'Cheer',
         'Ribbon', 'Bells', 'Cocoa', 'Cinnamon', 'Nutmeg', 'Peppermint', 'Vanilla'
       ];
-      
       const suffixes = [
         'toes', 'bells', 'sparkles', 'whiskers', 'twinkle', 'bright', 'joy', 'cheer',
         'frost', 'snow', 'star', 'glow', 'shine', 'beam', 'dust', 'flake',
         'wonder', 'magic', 'wishes', 'dreams', 'giggles', 'bounces', 'jingles',
         'shimmer', 'glimmer', 'dazzle', 'sprinkle', 'merriment', 'laughter', 'delight'
       ];
-      
       const titles = [
         'the Cheerful', 'the Merry', 'the Jolly', 'the Bright', 'the Swift',
         'the Kind', 'the Helpful', 'the Clever', 'the Wise', 'the Joyful',
         'the Quick', 'the Gentle', 'the Brave', 'the Happy', 'the Magical',
         'the Sparkly', 'the Wonderful', 'the Fantastic', 'the Amazing', 'the Incredible'
       ];
-      
       const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
       const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
       const title = titles[Math.floor(Math.random() * titles.length)];
-      
       const elfName = `${prefix}${suffix}`;
       const fullTitle = `${elfName} ${title}`;
-      
+
       const nameEl = document.getElementById('elfNameText');
       const displayEl = document.getElementById('elfNameDisplay');
-      
-      // Add animation
+
       displayEl.style.transform = 'scale(0.95)';
       displayEl.style.opacity = '0.7';
-      
       setTimeout(() => {
         nameEl.textContent = fullTitle;
         displayEl.querySelector('.subtitle').textContent = '✨ Official North Pole Registry ✨';
