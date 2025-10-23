@@ -181,7 +181,7 @@ This year I have...
                 <button class="btn secondary" onclick="downloadLetter()">Download .txt</button>
                 <button class="btn ghost" onclick="printLetter()">Print</button>
                 <button class="btn ghost" onclick="shareLetter()">Share</button>
-                <button class="btn" style="background:#dc2626" onclick="sendLetter()">Send to Santa</button>
+                <button class="btn" id="sendBtn" style="background:#dc2626" onclick="sendLetter()">Send to Santa</button>
               </div>
               <div class="hint" style="margin-top:10px">Letters are saved only on this device (local storage). No data leaves your browser unless you hit “Send” or “Share”.</div>
             </div>
@@ -428,9 +428,13 @@ This year I have...
       }
     }
 
+    // Background send via /api/send-letter (no mail client)
     async function sendLetter(){
+      const btn = document.getElementById('sendBtn');
+      const prevText = btn.textContent;
+      btn.disabled = true; btn.textContent = 'Sending…';
+
       const entry = buildLetterObject();
-      const content = `Dear Santa,\n\n${entry.body}\n\nFrom,\n${entry.from || '—'}\nWishlist: ${entry.wishlist || '—'}\nDate: ${new Date(entry.createdAt).toLocaleString()}`;
 
       try {
         const res = await fetch('/api/send-letter', {
@@ -444,20 +448,17 @@ This year I have...
           })
         });
 
-        if (res.ok) {
-          alert('Sent to Santa! 🎅📬');
-          return;
+        if (!res.ok) {
+          const err = await res.json().catch(()=>({error:'Failed'}));
+          throw new Error(err?.error || 'Failed to send');
         }
-        // Fallback to mailto:
-        const to = 'santa@example.com'; // optional default
-        const subject = encodeURIComponent(`Letter to Santa from ${entry.from || '—'}`);
-        const body = encodeURIComponent(content);
-        window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+
+        alert('Sent to Santa! 🎅📬');
       } catch (e) {
-        const to = 'santa@example.com';
-        const subject = encodeURIComponent(`Letter to Santa from ${entry.from || '—'}`);
-        const body = encodeURIComponent(content);
-        window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+        console.error('[sendLetter] Error:', e);
+        alert('Sorry, Santa’s mail room is busy right now. Please try again in a moment.');
+      } finally {
+        btn.disabled = false; btn.textContent = prevText;
       }
     }
 
