@@ -3,7 +3,7 @@
 <head>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7145940911173373" crossorigin="anonymous"></script>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Santa's Command Center</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -39,6 +39,7 @@
     .message-btn.neutral{ background:linear-gradient(135deg,#3b82f6,#2563eb); }
     .speaking-indicator{ margin-top:16px; padding:16px; background:linear-gradient(135deg,#dc2626,#16a34a); border-radius:16px; text-align:center; font-weight:bold; animation:pulse 1.5s ease-in-out infinite; }
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+
     .generate-btn{ width:100%; padding:24px; border-radius:16px; border:none; background:linear-gradient(135deg,#dc2626,#ef4444,#16a34a); color:white; font-size:18px; font-weight:bold; cursor:pointer; margin-bottom:24px; transition:transform .2s; }
     .generate-btn:hover{ transform:scale(1.05); }
     .report-card{ background:white; color:#1f2937; border-radius:20px; overflow:hidden; }
@@ -50,12 +51,14 @@
     .score-box.naughty{ background:#fee2e2; }
     .score-number{ font-size:48px; font-weight:bold; }
     .deeds-section{ background:#f3f4f6; padding:16px; border-radius:12px; margin:16px 0; }
+
     .cam-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
     @media (min-width:640px){ .cam-grid{ grid-template-columns: repeat(3, 1fr); }}
     .cam-button{ padding:20px; border-radius:16px; border:none; color:white; font-weight:bold; cursor:pointer; transition:transform .2s; text-align:center; }
     .cam-button:hover{ transform:scale(1.05); }
     .cam-emoji{ font-size:40px; display:block; margin-bottom:8px; }
     .cam-title{ font-size:14px; display:block; }
+
     .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:1000; padding:20px; }
     .modal.open{ display:flex; align-items:center; justify-content:center; }
     .modal-content{ width:100%; max-width:1000px; background:#000; border-radius:16px; overflow:hidden; }
@@ -66,7 +69,9 @@
     .video-controls{ padding:16px; background:#1f1f1f; display:flex; gap:12px; justify-content:center; }
     .control-btn{ background:#374151; color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px; }
     .control-btn:hover{ background:#4b5563; }
+
     .footer{ text-align:center; margin-top:40px; opacity:.6; font-size:14px; }
+
     /* Letters to Santa */
     .letter-grid{ display:grid; gap:16px; grid-template-columns:1fr; }
     @media(min-width:900px){ .letter-grid{ grid-template-columns: 1.1fr .9fr; } }
@@ -92,6 +97,7 @@
 </head>
 <body>
   <div id="snowflakes"></div>
+
   <div class="container">
     <div class="header">
       <div style="position: relative; display: inline-block;">
@@ -130,13 +136,13 @@
           <div id="speakingIndicator" style="display:none" class="speaking-indicator">🔊 Santa is speaking...</div>
         </div>
 
-        <!-- Report -->
+        <!-- Report Card -->
         <div id="report" class="tab-pane">
           <button class="generate-btn" onclick="generateReport()">✨ Generate Report Card</button>
           <div id="reportResult"></div>
         </div>
 
-        <!-- Cam -->
+        <!-- Santa Cam -->
         <div id="cam" class="tab-pane">
           <div class="cam-grid">
             <button class="cam-button" style="background:linear-gradient(135deg,#d97706,#ea580c);" onclick="openCam('workshop')"><span class="cam-emoji">🎁</span><span class="cam-title">Workshop</span></button>
@@ -175,8 +181,9 @@ This year I have...
                 <button class="btn secondary" onclick="downloadLetter()">Download .txt</button>
                 <button class="btn ghost" onclick="printLetter()">Print</button>
                 <button class="btn ghost" onclick="shareLetter()">Share</button>
+                <button class="btn" style="background:#dc2626" onclick="sendLetter()">Send to Santa</button>
               </div>
-              <div class="hint" style="margin-top:10px">Letters are saved only on this device (local storage). No data leaves your browser.</div>
+              <div class="hint" style="margin-top:10px">Letters are saved only on this device (local storage). No data leaves your browser unless you hit “Send” or “Share”.</div>
             </div>
 
             <div>
@@ -200,6 +207,7 @@ This year I have...
     </div>
   </div>
 
+  <!-- Video Modal -->
   <div id="videoModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -215,6 +223,7 @@ This year I have...
   </div>
 
   <script>
+    // ===== Global =====
     let currentAudio = null;
 
     // Snow
@@ -236,7 +245,7 @@ This year I have...
       document.getElementById(tabName).classList.add('active');
     }
 
-    // Soundboard
+    // ===== Soundboard =====
     const messages = [
       { text: "Ho ho ho! You've been very good today, {name}!", type: "nice", emoji: "🎅" },
       { text: "{name}, you're on the nice list this year!", type: "nice", emoji: "⭐" },
@@ -291,7 +300,7 @@ This year I have...
       } catch(err){ console.error(err); indicator.style.display='none'; buttons.forEach(b=>b.disabled=false); alert('Error generating Santa voice.\n\n'+err.message); }
     }
 
-    // Report Card
+    // ===== Report Card =====
     function generateReport(){
       const name = document.getElementById('childName').value.trim() || 'this child';
       const niceScore = Math.floor(Math.random()*40)+60; const naughtyScore = 100-niceScore;
@@ -324,14 +333,15 @@ This year I have...
         </div>`;
     }
 
-    // Cam
+    // ===== Santa Cam =====
+    // Put your video files under /videos/ e.g. /videos/workshop1.mp4
     const camScenes={
-      workshop:{ title:"Santa's Workshop", videos:['workshop1.mp4','workshop2.mp4','workshop3.mp4','workshop4.mp4'] },
-      office:{ title:"Santa's Office", videos:['office1.mp4','office2.mp4','office3.mp4','office4.mp4'] },
-      stable:{ title:'Reindeer Stable', videos:['stable1.mp4','stable2.mp4','stable3.mp4','stable4.mp4'] },
-      kitchen:{ title:"Mrs. Claus' Kitchen", videos:['kitchen1.mp4','kitchen2.mp4','kitchen3.mp4','kitchen4.mp4'] },
-      mailroom:{ title:'Mail Room', videos:['mailroom1.mp4','mailroom2.mp4','mailroom3.mp4','mailroom4.mp4'] },
-      lab:{ title:'Toy Testing Lab', videos:['lab1.mp4','lab2.mp4','lab3.mp4','lab4.mp4'] }
+      workshop:{ title:"Santa's Workshop", videos:['videos/workshop1.mp4','videos/workshop2.mp4','videos/workshop3.mp4','videos/workshop4.mp4'] },
+      office:{ title:"Santa's Office", videos:['videos/office1.mp4','videos/office2.mp4','videos/office3.mp4','videos/office4.mp4'] },
+      stable:{ title:'Reindeer Stable', videos:['videos/stable1.mp4','videos/stable2.mp4','videos/stable3.mp4','videos/stable4.mp4'] },
+      kitchen:{ title:"Mrs. Claus' Kitchen", videos:['videos/kitchen1.mp4','videos/kitchen2.mp4','videos/kitchen3.mp4','videos/kitchen4.mp4'] },
+      mailroom:{ title:'Mail Room', videos:['videos/mailroom1.mp4','videos/mailroom2.mp4','videos/mailroom3.mp4','videos/mailroom4.mp4'] },
+      lab:{ title:'Toy Testing Lab', videos:['videos/lab1.mp4','videos/lab2.mp4','videos/lab3.mp4','videos/lab4.mp4'] }
     };
     function openCam(key){
       const modal=document.getElementById('videoModal'); const video=document.getElementById('modalVideo'); const title=document.getElementById('modalTitle'); const muteBtn=document.getElementById('muteBtn');
@@ -415,6 +425,39 @@ This year I have...
         const subject = encodeURIComponent('Letter to Santa');
         const body = encodeURIComponent(text);
         window.location.href = `mailto:?subject=${subject}&body=${body}`;
+      }
+    }
+
+    async function sendLetter(){
+      const entry = buildLetterObject();
+      const content = `Dear Santa,\n\n${entry.body}\n\nFrom,\n${entry.from || '—'}\nWishlist: ${entry.wishlist || '—'}\nDate: ${new Date(entry.createdAt).toLocaleString()}`;
+
+      try {
+        const res = await fetch('/api/send-letter', {
+          method:'POST',
+          headers:{ 'Content-Type':'application/json' },
+          body: JSON.stringify({
+            from: entry.from || '—',
+            wishlist: entry.wishlist || '',
+            body: entry.body || '',
+            createdAt: entry.createdAt
+          })
+        });
+
+        if (res.ok) {
+          alert('Sent to Santa! 🎅📬');
+          return;
+        }
+        // Fallback to mailto:
+        const to = 'santa@example.com'; // optional default
+        const subject = encodeURIComponent(`Letter to Santa from ${entry.from || '—'}`);
+        const body = encodeURIComponent(content);
+        window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+      } catch (e) {
+        const to = 'santa@example.com';
+        const subject = encodeURIComponent(`Letter to Santa from ${entry.from || '—'}`);
+        const body = encodeURIComponent(content);
+        window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
       }
     }
 
