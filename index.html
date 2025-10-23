@@ -20,6 +20,7 @@
     .name-input-section { background: linear-gradient(to right, #dc2626, #ef4444, #16a34a); padding: 24px; }
     .name-input-section label { display:block; color:white; font-size:12px; font-weight:700; letter-spacing:1px; margin-bottom:12px; }
     .name-input-section input { width:100%; padding:16px 20px; border-radius:16px; border:none; font-size:18px; outline:none; }
+
     .tabs { display:flex; background: rgba(255,255,255,.05); border-bottom:1px solid rgba(255,255,255,.1); overflow:auto; }
     .tab { flex:1; padding:20px; text-align:center; cursor:pointer; background:transparent; border:none; color:rgba(255,255,255,.7); font-size:14px; font-weight:600; transition:.2s; position:relative; white-space:nowrap; }
     .tab:hover{ color:#fff; }
@@ -29,6 +30,7 @@
     .tab-content{ padding:24px; min-height: 520px; }
     .tab-pane{ display:none; }
     .tab-pane.active{ display:block; }
+
     .message-buttons{ display:flex; flex-direction:column; gap:12px; }
     .message-btn{ display:flex; justify-content:space-between; align-items:center; padding:20px; border-radius:16px; border:none; font-size:16px; font-weight:700; color:white; cursor:pointer; transition:transform .2s; position:relative; }
     .message-btn:hover:not(:disabled){ transform:scale(1.05); }
@@ -93,6 +95,25 @@
     .letter-list{ margin-top:16px; display:flex; flex-direction:column; gap:10px; }
     .letter-item{ background: rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
     .letter-item b{ font-size:14px; }
+
+    /* Toast (fake send confirmation) */
+    .toast {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      background: #16a34a;
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      font-weight: 800;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .25s ease, transform .25s ease;
+      z-index: 2000;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
@@ -183,7 +204,7 @@ This year I have...
                 <button class="btn ghost" onclick="shareLetter()">Share</button>
                 <button class="btn" id="sendBtn" style="background:#dc2626" onclick="sendLetter()">Send to Santa</button>
               </div>
-              <div class="hint" style="margin-top:10px">Letters are saved only on this device (local storage). No data leaves your browser unless you hit “Send” or “Share”.</div>
+              <div class="hint" style="margin-top:10px">Letters are saved only on this device (local storage). Hitting “Send” shows a confirmation and keeps you on this page.</div>
             </div>
 
             <div>
@@ -221,6 +242,9 @@ This year I have...
       </div>
     </div>
   </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
 
   <script>
     // ===== Global =====
@@ -428,7 +452,15 @@ This year I have...
       }
     }
 
-    // Background send via /api/send-letter (no mail client)
+    // ===== Fake Send (no external email) =====
+    function showToast(message = 'Message sent to Santa! 🎅📬', ms = 2200) {
+      const el = document.getElementById('toast');
+      if (!el) return alert(message);
+      el.textContent = message;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), ms);
+    }
+
     async function sendLetter(){
       const btn = document.getElementById('sendBtn');
       const prevText = btn.textContent;
@@ -436,30 +468,19 @@ This year I have...
 
       const entry = buildLetterObject();
 
+      // Optional "outbox" stored locally for your records
       try {
-        const res = await fetch('/api/send-letter', {
-          method:'POST',
-          headers:{ 'Content-Type':'application/json' },
-          body: JSON.stringify({
-            from: entry.from || '—',
-            wishlist: entry.wishlist || '',
-            body: entry.body || '',
-            createdAt: entry.createdAt
-          })
-        });
+        const OUTBOX_KEY = 'santaOutbox';
+        const box = JSON.parse(localStorage.getItem(OUTBOX_KEY) || '[]');
+        box.unshift(entry);
+        localStorage.setItem(OUTBOX_KEY, JSON.stringify(box));
+      } catch {}
 
-        if (!res.ok) {
-          const err = await res.json().catch(()=>({error:'Failed'}));
-          throw new Error(err?.error || 'Failed to send');
-        }
+      // Simulate sending delay
+      await new Promise(r => setTimeout(r, 1200));
+      showToast('Message sent to Santa! 🎅📬');
 
-        alert('Sent to Santa! 🎅📬');
-      } catch (e) {
-        console.error('[sendLetter] Error:', e);
-        alert('Sorry, Santa’s mail room is busy right now. Please try again in a moment.');
-      } finally {
-        btn.disabled = false; btn.textContent = prevText;
-      }
+      btn.disabled = false; btn.textContent = prevText;
     }
 
     function renderLetters(){
