@@ -7,7 +7,16 @@
   <title>Santa's Command Center</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: linear-gradient(to bottom right, #450a0a, #7f1d1d, #14532d); min-height: 100vh; color: white; padding: 20px; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: linear-gradient(to bottom right, #450a0a, #7f1d1d, #14532d); min-height: 100vh; color: white; padding: 20px; position: relative; overflow-x: hidden; }
+    
+    /* Northern Lights */
+    .aurora { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.3; }
+    .aurora-layer { position: absolute; width: 200%; height: 100%; background: linear-gradient(90deg, transparent, #10b981, #3b82f6, #8b5cf6, transparent); animation: aurora-flow 20s ease-in-out infinite; }
+    .aurora-layer:nth-child(1) { animation-duration: 25s; opacity: 0.4; }
+    .aurora-layer:nth-child(2) { animation-duration: 18s; animation-delay: -8s; opacity: 0.3; background: linear-gradient(90deg, transparent, #06b6d4, #6366f1, #ec4899, transparent); }
+    .aurora-layer:nth-child(3) { animation-duration: 22s; animation-delay: -15s; opacity: 0.25; background: linear-gradient(90deg, transparent, #14b8a6, #8b5cf6, #06b6d4, transparent); }
+    @keyframes aurora-flow { 0%, 100% { transform: translateX(-50%) translateY(0) skewX(0deg); filter: blur(60px); } 50% { transform: translateX(0%) translateY(-20px) skewX(5deg); filter: blur(80px); } }
+    
     @keyframes wiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-5deg)} 75%{transform:rotate(5deg)} }
     @keyframes float { 0%{transform:translateY(-100px) translateX(0);opacity:0} 50%{transform:translateY(50vh) translateX(30px);opacity:.2} 100%{transform:translateY(110vh) translateX(0);opacity:0} }
     .snowflake { position: fixed; top: -50px; color: white; font-size: 20px; opacity: .2; pointer-events:none; animation: float linear infinite; z-index:1; }
@@ -140,9 +149,25 @@
     .time-box small{ display:block; font-size: 11px; opacity: .85; margin-top: 2px; letter-spacing:.04em; }
     .countdown-soon{ animation: cdpulse 1.6s ease-in-out infinite; }
     @keyframes cdpulse { 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.15); } }
+    
+    /* Elf Name Generator */
+    .elf-generator { text-align: center; padding: 24px; background: rgba(255,255,255,.08); border-radius: 16px; margin-bottom: 20px; }
+    .elf-generator h3 { font-size: 20px; margin-bottom: 12px; }
+    .elf-name-display { background: linear-gradient(135deg, #10b981, #059669); padding: 20px; border-radius: 16px; margin: 16px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+    .elf-name-display .name { font-size: 28px; font-weight: bold; margin-bottom: 4px; }
+    .elf-name-display .subtitle { font-size: 14px; opacity: 0.9; }
+    .generate-elf-btn { background: linear-gradient(135deg, #dc2626, #16a34a); color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; transition: transform 0.2s; }
+    .generate-elf-btn:hover { transform: scale(1.05); }
   </style>
 </head>
 <body>
+  <!-- Aurora Borealis Background -->
+  <div class="aurora">
+    <div class="aurora-layer"></div>
+    <div class="aurora-layer"></div>
+    <div class="aurora-layer"></div>
+  </div>
+  
   <div id="snowflakes"></div>
 
   <!-- Christmas Countdown Bar -->
@@ -186,6 +211,9 @@
         </button>
         <button class="tab" onclick="switchTab(event,'letter')">
           <span class="tab-icon">✍️</span><span>Letter to Santa</span>
+        </button>
+        <button class="tab" onclick="switchTab(event,'elf')">
+          <span class="tab-icon">🧝</span><span>Elf Name</span>
         </button>
       </div>
 
@@ -243,7 +271,7 @@ This year I have...
                 <button class="btn ghost" onclick="shareLetter()">Share</button>
                 <button class="btn" id="sendBtn" style="background:#dc2626" onclick="sendLetter()">Send to Santa</button>
               </div>
-              <div class="hint" style="margin-top:10px">Letters are saved only on this device (local storage). Hitting “Send” shows a confirmation and keeps you on this page.</div>
+              <div class="hint" style="margin-top:10px">Letters are saved only on this device (local storage). Hitting "Send" shows a confirmation and keeps you on this page.</div>
             </div>
 
             <div>
@@ -257,6 +285,27 @@ This year I have...
               </div>
               <div class="letter-list" id="lettersList"></div>
             </div>
+          </div>
+        </div>
+
+        <!-- Elf Name Generator -->
+        <div id="elf" class="tab-pane">
+          <div class="elf-generator">
+            <h3>🧝 Discover Your Elf Name! 🧝</h3>
+            <p style="opacity: 0.9; margin-bottom: 16px;">Every helper at the North Pole has a special elf name. Click below to discover yours!</p>
+            
+            <div class="elf-name-display" id="elfNameDisplay">
+              <div class="name" id="elfNameText">???</div>
+              <div class="subtitle">Click the button below to reveal your elf name!</div>
+            </div>
+            
+            <button class="generate-elf-btn" onclick="generateElfName()">
+              ✨ Generate My Elf Name ✨
+            </button>
+            
+            <p style="opacity: 0.7; margin-top: 16px; font-size: 14px;">
+              Your elf name is based on magical North Pole traditions! 🎄
+            </p>
           </div>
         </div>
       </div>
@@ -397,7 +446,6 @@ This year I have...
     }
 
     // ===== Santa Cam =====
-    // Put your video files under /videos/ e.g. /videos/workshop1.mp4
     const camScenes={
       workshop:{ title:"Santa's Workshop", videos:['videos/workshop1.mp4','videos/workshop2.mp4','videos/workshop3.mp4','videos/workshop4.mp4'] },
       office:{ title:"Santa's Office", videos:['videos/office1.mp4','videos/office2.mp4','videos/office3.mp4','videos/office4.mp4'] },
@@ -555,7 +603,7 @@ This year I have...
 
       function nextChristmasTarget(now = new Date()){
         const year = now.getFullYear();
-        const target = new Date(year, 11, 25, 0, 0, 0); // Dec 25 @ 00:00 local
+        const target = new Date(year, 11, 25, 0, 0, 0);
         return (now > target) ? new Date(year + 1, 11, 25, 0, 0, 0) : target;
       }
       function pad(n){ return String(n).padStart(2,'0'); }
@@ -568,7 +616,7 @@ This year I have...
         if (diff <= 0) {
           $days.textContent = '00'; $hours.textContent = '00';
           $mins.textContent = '00'; $secs.textContent = '00';
-          $bar.querySelector('.countdown-title').textContent = '🎅 It’s Christmas Day!';
+          $bar.querySelector('.countdown-title').textContent = '🎅 It's Christmas Day!';
           $bar.classList.remove('countdown-soon');
           return;
         }
@@ -590,6 +638,52 @@ This year I have...
       tick();
       setInterval(tick, 1000);
     })();
+
+    // ===== Elf Name Generator =====
+    function generateElfName() {
+      const prefixes = [
+        'Jingle', 'Twinkle', 'Sparkle', 'Merry', 'Jolly', 'Peppy', 'Snowy', 'Frosty',
+        'Candy', 'Sugar', 'Holly', 'Cookie', 'Ginger', 'Sprinkle', 'Bubble', 'Tinsel',
+        'Starlight', 'Snowflake', 'Crystal', 'Glitter', 'Shimmer', 'Dazzle', 'Cheer',
+        'Ribbon', 'Bells', 'Cocoa', 'Cinnamon', 'Nutmeg', 'Peppermint', 'Vanilla'
+      ];
+      
+      const suffixes = [
+        'toes', 'bells', 'sparkles', 'whiskers', 'twinkle', 'bright', 'joy', 'cheer',
+        'frost', 'snow', 'star', 'glow', 'shine', 'beam', 'dust', 'flake',
+        'wonder', 'magic', 'wishes', 'dreams', 'giggles', 'bounces', 'jingles',
+        'shimmer', 'glimmer', 'dazzle', 'sprinkle', 'merriment', 'laughter', 'delight'
+      ];
+      
+      const titles = [
+        'the Cheerful', 'the Merry', 'the Jolly', 'the Bright', 'the Swift',
+        'the Kind', 'the Helpful', 'the Clever', 'the Wise', 'the Joyful',
+        'the Quick', 'the Gentle', 'the Brave', 'the Happy', 'the Magical',
+        'the Sparkly', 'the Wonderful', 'the Fantastic', 'the Amazing', 'the Incredible'
+      ];
+      
+      const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+      const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+      const title = titles[Math.floor(Math.random() * titles.length)];
+      
+      const elfName = `${prefix}${suffix}`;
+      const fullTitle = `${elfName} ${title}`;
+      
+      const nameEl = document.getElementById('elfNameText');
+      const displayEl = document.getElementById('elfNameDisplay');
+      
+      // Add animation
+      displayEl.style.transform = 'scale(0.95)';
+      displayEl.style.opacity = '0.7';
+      
+      setTimeout(() => {
+        nameEl.textContent = fullTitle;
+        displayEl.querySelector('.subtitle').textContent = '✨ Official North Pole Registry ✨';
+        displayEl.style.transform = 'scale(1)';
+        displayEl.style.opacity = '1';
+        displayEl.style.transition = 'all 0.3s ease';
+      }, 200);
+    }
 
     // Init
     updateButtonText();
