@@ -161,6 +161,12 @@
     .game-btn{ background:#16a34a; border:none; color:white; font-weight:800; padding:10px 12px; border-radius:10px; cursor:pointer; }
     .game-btn.ghost{ background:transparent; border:1px solid rgba(255,255,255,.35); }
     .canvas-box{ position:relative; background: rgba(0,0,0,.3); border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,.15); }
+    /* vignette overlay */
+    .canvas-box::after{
+      content:""; position:absolute; inset:0; pointer-events:none;
+      box-shadow: inset 0 0 120px rgba(0,0,0,.45), inset 0 0 220px rgba(0,0,0,.25);
+      border-radius:12px;
+    }
     #presentCanvas{ width:100%; height:auto; display:block; }
     .touch-bar{ display:flex; gap:8px; margin-top:8px; }
     .touch-btn{ flex:1; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.08); color:#fff; font-weight:800; }
@@ -713,7 +719,7 @@ This year I have...
       }, 200);
     }
 
-    // ===== Present Catcher Game (tuned) =====
+    // ===== Present Catcher Game (difficulty tuned + visual polish) =====
     (function(){
       const canvas = document.getElementById('presentCanvas');
       const ctx = canvas.getContext('2d');
@@ -733,6 +739,7 @@ This year I have...
       let running = false;
       let paused = false;
       let last = 0;
+      let lastDt = 16;          // for starfield timing
       let score = 0;
       let lives = 3;
       let level = 1;
@@ -747,8 +754,9 @@ This year I have...
 
       let presents = [];
       let particles = [];
+      let popups = [];                 // score pop-ups
       let keys = { left:false, right:false, down:false };
-      let basket = { x: baseW/2 - 60, y: baseH - 56, w: 120, h: 26, speed: 7.5 };
+      let basket = { x: baseW/2 - 60, y: baseH - 56, w: 120, h: 26, speed: 7.5, squish: 0 };
 
       function maxActive(){            // cap active presents; scales gently
         return Math.min(2 + Math.floor((level - 1) / 2), 6);
@@ -788,7 +796,7 @@ This year I have...
         spawnTimer = -600;            // small grace before first spawn
         spawnInterval = baseSpawnEvery;
         missCooldown = 0;
-        presents.length = 0; particles.length = 0;
+        presents.length = 0; particles.length = 0; popups.length = 0;
         basket.x = baseW/2 - basket.w/2;
         updateHud();
       }
@@ -817,6 +825,28 @@ This year I have...
         spawnInterval = Math.max(380, baseSpawnEvery + (Math.random()*240 - 120));
       }
 
+      /* ==== Visual helpers ==== */
+      // Starfield/parallax background
+      const stars = Array.from({length: 60}, () => ({
+        x: Math.random()*baseW,
+        y: Math.random()*baseH,
+        r: Math.random()*1.6 + 0.4,
+        s: Math.random()*0.6 + 0.2  // speed
+      }));
+      function drawStars(dt){
+        ctx.save();
+        ctx.globalAlpha = 0.7;
+        stars.forEach(st=>{
+          st.x -= st.s * dt/1000 * 18;    // slow drift left
+          if(st.x < -2) st.x = baseW + 2;
+          ctx.beginPath();
+          ctx.fillStyle = 'rgba(255,255,255,.85)';
+          ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
+          ctx.fill();
+        });
+        ctx.restore();
+      }
+
       function drawBackground(){
         const grd = ctx.createLinearGradient(0, baseH-140, 0, baseH);
         grd.addColorStop(0, 'rgba(255,255,255,0.12)');
@@ -826,26 +856,63 @@ This year I have...
         ctx.fillStyle = 'rgba(255,255,255,0.2)';
         ctx.fillRect(0, baseH-28, baseW, 2);
       }
+
+      function drawBasketGlow(){
+        const r = 120;
+        const cx = basket.x + basket.w/2;
+        const cy = basket.y + basket.h/2 + 6;
+        const g = ctx.createRadialGradient(cx, cy, 6, cx, cy, r);
+        g.addColorStop(0, 'rgba(255,255,255,.35)');
+        g.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+      }
+
       function drawBasket(){
+        const s = 1 - basket.squish * 0.15;   // scales Y down a bit
         ctx.save();
-        ctx.translate(basket.x, basket.y);
+        ctx.translate(basket.x + basket.w/2, basket.y + basket.h/2);
+        ctx.scale(1, s);
+        ctx.translate(-basket.w/2, -basket.h/2);
+
         ctx.fillStyle = 'rgba(255,255,255,0.92)';
         ctx.beginPath(); ctx.roundRect(0, 0, basket.w, basket.h, 8); ctx.fill();
         ctx.fillStyle = 'rgba(220,38,38,.9)'; ctx.fillRect(6, 6, basket.w-12, basket.h-12);
+
         ctx.restore();
+
+        // ease squish back
+        basket.squish *= 0.85;
+        if (basket.squish < 0.001) basket.squish = 0;
       }
+
       function drawPresents(){
         presents.forEach(p=>{
           ctx.save();
           ctx.translate(p.x + p.w/2, p.y + p.h/2);
           ctx.rotate(p.rot);
-          ctx.font = `${Math.max(20, p.w)}px serif`;
+
+          // soft drop shadow
+          ctx.shadowColor = 'rgba(0,0,0,.35)';
+          ctx.shadowBlur = 12;
+          ctx.shadowOffsetY = 4;
+
+          // outline
+          ctx.font = `${Math.max(22, p.w)}px serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
+          ctx.lineWidth = 4;
+          ctx.strokeStyle = 'rgba(0,0,0,.4)';
+          ctx.strokeText(p.emoji, 0, 0);
+
+          // fill
+          ctx.shadowColor = 'transparent';
           ctx.fillText(p.emoji, 0, 0);
+
           ctx.restore();
         });
       }
+
       function addParticles(x,y){
         for(let i=0;i<8;i++){
           particles.push({ x, y, vx:(Math.random()*2-1)*2.2, vy:(Math.random()*-2.2)-0.6, life: 18 + (Math.random()*8|0) });
@@ -860,6 +927,23 @@ This year I have...
           if(a.life<=0) particles.splice(i,1);
         }
       }
+
+      function drawPopups(){
+        for(let i=popups.length-1;i>=0;i--){
+          const q = popups[i];
+          q.y += q.vy;
+          q.a -= 0.02;
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, q.a);
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 18px system-ui, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(q.text, q.x, q.y);
+          ctx.restore();
+          if(q.a <= 0) popups.splice(i,1);
+        }
+      }
+
       function rectsOverlap(ax, ay, aw, ah, bx, by, bw, bh){
         return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
       }
@@ -876,6 +960,8 @@ This year I have...
           ctx.strokeStyle = 'rgba(255,255,255,.6)';
           ctx.strokeRect(baseW*0.25, 30, baseW*0.5, 54);
           ctx.fillStyle = '#fff';
+          ctx.shadowColor = '#fff';
+          ctx.shadowBlur = 12;
           ctx.font = 'bold 24px system-ui, sans-serif';
           ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
           ctx.fillText(bannerText, baseW/2, 57);
@@ -911,6 +997,12 @@ This year I have...
       function catchPresent(p){
         const gain = p.value * Math.max(1, Math.min(5, Math.floor(streak/5)+1));
         score += gain; streak++; addParticles(p.x+p.w/2, p.y+p.h/2); beep('catch');
+
+        // basket squish + micro sparkles + popup
+        basket.squish = 1;
+        for(let i=0;i<4;i++) particles.push({ x:p.x+p.w/2, y:p.y+p.h/2, vx:(Math.random()*2-1)*1.5, vy:-Math.random()*2.2, life: 14+(Math.random()*6|0) });
+        popups.push({ x: p.x + p.w/2, y: p.y, a: 1, vy: -0.5, text: `+${gain}` });
+
         // gentle level ramp
         if (score > level * 150){
           level++;
@@ -958,12 +1050,24 @@ This year I have...
       }
       function render(){
         ctx.clearRect(0,0,baseW,baseH);
+
+        // Background layers
+        drawStars(lastDt);
         drawBackground();
+
+        // Presents + effects
         drawPresents();
-        drawBasket();
+        drawPopups();
         drawParticles();
+
+        // Basket
+        drawBasketGlow();
+        drawBasket();
+
+        // UI overlays
         drawBanner();
         drawHUDOverlay();
+
         if(!running){
           ctx.save();
           ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(0,0,baseW,baseH);
@@ -982,7 +1086,7 @@ This year I have...
       }
       function loop(ts){
         if(!last) last = ts;
-        const dt = ts - last; last = ts;
+        const dt = ts - last; last = ts; lastDt = dt;
         if(running && !paused) step(dt);
         render();
         requestAnimationFrame(loop);
