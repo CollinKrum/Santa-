@@ -362,7 +362,6 @@ This year I have...
         <span id="modalTitle">Santa Cam</span>
         <button class="close-btn" onclick="closeModal()">Close</button>
       </div>
-      <!-- NOTE: autoplay-friendly defaults for Vercel/static hosting -->
       <div class="video-container">
         <video id="modalVideo" autoplay loop playsinline muted preload="metadata"></video>
       </div>
@@ -491,7 +490,6 @@ This year I have...
     }
 
     // ===== Santa Cam =====
-    // absolute path helper (Vercel static): always /videos/<file>
     const vid = (name) => `/videos/${name}`;
 
     const camScenes = {
@@ -512,42 +510,25 @@ This year I have...
       const scene=camScenes[key];
       const src=scene.videos[(Math.random()*scene.videos.length)|0];
 
-      modal.classList.add('open');
-
-      // Clean reset
-      try { video.pause(); } catch {}
-      video.removeAttribute('src');
-      while (video.firstChild) video.removeChild(video.firstChild);
-
-      // Add <source> with explicit type (helps some browsers)
-      const source = document.createElement('source');
-      source.src = src;
-      source.type = 'video/mp4';
-      video.appendChild(source);
-
-      // Autoplay-friendly
+      // Pause and reset video properly
+      video.pause();
+      video.currentTime = 0;
+      video.src = src;
       video.muted = true;
       video.playsInline = true;
+      
       title.textContent = scene.title;
       muteBtn.textContent = '🔇 Unmute';
-
-      const tryPlay = () => setTimeout(() => {
-        video.load();
+      
+      modal.classList.add('open');
+      
+      // Load and play with error handling
+      video.load();
+      setTimeout(() => {
         video.play().catch(err => {
           console.warn('Play error:', err);
-          // If NotSupportedError appears, it’s a codec problem (re-encode to H.264 + AAC).
         });
-      }, 0);
-
-      const onCanPlay = () => { video.removeEventListener('canplay', onCanPlay); tryPlay(); };
-      video.addEventListener('canplay', onCanPlay, { once: true });
-      tryPlay();
-
-      const onError = () => {
-        video.removeEventListener('error', onError);
-        alert('Could not load video. Check /videos path, filename case, or codec.');
-      };
-      video.addEventListener('error', onError, { once: true });
+      }, 100);
     }
 
     function toggleMute(){
@@ -781,7 +762,7 @@ This year I have...
       }, 200);
     }
 
-    // ===== Present Catcher Game (difficulty tuned + visual polish) =====
+    // ===== Present Catcher Game =====
     (function(){
       const canvas = document.getElementById('presentCanvas');
       const ctx = canvas.getContext('2d');
@@ -801,30 +782,28 @@ This year I have...
       let running = false;
       let paused = false;
       let last = 0;
-      let lastDt = 16;          // for starfield timing
+      let lastDt = 16;
       let score = 0;
       let lives = 3;
       let level = 1;
       let streak = 0;
 
-      // tuned difficulty
-      let fallSpeed = 1.6;             // slower early game
-      let baseSpawnEvery = 1200;       // longer interval early
-      let spawnTimer = 0;              // ms since last spawn
+      let fallSpeed = 1.6;
+      let baseSpawnEvery = 1200;
+      let spawnTimer = 0;
       let spawnInterval = baseSpawnEvery;
-      let missCooldown = 0;            // grace after a miss (ms)
+      let missCooldown = 0;
 
       let presents = [];
       let particles = [];
-      let popups = [];                 // score pop-ups
+      let popups = [];
       let keys = { left:false, right:false, down:false };
       let basket = { x: baseW/2 - 60, y: baseH - 56, w: 120, h: 26, speed: 7.5, squish: 0 };
 
-      function maxActive(){            // cap active presents; scales gently
+      function maxActive(){
         return Math.min(2 + Math.floor((level - 1) / 2), 6);
       }
 
-      // UI
       const elScore = document.getElementById('gScore');
       const elLives = document.getElementById('gLives');
       const elLevel = document.getElementById('gLevel');
@@ -832,11 +811,7 @@ This year I have...
       const btnStart = document.getElementById('gStart');
       const btnPause = document.getElementById('gPause');
       const btnSound = document.getElementById('gSound');
-      const leftBtn = document.getElementById('leftBtn');
-      const rightBtn = document.getElementById('rightBtn');
-      const dropBtn = document.getElementById('dropBtn');
 
-      // WebAudio beeps
       let soundOn = true;
       let audioCtx = null;
       function beep(type='catch'){
@@ -855,7 +830,7 @@ This year I have...
         score = 0; lives = 3; level = 1; streak = 0;
         fallSpeed = 1.6;
         baseSpawnEvery = 1200;
-        spawnTimer = -600;            // small grace before first spawn
+        spawnTimer = -600;
         spawnInterval = baseSpawnEvery;
         missCooldown = 0;
         presents.length = 0; particles.length = 0; popups.length = 0;
@@ -883,23 +858,20 @@ This year I have...
         presents.push({ x, y: -size, w:size, h:size, vy: fallSpeed + Math.random()*1.2, emoji: k.emoji, value: k.value, rot: 0, rotv: rot });
       }
       function retargetSpawnInterval(){
-        // jitter ±120ms; min 380ms late game
         spawnInterval = Math.max(380, baseSpawnEvery + (Math.random()*240 - 120));
       }
 
-      /* ==== Visual helpers ==== */
-      // Starfield/parallax background
       const stars = Array.from({length: 60}, () => ({
         x: Math.random()*baseW,
         y: Math.random()*baseH,
         r: Math.random()*1.6 + 0.4,
-        s: Math.random()*0.6 + 0.2  // speed
+        s: Math.random()*0.6 + 0.2
       }));
       function drawStars(dt){
         ctx.save();
         ctx.globalAlpha = 0.7;
         stars.forEach(st=>{
-          st.x -= st.s * dt/1000 * 18;    // slow drift left
+          st.x -= st.s * dt/1000 * 18;
           if(st.x < -2) st.x = baseW + 2;
           ctx.beginPath();
           ctx.fillStyle = 'rgba(255,255,255,.85)';
@@ -931,7 +903,7 @@ This year I have...
       }
 
       function drawBasket(){
-        const s = 1 - basket.squish * 0.15;   // scales Y down a bit
+        const s = 1 - basket.squish * 0.15;
         ctx.save();
         ctx.translate(basket.x + basket.w/2, basket.y + basket.h/2);
         ctx.scale(1, s);
@@ -943,7 +915,6 @@ This year I have...
 
         ctx.restore();
 
-        // ease squish back
         basket.squish *= 0.85;
         if (basket.squish < 0.001) basket.squish = 0;
       }
@@ -954,12 +925,10 @@ This year I have...
           ctx.translate(p.x + p.w/2, p.y + p.h/2);
           ctx.rotate(p.rot);
 
-          // soft drop shadow
           ctx.shadowColor = 'rgba(0,0,0,.35)';
           ctx.shadowBlur = 12;
           ctx.shadowOffsetY = 4;
 
-          // outline
           ctx.font = `${Math.max(22, p.w)}px serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
@@ -967,7 +936,6 @@ This year I have...
           ctx.strokeStyle = 'rgba(0,0,0,.4)';
           ctx.strokeText(p.emoji, 0, 0);
 
-          // fill
           ctx.shadowColor = 'transparent';
           ctx.fillText(p.emoji, 0, 0);
 
@@ -1050,7 +1018,7 @@ This year I have...
       function missPresent(p){
         lives--; streak = 0;
         beep('miss'); addParticles(p.x+p.w/2, baseH-20);
-        missCooldown = 900;                 // grace window after a miss
+        missCooldown = 900;
         spawnTimer = Math.min(spawnTimer, 0);
         if(lives<=0){ running = false; saveHighScore(score); drawGameOver(); }
         else { flashBanner('Missed! 💥'); }
@@ -1060,12 +1028,10 @@ This year I have...
         const gain = p.value * Math.max(1, Math.min(5, Math.floor(streak/5)+1));
         score += gain; streak++; addParticles(p.x+p.w/2, p.y+p.h/2); beep('catch');
 
-        // basket squish + micro sparkles + popup
         basket.squish = 1;
         for(let i=0;i<4;i++) particles.push({ x:p.x+p.w/2, y:p.y+p.h/2, vx:(Math.random()*2-1)*1.5, vy:-Math.random()*2.2, life: 14+(Math.random()*6|0) });
         popups.push({ x: p.x + p.w/2, y: p.y, a: 1, vy: -0.5, text: `+${gain}` });
 
-        // gentle level ramp
         if (score > level * 150){
           level++;
           fallSpeed += 0.35;
@@ -1082,29 +1048,25 @@ This year I have...
         spawnTimer += dt;
         if (missCooldown > 0) missCooldown -= dt;
 
-        // spawn if not cooling down, timer elapsed, and under cap
         if (missCooldown <= 0 && spawnTimer >= spawnInterval && presents.length < maxActive()) {
           spawnPresent();
           spawnTimer = 0;
           retargetSpawnInterval();
         }
 
-        // Basket movement
         let vx = 0;
         if(keys.left) vx -= basket.speed;
         if(keys.right) vx += basket.speed;
         basket.x = Math.max(6, Math.min(baseW - basket.w - 6, basket.x + vx));
         basket.y = keys.down ? (baseH - 50) : (baseH - 56);
 
-        // Presents update
         for(let i=presents.length-1;i>=0;i--){
           const p = presents[i];
           p.y += p.vy; p.rot += p.rotv;
-          if(keys.down) p.y += 3; // fast drop
+          if(keys.down) p.y += 3;
           if(rectsOverlap(basket.x, basket.y, basket.w, basket.h, p.x, p.y, p.w, p.h)){
             catchPresent(p); presents.splice(i,1); continue;
           }
-          // slight buffer before counting as miss
           if(p.y > baseH - 18){
             missPresent(p); presents.splice(i,1);
           }
@@ -1113,20 +1075,16 @@ This year I have...
       function render(){
         ctx.clearRect(0,0,baseW,baseH);
 
-        // Background layers
         drawStars(lastDt);
         drawBackground();
 
-        // Presents + effects
         drawPresents();
         drawPopups();
         drawParticles();
 
-        // Basket
         drawBasketGlow();
         drawBasket();
 
-        // UI overlays
         drawBanner();
         drawHUDOverlay();
 
@@ -1155,7 +1113,6 @@ This year I have...
       }
       requestAnimationFrame(loop);
 
-      // High Scores
       const HS_KEY = 'presentCatcherHS';
       function loadHighScores(){ try{ return JSON.parse(localStorage.getItem(HS_KEY)||'[]'); }catch{ return []; } }
       function saveHighScore(val){
@@ -1174,7 +1131,6 @@ This year I have...
       window.clearHighScores = function(){ localStorage.removeItem(HS_KEY); renderHighScores(); }
       renderHighScores();
 
-      // Controls
       function startGame(){ resetGame(); running = true; paused = false; btnPause.textContent = 'Pause'; }
       function togglePause(){ if(!running){ startGame(); return; } paused = !paused; btnPause.textContent = paused ? 'Resume' : 'Pause'; }
 
@@ -1209,7 +1165,6 @@ This year I have...
       bindHold(rightBtnEl, ()=>{ keys.right = true; }, ()=>{ keys.right=false; });
       bindHold(dropBtnEl, ()=>{ keys.down = true; }, ()=>{ keys.down=false; });
     })();
-    // ===== /Present Catcher Game =====
 
     // Init
     updateButtonText();
