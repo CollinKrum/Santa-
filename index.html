@@ -362,9 +362,12 @@ This year I have...
         <span id="modalTitle">Santa Cam</span>
         <button class="close-btn" onclick="closeModal()">Close</button>
       </div>
-      <div class="video-container"><video id="modalVideo" autoplay loop playsinline></video></div>
+      <!-- NOTE: autoplay-friendly defaults for Vercel/static hosting -->
+      <div class="video-container">
+        <video id="modalVideo" autoplay loop playsinline muted preload="metadata"></video>
+      </div>
       <div class="video-controls">
-        <button class="control-btn" id="muteBtn" onclick="toggleMute()">🔊 Unmute</button>
+        <button class="control-btn" id="muteBtn" onclick="toggleMute()">🔇 Unmute</button>
         <button class="control-btn" onclick="restartVideo()">↻ Restart</button>
       </div>
     </div>
@@ -488,23 +491,82 @@ This year I have...
     }
 
     // ===== Santa Cam =====
-    const camScenes={
-      workshop:{ title:"Santa's Workshop", videos:['videos/workshop1.mp4','videos/workshop2.mp4','videos/workshop3.mp4','videos/workshop4.mp4'] },
-      office:{ title:"Santa's Office", videos:['videos/office1.mp4','videos/office2.mp4','videos/office3.mp4','videos/office4.mp4'] },
-      stable:{ title:'Reindeer Stable', videos:['videos/stable1.mp4','videos/stable2.mp4','videos/stable3.mp4','videos/stable4.mp4'] },
-      kitchen:{ title:"Mrs. Claus' Kitchen", videos:['videos/kitchen1.mp4','videos/kitchen2.mp4','videos/kitchen3.mp4','videos/kitchen4.mp4'] },
-      mailroom:{ title:'Mail Room', videos:['videos/mailroom1.mp4','videos/mailroom2.mp4','videos/mailroom3.mp4','videos/mailroom4.mp4'] },
-      lab:{ title:'Toy Testing Lab', videos:['videos/lab1.mp4','videos/lab2.mp4','videos/lab3.mp4','videos/lab4.mp4'] }
+    // absolute path helper (Vercel static): always /videos/<file>
+    const vid = (name) => `/videos/${name}`;
+
+    const camScenes = {
+      workshop:{ title:"Santa's Workshop", videos:[vid('workshop1.mp4'), vid('workshop2.mp4'), vid('workshop3.mp4'), vid('workshop4.mp4')] },
+      office:{   title:"Santa's Office",   videos:[vid('office1.mp4'),   vid('office2.mp4'),   vid('office3.mp4'),   vid('office4.mp4')] },
+      stable:{   title:'Reindeer Stable',  videos:[vid('stable1.mp4'),   vid('stable2.mp4'),   vid('stable3.mp4'),   vid('stable4.mp4')] },
+      kitchen:{  title:"Mrs. Claus' Kitchen", videos:[vid('kitchen1.mp4'), vid('kitchen2.mp4'), vid('kitchen3.mp4'), vid('kitchen4.mp4')] },
+      mailroom:{ title:'Mail Room',        videos:[vid('mailroom1.mp4'), vid('mailroom2.mp4'), vid('mailroom3.mp4'), vid('mailroom4.mp4')] },
+      lab:{      title:'Toy Testing Lab',  videos:[vid('lab1.mp4'),      vid('lab2.mp4'),      vid('lab3.mp4'),      vid('lab4.mp4')] }
     };
+
     function openCam(key){
-      const modal=document.getElementById('videoModal'); const video=document.getElementById('modalVideo'); const title=document.getElementById('modalTitle'); const muteBtn=document.getElementById('muteBtn');
-      const scene=camScenes[key]; const randomVideo=scene.videos[Math.floor(Math.random()*scene.videos.length)];
-      video.src=randomVideo; title.textContent=scene.title; video.muted=false; muteBtn.textContent='🔊 Mute'; modal.classList.add('open');
-      video.play().catch(()=>{ video.muted=true; muteBtn.textContent='🔇 Unmute'; video.play(); });
+      const modal=document.getElementById('videoModal');
+      const video=document.getElementById('modalVideo');
+      const title=document.getElementById('modalTitle');
+      const muteBtn=document.getElementById('muteBtn');
+
+      const scene=camScenes[key];
+      const src=scene.videos[(Math.random()*scene.videos.length)|0];
+
+      modal.classList.add('open');
+
+      // Clean reset
+      try { video.pause(); } catch {}
+      video.removeAttribute('src');
+      while (video.firstChild) video.removeChild(video.firstChild);
+
+      // Add <source> with explicit type (helps some browsers)
+      const source = document.createElement('source');
+      source.src = src;
+      source.type = 'video/mp4';
+      video.appendChild(source);
+
+      // Autoplay-friendly
+      video.muted = true;
+      video.playsInline = true;
+      title.textContent = scene.title;
+      muteBtn.textContent = '🔇 Unmute';
+
+      const tryPlay = () => setTimeout(() => {
+        video.load();
+        video.play().catch(err => {
+          console.warn('Play error:', err);
+          // If NotSupportedError appears, it’s a codec problem (re-encode to H.264 + AAC).
+        });
+      }, 0);
+
+      const onCanPlay = () => { video.removeEventListener('canplay', onCanPlay); tryPlay(); };
+      video.addEventListener('canplay', onCanPlay, { once: true });
+      tryPlay();
+
+      const onError = () => {
+        video.removeEventListener('error', onError);
+        alert('Could not load video. Check /videos path, filename case, or codec.');
+      };
+      video.addEventListener('error', onError, { once: true });
     }
-    function toggleMute(){ const v=document.getElementById('modalVideo'); const b=document.getElementById('muteBtn'); v.muted=!v.muted; b.textContent=v.muted?'🔇 Unmute':'🔊 Mute'; }
-    function restartVideo(){ const v=document.getElementById('modalVideo'); v.currentTime=0; v.play(); }
-    function closeModal(){ const m=document.getElementById('videoModal'); const v=document.getElementById('modalVideo'); v.pause(); m.classList.remove('open'); }
+
+    function toggleMute(){
+      const v = document.getElementById('modalVideo');
+      const b = document.getElementById('muteBtn');
+      v.muted = !v.muted;
+      b.textContent = v.muted ? '🔇 Unmute' : '🔊 Mute';
+      if (!v.muted) v.play().catch(()=>{});
+    }
+    function restartVideo(){
+      const v=document.getElementById('modalVideo');
+      v.currentTime=0; v.play().catch(()=>{});
+    }
+    function closeModal(){
+      const m=document.getElementById('videoModal');
+      const v=document.getElementById('modalVideo');
+      try { v.pause(); } catch {}
+      m.classList.remove('open');
+    }
     document.getElementById('videoModal').addEventListener('click',e=>{ if(e.target.id==='videoModal') closeModal(); });
 
     // ===== Letters to Santa =====
@@ -1132,6 +1194,10 @@ This year I have...
         if(e.code==='ArrowDown') keys.down = false;
       });
 
+      const leftBtnEl = document.getElementById('leftBtn');
+      const rightBtnEl = document.getElementById('rightBtn');
+      const dropBtnEl = document.getElementById('dropBtn');
+
       function bindHold(btn, on, off){
         const start = (ev)=>{ ev.preventDefault(); on(); };
         const end = ()=>{ off && off(); };
@@ -1139,9 +1205,9 @@ This year I have...
         btn.addEventListener('touchstart', start, {passive:false});
         ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=>btn.addEventListener(evt, end));
       }
-      bindHold(leftBtn, ()=>{ keys.left = true; }, ()=>{ keys.left=false; });
-      bindHold(rightBtn, ()=>{ keys.right = true; }, ()=>{ keys.right=false; });
-      bindHold(dropBtn, ()=>{ keys.down = true; }, ()=>{ keys.down=false; });
+      bindHold(leftBtnEl, ()=>{ keys.left = true; }, ()=>{ keys.left=false; });
+      bindHold(rightBtnEl, ()=>{ keys.right = true; }, ()=>{ keys.right=false; });
+      bindHold(dropBtnEl, ()=>{ keys.down = true; }, ()=>{ keys.down=false; });
     })();
     // ===== /Present Catcher Game =====
 
