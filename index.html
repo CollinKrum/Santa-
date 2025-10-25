@@ -1,203 +1,409 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7145940911173373" crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7145940911173373"
+     crossorigin="anonymous"></script>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Santa's Command Center</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: linear-gradient(to bottom right, #450a0a, #7f1d1d, #14532d); min-height: 100vh; color: white; padding: 20px; position: relative; overflow-x: hidden; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(to bottom right, #450a0a, #7f1d1d, #14532d);
+      min-height: 100vh;
+      color: white;
+      padding: 20px;
+    }
 
-    /* Northern Lights */
-    .aurora { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 0.3; }
-    .aurora-layer { position: absolute; width: 200%; height: 100%; background: linear-gradient(90deg, transparent, #10b981, #3b82f6, #8b5cf6, transparent); animation: aurora-flow 20s ease-in-out infinite; }
-    .aurora-layer:nth-child(1) { animation-duration: 25s; opacity: 0.4; }
-    .aurora-layer:nth-child(2) { animation-duration: 18s; animation-delay: -8s; opacity: 0.3; background: linear-gradient(90deg, transparent, #06b6d4, #6366f1, #ec4899, transparent); }
-    .aurora-layer:nth-child(3) { animation-duration: 22s; animation-delay: -15s; opacity: 0.25; background: linear-gradient(90deg, transparent, #14b8a6, #8b5cf6, #06b6d4, transparent); }
-    @keyframes aurora-flow { 0%, 100% { transform: translateX(-50%) translateY(0) skewX(0deg); filter: blur(60px); } 50% { transform: translateX(0%) translateY(-20px) skewX(5deg); filter: blur(80px); } }
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-5deg); }
+      75% { transform: rotate(5deg); }
+    }
 
-    @keyframes wiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-5deg)} 75%{transform:rotate(5deg)} }
-    @keyframes float { 0%{transform:translateY(-100px) translateX(0);opacity:0} 50%{transform:translateY(50vh) translateX(30px);opacity:.2} 100%{transform:translateY(110vh) translateX(0);opacity:0} }
-    .snowflake { position: fixed; top: -50px; color: white; font-size: 20px; opacity: .2; pointer-events:none; animation: float linear infinite; z-index:1; }
-    .container { max-width: 980px; margin: 0 auto; position: relative; z-index: 10; }
-    .header { text-align: center; margin-bottom: 30px; }
-    .header h1 { font-size: clamp(32px, 5vw, 48px); font-weight: bold; margin-bottom: 8px; }
-    .santa-icon { display: inline-block; font-size: 64px; animation: wiggle 2s ease-in-out infinite; }
-    .subtitle { color: #fecaca; font-size: 18px; }
-    .card { background: rgba(255,255,255,.1); backdrop-filter: blur(10px); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-    .name-input-section { background: linear-gradient(to right, #dc2626, #ef4444, #16a34a); padding: 24px; }
-    .name-input-section label { display:block; color:white; font-size:12px; font-weight:700; letter-spacing:1px; margin-bottom:12px; }
-    .name-input-section input { width:100%; padding:16px 20px; border-radius:16px; border:none; font-size:18px; outline:none; }
+    @keyframes float {
+      0% { transform: translateY(-100px) translateX(0); opacity: 0; }
+      50% { transform: translateY(50vh) translateX(30px); opacity: 0.2; }
+      100% { transform: translateY(110vh) translateX(0); opacity: 0; }
+    }
 
-    .tabs { display:flex; background: rgba(255,255,255,.05); border-bottom:1px solid rgba(255,255,255,.1); overflow:auto; }
-    .tab { flex:1; padding:20px; text-align:center; cursor:pointer; background:transparent; border:none; color:rgba(255,255,255,.7); font-size:14px; font-weight:600; transition:.2s; position:relative; white-space:nowrap; }
-    .tab:hover{ color:#fff; }
-    .tab.active{ color:#fff; background: rgba(255,255,255,.1); }
-    .tab.active::after{ content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background: linear-gradient(to right, #dc2626, #16a34a); border-radius:3px 3px 0 0; }
-    .tab-icon{ display:block; font-size:24px; margin-bottom:4px; }
-    .tab-content{ padding:24px; min-height: 520px; }
-    .tab-pane{ display:none; }
-    .tab-pane.active{ display:block; }
-
-    .message-buttons{ display:flex; flex-direction:column; gap:12px; }
-    .message-btn{ display:flex; justify-content:space-between; align-items:center; padding:20px; border-radius:16px; border:none; font-size:16px; font-weight:700; color:white; cursor:pointer; transition:transform .2s; position:relative; }
-    .message-btn:hover:not(:disabled){ transform:scale(1.05); }
-    .message-btn:active:not(:disabled){ transform:scale(.98); }
-    .message-btn:disabled{ opacity:.6; cursor:not-allowed; transform:none !important; }
-    .message-btn.nice{ background:linear-gradient(135deg,#10b981,#059669); }
-    .message-btn.naughty{ background:linear-gradient(135deg,#ef4444,#dc2626); }
-    .message-btn.neutral{ background:linear-gradient(135deg,#3b82f6,#2563eb); }
-    .speaking-indicator{ margin-top:16px; padding:16px; background:linear-gradient(135deg,#dc2626,#16a34a); border-radius:16px; text-align:center; font-weight:bold; animation:pulse 1.5s ease-in-out infinite; }
-    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
-
-    .generate-btn{ width:100%; padding:24px; border-radius:16px; border:none; background:linear-gradient(135deg,#dc2626,#ef4444,#16a34a); color:white; font-size:18px; font-weight:bold; cursor:pointer; margin-bottom:24px; transition:transform .2s; }
-    .generate-btn:hover{ transform:scale(1.05); }
-    .report-card{ background:white; color:#1f2937; border-radius:20px; overflow:hidden; }
-    .report-header{ background:linear-gradient(135deg,#dc2626,#16a34a); color:white; padding:24px; text-align:center; }
-    .report-content{ padding:24px; }
-    .report-scores{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
-    .score-box{ padding:20px; border-radius:16px; text-align:center; }
-    .score-box.nice{ background:#d1fae5; }
-    .score-box.naughty{ background:#fee2e2; }
-    .score-number{ font-size:48px; font-weight:bold; }
-    .deeds-section{ background:#f3f4f6; padding:16px; border-radius:12px; margin:16px 0; }
-
-    .cam-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
-    @media (min-width:640px){ .cam-grid{ grid-template-columns: repeat(3, 1fr); }}
-    .cam-button{ padding:20px; border-radius:16px; border:none; color:white; font-weight:bold; cursor:pointer; transition:transform .2s; text-align:center; }
-    .cam-button:hover{ transform:scale(1.05); }
-    .cam-emoji{ font-size:40px; display:block; margin-bottom:8px; }
-    .cam-title{ font-size:14px; display:block; }
-
-    .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:1000; padding:20px; }
-    .modal.open{ display:flex; align-items:center; justify-content:center; }
-    .modal-content{ width:100%; max-width:1000px; background:#000; border-radius:16px; overflow:hidden; }
-    .modal-header{ display:flex; justify-content:space-between; align-items:center; padding:16px; background:#1f1f1f; }
-    .close-btn{ background:#dc2626; color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:bold; }
-    .video-container{ background:#000; display:flex; align-items:center; justify-content:center; min-height:400px; }
-    .video-container video{ width:100%; max-height:80vh; object-fit:contain; display:block; }
-    .video-controls{ padding:16px; background:#1f1f1f; display:flex; gap:12px; justify-content:center; }
-    .control-btn{ background:#374151; color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px; }
-    .control-btn:hover{ background:#4b5563; }
-
-    .footer{ text-align:center; margin-top:40px; opacity:.6; font-size:14px; }
-
-    /* Letters to Santa */
-    .letter-grid{ display:grid; gap:16px; grid-template-columns:1fr; }
-    @media(min-width:900px){ .letter-grid{ grid-template-columns: 1.1fr .9fr; } }
-    .field{ display:flex; flex-direction:column; gap:8px; }
-    .field label{ font-size:12px; letter-spacing:.08em; font-weight:800; opacity:.9; }
-    .input, .textarea{ background: rgba(255,255,255,.9); color:#111827; border:none; border-radius:14px; padding:14px 16px; font-size:16px; outline:none; }
-    .textarea{ min-height:180px; resize:vertical; }
-    .pill-row{ display:flex; gap:8px; flex-wrap:wrap; }
-    .pill{ background: rgba(255,255,255,.85); color:#111827; padding:6px 10px; border-radius:999px; font-size:12px; font-weight:700; }
-    .hint{ font-size:12px; opacity:.85; }
-    .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
-    .btn{ background:#16a34a; border:none; color:white; font-weight:800; padding:12px 16px; border-radius:12px; cursor:pointer; }
-    .btn.secondary{ background:#2563eb; }
-    .btn.ghost{ background:transparent; border:1px solid rgba(255,255,255,.3); }
-    .counter{ font-size:12px; opacity:.8; text-align:right; }
-    .preview{ background: #faf7e8; color:#2b2b2b; border-radius:16px; padding:18px; min-height:240px; position:relative; box-shadow: inset 0 0 0 2px rgba(0,0,0,.05); background-image: linear-gradient(to bottom, rgba(0,0,0,.04) 1px, transparent 1px); background-size: 100% 28px; }
-    .preview h3{ margin-bottom:8px; color:#7c2d12; }
-    .preview small{ color:#6b7280; }
-    .letter-list{ margin-top:16px; display:flex; flex-direction:column; gap:10px; }
-    .letter-item{ background: rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:10px 12px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
-    .letter-item b{ font-size:14px; }
-
-    /* Toast */
-    .toast {
+    .snowflake {
       position: fixed;
-      right: 24px;
-      bottom: 24px;
-      background: #16a34a;
-      color: #fff;
-      padding: 12px 16px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-      font-weight: 800;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity .25s ease, transform .25s ease;
-      z-index: 2000;
+      top: -50px;
+      color: white;
+      font-size: 20px;
+      opacity: 0.2;
       pointer-events: none;
-    }
-    .toast.show { opacity: 1; transform: translateY(0); }
-
-    /* Countdown */
-    .countdown-wrap{ position: sticky; top: 0; z-index: 50; margin: 0 auto 16px; max-width: 980px; }
-    .countdown-bar{ display:flex; align-items:center; justify-content:center; gap:14px; background: linear-gradient(90deg,#064e3b,#065f46,#166534); border: 1px solid rgba(255,255,255,.15); color: #fff; padding: 10px 14px; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
-    .countdown-title{ font-weight: 800; letter-spacing:.06em; font-size: 13px; opacity:.95; white-space:nowrap; }
-    .countdown-boxes{ display:flex; gap:10px; flex-wrap:wrap; }
-    .time-box{ background: rgba(255,255,255,.12); padding: 8px 10px; border-radius: 10px; min-width: 68px; text-align:center; border: 1px solid rgba(255,255,255,.15); }
-    .time-box b{ display:block; font-size: 18px; line-height: 1; }
-    .time-box small{ display:block; font-size: 11px; opacity: .85; margin-top: 2px; letter-spacing:.04em; }
-    .countdown-soon{ animation: cdpulse 1.6s ease-in-out infinite; }
-    @keyframes cdpulse { 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.15); } }
-
-    /* Elf Name Generator */
-    .elf-generator { text-align: center; padding: 24px; background: rgba(255,255,255,.08); border-radius: 16px; margin-bottom: 20px; }
-    .elf-generator h3 { font-size: 20px; margin-bottom: 12px; }
-    .elf-name-display { background: linear-gradient(135deg, #10b981, #059669); padding: 20px; border-radius: 16px; margin: 16px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; flex-direction: column; }
-    .elf-name-display .name { font-size: 28px; font-weight: bold; margin-bottom: 4px; }
-    .elf-name-display .subtitle { font-size: 14px; opacity: 0.9; }
-    .generate-elf-btn { background: linear-gradient(135deg, #dc2626, #16a34a); color: white; border: none; padding: 14px 24px; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; transition: transform 0.2s; }
-    .generate-elf-btn:hover { transform: scale(1.05); }
-
-    /* Snowburst */
-    .burst-layer { position: fixed; inset: 0; pointer-events: none; z-index: 1500; overflow: hidden; }
-    .burst-flake { position: absolute; will-change: transform, opacity; font-size: 18px; opacity: 0.95; filter: drop-shadow(0 2px 2px rgba(0,0,0,.25)); animation: burst-fall linear forwards; }
-    @keyframes burst-fall {
-      0%   { transform: translate(var(--x,0), var(--y,0)) rotate(0deg) scale(1); opacity: 1; }
-      100% { transform: translate(calc(var(--x,0) + var(--dx,0)), calc(var(--y,0) + var(--dy,200px))) rotate(var(--rot,180deg)) scale(0.9); opacity: 0; }
+      animation: float linear infinite;
+      z-index: 1;
     }
 
-    /* Present Catcher (Game) */
-    .game-wrap { display:grid; gap:12px; grid-template-columns:1fr; }
-    @media(min-width:900px){ .game-wrap{ grid-template-columns:1fr 320px; } }
-    .game-card{ background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:16px; padding:14px; }
-    .game-ui{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
-    .pill-stat{ background: rgba(255,255,255,.15); padding:8px 10px; border-radius:999px; font-weight:800; font-size:12px; }
-    .game-btn{ background:#16a34a; border:none; color:white; font-weight:800; padding:10px 12px; border-radius:10px; cursor:pointer; }
-    .game-btn.ghost{ background:transparent; border:1px solid rgba(255,255,255,.35); }
-    .canvas-box{ position:relative; background: rgba(0,0,0,.3); border-radius:12px; overflow:hidden; border:1px solid rgba(255,255,255,.15); }
-    /* vignette overlay */
-    .canvas-box::after{
-      content:""; position:absolute; inset:0; pointer-events:none;
-      box-shadow: inset 0 0 120px rgba(0,0,0,.45), inset 0 0 220px rgba(0,0,0,.25);
-      border-radius:12px;
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 10;
     }
-    #presentCanvas{ width:100%; height:auto; display:block; }
-    .touch-bar{ display:flex; gap:8px; margin-top:8px; }
-    .touch-btn{ flex:1; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.3); background: rgba(255,255,255,.08); color:#fff; font-weight:800; }
-    .legend{ font-size:12px; opacity:.85; }
-    .hs-list{ display:flex; flex-direction:column; gap:8px; }
-    .hs-item{ background: rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); padding:10px; border-radius:10px; display:flex; justify-content:space-between; }
-    .muted{ opacity:.8; }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: clamp(32px, 5vw, 48px);
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .santa-icon {
+      display: inline-block;
+      font-size: 64px;
+      animation: wiggle 2s ease-in-out infinite;
+    }
+
+    .subtitle {
+      color: #fecaca;
+      font-size: 18px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .name-input-section {
+      background: linear-gradient(to right, #dc2626, #ef4444, #16a34a);
+      padding: 24px;
+    }
+
+    .name-input-section label {
+      display: block;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .name-input-section input {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: none;
+      font-size: 18px;
+      outline: none;
+    }
+
+    .tabs {
+      display: flex;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .tab:hover {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .tab.active {
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(to right, #dc2626, #16a34a);
+      border-radius: 3px 3px 0 0;
+    }
+
+    .tab-icon {
+      display: block;
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+
+    .tab-content {
+      padding: 24px;
+      min-height: 500px;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
+      display: block;
+    }
+
+    .message-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message-btn {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      border-radius: 16px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s;
+      position: relative;
+    }
+
+    .message-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+    }
+
+    .message-btn:active:not(:disabled) {
+      transform: scale(0.95);
+    }
+
+    .message-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .message-btn.nice { background: linear-gradient(135deg, #10b981, #059669); }
+    .message-btn.naughty { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .message-btn.neutral { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+
+    .speaking-indicator {
+      margin-top: 16px;
+      padding: 16px;
+      background: linear-gradient(135deg, #dc2626, #16a34a);
+      border-radius: 16px;
+      text-align: center;
+      font-weight: bold;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 24px;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(135deg, #dc2626, #ef4444, #16a34a);
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-bottom: 24px;
+      transition: transform 0.2s;
+    }
+
+    .generate-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .report-card {
+      background: white;
+      color: #1f2937;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .report-header {
+      background: linear-gradient(135deg, #dc2626, #16a34a);
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .report-content {
+      padding: 24px;
+    }
+
+    .report-scores {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .score-box {
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+    }
+
+    .score-box.nice { background: #d1fae5; }
+    .score-box.naughty { background: #fee2e2; }
+
+    .score-number {
+      font-size: 48px;
+      font-weight: bold;
+    }
+
+    .deeds-section {
+      background: #f3f4f6;
+      padding: 16px;
+      border-radius: 12px;
+      margin: 16px 0;
+    }
+
+    .cam-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .cam-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .cam-button {
+      padding: 20px;
+      border-radius: 16px;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+      text-align: center;
+    }
+
+    .cam-button:hover {
+      transform: scale(1.05);
+    }
+
+    .cam-emoji {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .cam-title {
+      font-size: 14px;
+      display: block;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal.open {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 1000px;
+      background: #000;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px;
+      background: #1f1f1f;
+    }
+
+    .close-btn {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .video-container {
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+    }
+
+    .video-container video {
+      width: 100%;
+      max-height: 80vh;
+      object-fit: contain;
+      display: block;
+    }
+
+    .video-controls {
+      padding: 16px;
+      background: #1f1f1f;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .control-btn {
+      background: #374151;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .control-btn:hover {
+      background: #4b5563;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      opacity: 0.6;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
-  <!-- Aurora -->
-  <div class="aurora">
-    <div class="aurora-layer"></div>
-    <div class="aurora-layer"></div>
-    <div class="aurora-layer"></div>
-  </div>
-
   <div id="snowflakes"></div>
-
-  <!-- Christmas Countdown -->
-  <div class="countdown-wrap">
-    <div id="countdownBar" class="countdown-bar" aria-live="polite">
-      <span class="countdown-title">🎄 Christmas Countdown</span>
-      <div class="countdown-boxes">
-        <div class="time-box"><b id="cd-days">00</b><small>Days</small></div>
-        <div class="time-box"><b id="cd-hours">00</b><small>Hours</small></div>
-        <div class="time-box"><b id="cd-mins">00</b><small>Minutes</small></div>
-        <div class="time-box"><b id="cd-secs">00</b><small>Seconds</small></div>
-      </div>
-    </div>
-  </div>
 
   <div class="container">
     <div class="header">
@@ -210,148 +416,82 @@
     </div>
 
     <div class="card">
+      <!-- Name Input -->
       <div class="name-input-section">
         <label>CHILD'S NAME</label>
         <input type="text" id="childName" placeholder="Enter name here..." />
       </div>
 
+      <!-- Tabs -->
       <div class="tabs">
-        <button class="tab active" onclick="switchTab(event,'soundboard')"><span class="tab-icon">🔊</span><span>Soundboard</span></button>
-        <button class="tab" onclick="switchTab(event,'report')"><span class="tab-icon">📄</span><span>Report Card</span></button>
-        <button class="tab" onclick="switchTab(event,'cam')"><span class="tab-icon">📹</span><span>Santa Cam</span></button>
-        <button class="tab" onclick="switchTab(event,'letter')"><span class="tab-icon">✍️</span><span>Letter to Santa</span></button>
-        <button class="tab" onclick="switchTab(event,'elf')"><span class="tab-icon">🧝</span><span>Elf Name</span></button>
-        <button class="tab" onclick="switchTab(event,'present')"><span class="tab-icon">🎁</span><span>Present Catcher</span></button>
+        <button class="tab active" onclick="switchTab('soundboard')">
+          <span class="tab-icon">🔊</span>
+          <span>Soundboard</span>
+        </button>
+        <button class="tab" onclick="switchTab('report')">
+          <span class="tab-icon">📄</span>
+          <span>Report Card</span>
+        </button>
+        <button class="tab" onclick="switchTab('cam')">
+          <span class="tab-icon">📹</span>
+          <span>Santa Cam</span>
+        </button>
       </div>
 
+      <!-- Tab Content -->
       <div class="tab-content">
         <!-- Soundboard -->
         <div id="soundboard" class="tab-pane active">
           <div class="message-buttons" id="messageButtons"></div>
-          <div id="speakingIndicator" style="display:none" class="speaking-indicator">🔊 Santa is speaking...</div>
+
+          <div id="speakingIndicator" style="display: none;" class="speaking-indicator">
+            🔊 Santa is speaking...
+          </div>
         </div>
 
         <!-- Report Card -->
         <div id="report" class="tab-pane">
-          <button class="generate-btn" onclick="generateReport()">✨ Generate Report Card</button>
+          <button class="generate-btn" onclick="generateReport()">
+            ✨ Generate Report Card
+          </button>
           <div id="reportResult"></div>
         </div>
 
         <!-- Santa Cam -->
         <div id="cam" class="tab-pane">
           <div class="cam-grid">
-            <button class="cam-button" style="background:linear-gradient(135deg,#d97706,#ea580c);" onclick="openCam('workshop')"><span class="cam-emoji">🎁</span><span class="cam-title">Workshop</span></button>
-            <button class="cam-button" style="background:linear-gradient(135deg,#dc2626,#991b1b);" onclick="openCam('office')"><span class="cam-emoji">📋</span><span class="cam-title">Office</span></button>
-            <button class="cam-button" style="background:linear-gradient(135deg,#475569,#334155);" onclick="openCam('stable')"><span class="cam-emoji">🦌</span><span class="cam-title">Stable</span></button>
-            <button class="cam-button" style="background:linear-gradient(135deg,#ec4899,#be185d);" onclick="openCam('kitchen')"><span class="cam-emoji">🍪</span><span class="cam-title">Kitchen</span></button>
-            <button class="cam-button" style="background:linear-gradient(135deg,#2563eb,#1e40af);" onclick="openCam('mailroom')"><span class="cam-emoji">✉️</span><span class="cam-title">Mail Room</span></button>
-            <button class="cam-button" style="background:linear-gradient(135deg,#059669,#047857);" onclick="openCam('lab')"><span class="cam-emoji">🧸</span><span class="cam-title">Toy Lab</span></button>
+            <button class="cam-button" style="background: linear-gradient(135deg, #d97706, #ea580c);" onclick="openCam('workshop')">
+              <span class="cam-emoji">🎁</span>
+              <span class="cam-title">Workshop</span>
+            </button>
+            <button class="cam-button" style="background: linear-gradient(135deg, #dc2626, #991b1b);" onclick="openCam('office')">
+              <span class="cam-emoji">📋</span>
+              <span class="cam-title">Office</span>
+            </button>
+            <button class="cam-button" style="background: linear-gradient(135deg, #475569, #334155);" onclick="openCam('stable')">
+              <span class="cam-emoji">🦌</span>
+              <span class="cam-title">Stable</span>
+            </button>
+            <button class="cam-button" style="background: linear-gradient(135deg, #ec4899, #be185d);" onclick="openCam('kitchen')">
+              <span class="cam-emoji">🍪</span>
+              <span class="cam-title">Kitchen</span>
+            </button>
+            <button class="cam-button" style="background: linear-gradient(135deg, #2563eb, #1e40af);" onclick="openCam('mailroom')">
+              <span class="cam-emoji">✉️</span>
+              <span class="cam-title">Mail Room</span>
+            </button>
+            <button class="cam-button" style="background: linear-gradient(135deg, #059669, #047857);" onclick="openCam('lab')">
+              <span class="cam-emoji">🧸</span>
+              <span class="cam-title">Toy Lab</span>
+            </button>
           </div>
         </div>
-
-        <!-- Letter to Santa -->
-        <div id="letter" class="tab-pane">
-          <div class="letter-grid">
-            <div>
-              <div class="field">
-                <label for="letterFrom">FROM</label>
-                <input id="letterFrom" class="input" type="text" placeholder="Child's name" />
-              </div>
-              <div style="height:10px"></div>
-              <div class="field">
-                <label for="wishlist">WISHLIST (optional)</label>
-                <input id="wishlist" class="input" type="text" placeholder="e.g., Lego set, story books, warm socks" />
-                <div class="hint">Tip: separate items with commas</div>
-              </div>
-              <div style="height:10px"></div>
-              <div class="field">
-                <label for="letterBody">YOUR LETTER</label>
-                <textarea id="letterBody" class="textarea" maxlength="1200" placeholder="Dear Santa,
-This year I have...
-"></textarea>
-                <div class="counter"><span id="charCount">0</span>/1200</div>
-              </div>
-              <div class="actions">
-                <button class="btn" onclick="saveLetter()">Save locally</button>
-                <button class="btn secondary" onclick="downloadLetter()">Download .txt</button>
-                <button class="btn ghost" onclick="printLetter()">Print</button>
-                <button class="btn ghost" onclick="shareLetter()">Share</button>
-                <button class="btn" id="sendBtn" style="background:#dc2626" onclick="sendLetter(event)">Send to Santa</button>
-              </div>
-              <div class="hint" style="margin-top:10px">Letters are saved only on this device (local storage). Hitting "Send" shows a confirmation and keeps you on this page.</div>
-            </div>
-
-            <div>
-              <div class="preview" id="letterPreview">
-                <h3>Dear Santa,</h3>
-                <p style="white-space:pre-wrap; line-height:28px; font-size:16px;">Write your letter on the left to see a preview here.</p>
-                <div style="margin-top:16px">
-                  <small><b>From:</b> <span id="previewFrom">—</span></small><br>
-                  <small><b>Wishlist:</b> <span id="previewWishlist">—</span></small>
-                </div>
-              </div>
-              <div class="letter-list" id="lettersList"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Elf Name Generator -->
-        <div id="elf" class="tab-pane">
-          <div class="elf-generator">
-            <h3>🧝 Discover Your Elf Name! 🧝</h3>
-            <p style="opacity: 0.9; margin-bottom: 16px;">Every helper at the North Pole has a special elf name. Click below to discover yours!</p>
-
-            <div class="elf-name-display" id="elfNameDisplay">
-              <div class="name" id="elfNameText">???</div>
-              <div class="subtitle">Click the button below to reveal your elf name!</div>
-            </div>
-
-            <button class="generate-elf-btn" onclick="generateElfName()">✨ Generate My Elf Name ✨</button>
-
-            <p style="opacity: 0.7; margin-top: 16px; font-size: 14px;">Your elf name is based on magical North Pole traditions! 🎄</p>
-          </div>
-        </div>
-
-        <!-- Present Catcher -->
-        <div id="present" class="tab-pane">
-          <div class="game-wrap">
-            <div class="game-card">
-              <div class="game-ui">
-                <div class="pill-stat">🎯 Score: <span id="gScore">0</span></div>
-                <div class="pill-stat">🔥 Streak: <span id="gStreak">0</span>x</div>
-                <div class="pill-stat">🎄 Level: <span id="gLevel">1</span></div>
-                <div class="pill-stat">💖 Lives: <span id="gLives">3</span></div>
-                <div style="display:flex; gap:8px;">
-                  <button class="game-btn" id="gStart">Start</button>
-                  <button class="game-btn ghost" id="gPause">Pause</button>
-                  <button class="game-btn ghost" id="gSound">Sound: On</button>
-                </div>
-              </div>
-              <div style="height:8px"></div>
-              <div class="canvas-box">
-                <canvas id="presentCanvas" width="900" height="520" aria-label="Present Catcher Game"></canvas>
-              </div>
-              <div class="touch-bar">
-                <button class="touch-btn" id="leftBtn">⟵ Left</button>
-                <button class="touch-btn" id="dropBtn">⬇️ Drop</button>
-                <button class="touch-btn" id="rightBtn">Right ⟶</button>
-              </div>
-              <div class="legend">Controls: ← / → to move • ↓ to fast-drop • Space to start/pause • Mobile: use on-screen buttons</div>
-            </div>
-            <div class="game-card">
-              <h3 style="font-size:18px; font-weight:800; margin-bottom:6px;">🏆 High Scores</h3>
-              <div id="hsList" class="hs-list"></div>
-              <button class="game-btn ghost" style="margin-top:8px;" onclick="clearHighScores()">Clear High Scores</button>
-              <p class="muted" style="margin-top:8px; font-size:12px;">Scores are saved only on this device.</p>
-            </div>
-          </div>
-        </div>
-        <!-- /Present Catcher -->
       </div>
     </div>
 
     <div class="footer">
-      Made with holiday magic & Christmas spirit<br>© 2024 North Pole Technologies
+      Made with holiday magic & Christmas spirit<br>
+      © 2024 North Pole Technologies
     </div>
   </div>
 
@@ -363,45 +503,41 @@ This year I have...
         <button class="close-btn" onclick="closeModal()">Close</button>
       </div>
       <div class="video-container">
-        <video id="modalVideo" autoplay loop playsinline muted preload="metadata"></video>
+        <video id="modalVideo" autoplay loop playsinline></video>
       </div>
       <div class="video-controls">
-        <button class="control-btn" id="muteBtn" onclick="toggleMute()">🔇 Unmute</button>
+        <button class="control-btn" id="muteBtn" onclick="toggleMute()">🔊 Unmute</button>
         <button class="control-btn" onclick="restartVideo()">↻ Restart</button>
       </div>
     </div>
   </div>
 
-  <!-- Toast -->
-  <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
-
-  <!-- Snowburst Layer -->
-  <div id="burstLayer" class="burst-layer" aria-hidden="true"></div>
-
   <script>
-    // ===== Global =====
+    // Global state
     let currentAudio = null;
 
-    // Snow background
+    // Create snowflakes
     const snowflakesContainer = document.getElementById('snowflakes');
     for (let i = 0; i < 20; i++) {
-      const s = document.createElement('div');
-      s.className='snowflake'; s.textContent='❄';
-      s.style.left=Math.random()*100+'%';
-      s.style.animationDelay=Math.random()*5+'s';
-      s.style.animationDuration=(Math.random()*10+15)+'s';
-      snowflakesContainer.appendChild(s);
+      const snowflake = document.createElement('div');
+      snowflake.className = 'snowflake';
+      snowflake.textContent = '❄';
+      snowflake.style.left = Math.random() * 100 + '%';
+      snowflake.style.animationDelay = Math.random() * 5 + 's';
+      snowflake.style.animationDuration = Math.random() * 10 + 15 + 's';
+      snowflakesContainer.appendChild(snowflake);
     }
 
-    // Tabs
-    function switchTab(ev, tabName){
-      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-      document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-      ev.target.closest('.tab').classList.add('active');
+    // Tab switching
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+      
+      event.target.closest('.tab').classList.add('active');
       document.getElementById(tabName).classList.add('active');
     }
 
-    // ===== Soundboard =====
+    // Soundboard Messages
     const messages = [
       { text: "Ho ho ho! You've been very good today, {name}!", type: "nice", emoji: "🎅" },
       { text: "{name}, you're on the nice list this year!", type: "nice", emoji: "⭐" },
@@ -412,764 +548,279 @@ This year I have...
       { text: "{name}, that behavior might get you coal for Christmas!", type: "naughty", emoji: "🪨" },
       { text: "Careful, {name}! You're skating on thin ice!", type: "naughty", emoji: "❄️" },
       { text: "Merry Christmas, {name}! Have a magical holiday!", type: "nice", emoji: "🎄" },
-      { text: "{name}, have you been naughty or nice this year?", type: "neutral", emoji: "🎅" }
+      { text: "{name}, have you been naughty or nice this year?", type: "neutral", emoji: "🎅" },
     ];
 
     const messageButtonsContainer = document.getElementById('messageButtons');
 
-    function updateButtonText(){
+    // Function to update button text dynamically
+    function updateButtonText() {
       const name = document.getElementById('childName').value.trim() || 'little one';
-      document.querySelectorAll('.message-btn').forEach((btn, idx)=>{
-        const msg = messages[idx]; const span = btn.querySelector('.btn-text');
-        if(span){ span.innerHTML = msg.text.replace(/{name}/g, `<strong>${name}</strong>`); }
+      const buttons = document.querySelectorAll('.message-btn');
+      buttons.forEach((btn, idx) => {
+        const msg = messages[idx];
+        const buttonText = btn.querySelector('.btn-text');
+        if (buttonText) {
+          buttonText.innerHTML = msg.text.replace(/{name}/g, `<strong>${name}</strong>`);
+        }
       });
-      const fromEl = document.getElementById('letterFrom');
-      if(fromEl && (!fromEl.dataset.touched || fromEl.value === '')) {
-        fromEl.value = name; updateLetterPreview();
-      }
     }
 
-    messages.forEach(msg=>{
-      const btn=document.createElement('button');
-      btn.className=`message-btn ${msg.type}`;
-      btn.innerHTML = `<span class="btn-text">${msg.text.replace(/{name}/g,'<strong>little one</strong>')}</span><span style="font-size:30px;">${msg.emoji}</span>`;
-      btn.onclick = ()=>speakMessage(msg.text);
+    // Create buttons
+    messages.forEach((msg, idx) => {
+      const btn = document.createElement('button');
+      btn.className = `message-btn ${msg.type}`;
+      btn.innerHTML = `
+        <span class="btn-text">${msg.text.replace(/{name}/g, '<strong>little one</strong>')}</span>
+        <span style="font-size: 30px;">${msg.emoji}</span>
+      `;
+      btn.onclick = () => speakMessage(msg.text);
       messageButtonsContainer.appendChild(btn);
     });
 
+    // Update button text when name changes
     document.getElementById('childName').addEventListener('input', updateButtonText);
 
-    async function speakMessage(text){
+    // ElevenLabs TTS Function using serverless backend
+    async function speakMessage(text) {
       const name = document.getElementById('childName').value.trim() || 'little one';
       const personalized = text.replace(/{name}/g, name);
-      if(currentAudio){ currentAudio.pause(); currentAudio=null; }
-      const buttons = document.querySelectorAll('.message-btn'); buttons.forEach(b=>b.disabled=true);
-      const indicator = document.getElementById('speakingIndicator'); indicator.style.display='block';
+
+      // Stop any current audio
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+      }
+
+      // Disable all buttons
+      const buttons = document.querySelectorAll('.message-btn');
+      buttons.forEach(btn => btn.disabled = true);
+
+      const indicator = document.getElementById('speakingIndicator');
+      indicator.style.display = 'block';
+
       try {
-        const res = await fetch('/api/santa-voice',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ text: personalized }) });
-        if(!res.ok) throw new Error(`API Error: ${res.status} - ${res.statusText}`);
-        const blob = await res.blob(); const url = URL.createObjectURL(blob);
-        currentAudio = new Audio(url);
-        currentAudio.onended = ()=>{ indicator.style.display='none'; buttons.forEach(b=>b.disabled=false); currentAudio=null; };
-        currentAudio.onerror = ()=>{ indicator.style.display='none'; buttons.forEach(b=>b.disabled=false); alert('Error playing audio'); };
+        // Call YOUR serverless function
+        const response = await fetch('/api/santa-voice', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: personalized
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+        }
+
+        const audioBlob = await response.blob();
+        const audioUrl = URL.createObjectURL(audioBlob);
+        
+        currentAudio = new Audio(audioUrl);
+        currentAudio.onended = () => {
+          indicator.style.display = 'none';
+          buttons.forEach(btn => btn.disabled = false);
+          currentAudio = null;
+        };
+        currentAudio.onerror = () => {
+          indicator.style.display = 'none';
+          buttons.forEach(btn => btn.disabled = false);
+          alert('Error playing audio');
+        };
+        
         await currentAudio.play();
-      } catch(err){ console.error(err); indicator.style.display='none'; buttons.forEach(b=>b.disabled=false); alert('Error generating Santa voice.\n\n'+err.message); }
+
+      } catch (error) {
+        console.error('Error generating Santa voice:', error);
+        indicator.style.display = 'none';
+        buttons.forEach(btn => btn.disabled = false);
+        alert('Error generating Santa voice. Please try again.\n\n' + error.message);
+      }
     }
 
-    // ===== Report Card =====
-    function generateReport(){
-      const name = document.getElementById('childName').value.trim() || 'this child';
-      const niceScore = Math.floor(Math.random()*40)+60; const naughtyScore = 100-niceScore;
-      const status = niceScore>=75 ? 'NICE LIST' : niceScore>=60 ? 'WATCH LIST' : 'NAUGHTY LIST';
-      const statusEmoji = niceScore>=75 ? '⭐' : niceScore>=60 ? '⚠️' : '🎅';
-      const allGood=['Shared toys with siblings','Helped with chores without being asked','Was kind to classmates','Did homework on time','Cleaned their room','Said please and thank you','Helped a friend in need','Was respectful to adults','Took care of a pet','Made their bed every morning','Ate vegetables without complaining','Brushed teeth without reminders','Helped carry groceries','Shared snacks with others','Was patient while waiting','Used kind words','Helped set the dinner table','Picked up after themselves','Was a good sport in games','Showed empathy to others'];
-      const allBad=['Argued with siblings','Didn\'t listen the first time','Left toys scattered around','Complained about bedtime','Forgot to do assigned chores','Talked back occasionally','Needed reminders to clean up','Interrupted adults talking','Was grumpy in the morning','Fought over screen time','Didn\'t finish dinner','Procrastinated on homework','Made excuses for mistakes','Whined about going outside','Refused to share sometimes','Was too rough with pets','Stayed up past bedtime','Complained about chores','Left wet towels on the floor','Needed multiple reminders'];
-      const good=[...allGood].sort(()=>.5-Math.random()).slice(0,4);
-      const bad=[...allBad].sort(()=>.5-Math.random()).slice(0, Math.floor(Math.random()*2)+2);
-      document.getElementById('reportResult').innerHTML = `
-        <div class="report-card">
-          <div class="report-header">
-            <div style="font-size:40px; margin-bottom:8px;">🎄</div>
-            <h2 style="font-size:24px; font-weight:bold;">OFFICIAL SANTA REPORT</h2>
-            <p style="font-size:14px; margin-top:4px;">North Pole • ${new Date().toLocaleDateString()}</p>
+    // Report Card
+function generateReport() {
+  const name = document.getElementById('childName').value.trim() || 'this child';
+  const niceScore = Math.floor(Math.random() * 40) + 60;
+  const naughtyScore = 100 - niceScore;
+  
+  const status = niceScore >= 75 ? 'NICE LIST' : niceScore >= 60 ? 'WATCH LIST' : 'NAUGHTY LIST';
+  const statusEmoji = niceScore >= 75 ? '⭐' : niceScore >= 60 ? '⚠️' : '🎅';
+  
+  // Arrays of possible good deeds
+  const allGoodDeeds = [
+    'Shared toys with siblings',
+    'Helped with chores without being asked',
+    'Was kind to classmates',
+    'Did homework on time',
+    'Cleaned their room',
+    'Said please and thank you',
+    'Helped a friend in need',
+    'Was respectful to adults',
+    'Took care of a pet',
+    'Made their bed every morning',
+    'Ate vegetables without complaining',
+    'Brushed teeth without reminders',
+    'Helped carry groceries',
+    'Shared snacks with others',
+    'Was patient while waiting',
+    'Used kind words',
+    'Helped set the dinner table',
+    'Picked up after themselves',
+    'Was a good sport in games',
+    'Showed empathy to others'
+  ];
+  
+  // Arrays of possible areas to improve
+  const allNaughtyDeeds = [
+    'Argued with siblings',
+    'Didn\'t listen the first time',
+    'Left toys scattered around',
+    'Complained about bedtime',
+    'Forgot to do assigned chores',
+    'Talked back occasionally',
+    'Needed reminders to clean up',
+    'Interrupted adults talking',
+    'Was grumpy in the morning',
+    'Fought over screen time',
+    'Didn\'t finish dinner',
+    'Procrastinated on homework',
+    'Made excuses for mistakes',
+    'Whined about going outside',
+    'Refused to share sometimes',
+    'Was too rough with pets',
+    'Stayed up past bedtime',
+    'Complained about chores',
+    'Left wet towels on the floor',
+    'Needed multiple reminders'
+  ];
+  
+  // Randomly select 4 good deeds
+  const shuffledGood = [...allGoodDeeds].sort(() => 0.5 - Math.random());
+  const goodDeeds = shuffledGood.slice(0, 4);
+  
+  // Randomly select 2-3 areas to improve
+  const shuffledBad = [...allNaughtyDeeds].sort(() => 0.5 - Math.random());
+  const improvementCount = Math.floor(Math.random() * 2) + 2; // 2 or 3 items
+  const naughtyDeeds = shuffledBad.slice(0, improvementCount);
+  
+  document.getElementById('reportResult').innerHTML = `
+    <div class="report-card">
+      <div class="report-header">
+        <div style="font-size: 40px; margin-bottom: 8px;">🎄</div>
+        <h2 style="font-size: 24px; font-weight: bold;">OFFICIAL SANTA REPORT</h2>
+        <p style="font-size: 14px; margin-top: 4px;">North Pole • ${new Date().toLocaleDateString()}</p>
+      </div>
+      <div class="report-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3 style="font-size: 24px; font-weight: bold;">${name}</h3>
+          <span style="background: ${status.includes('NICE') ? '#10b981' : status.includes('WATCH') ? '#fbbf24' : '#ef4444'}; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px;">
+            ${statusEmoji} ${status}
+          </span>
+        </div>
+        <div class="report-scores">
+          <div class="score-box nice">
+            <div class="score-number" style="color: #059669;">${niceScore}%</div>
+            <div style="font-size: 14px; font-weight: 600; color: #059669;">Nice Score</div>
           </div>
-          <div class="report-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-              <h3 style="font-size:24px; font-weight:bold;">${name}</h3>
-              <span style="background:${status.includes('NICE')?'#10b981':status.includes('WATCH')?'#fbbf24':'#ef4444'}; color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:12px;">${statusEmoji} ${status}</span>
-            </div>
-            <div class="report-scores">
-              <div class="score-box nice"><div class="score-number" style="color:#059669;">${niceScore}%</div><div style="font-size:14px; font-weight:600; color:#059669;">Nice Score</div></div>
-              <div class="score-box naughty"><div class="score-number" style="color:#dc2626;">${naughtyScore}%</div><div style="font-size:14px; font-weight:600; color:#dc2626;">Naughty Score</div></div>
-            </div>
-            <div class="deeds-section"><h4 style="font-weight:bold; margin-bottom:8px;">⭐ Good Deeds</h4>${good.map(d=>`<div>✓ ${d}</div>`).join('')}</div>
-            <div class="deeds-section"><h4 style="font-weight:bold; margin-bottom:8px;">⚠️ Areas to Improve</h4>${bad.map(d=>`<div>• ${d}</div>`).join('')}</div>
-            <p style="text-align:center; font-size:12px; color:#6b7280; margin-top:16px; font-style:italic;">Report generated by Santa's Elf Monitoring System™</p>
+          <div class="score-box naughty">
+            <div class="score-number" style="color: #dc2626;">${naughtyScore}%</div>
+            <div style="font-size: 14px; font-weight: 600; color: #dc2626;">Naughty Score</div>
           </div>
-        </div>`;
+        </div>
+        <div class="deeds-section">
+          <h4 style="font-weight: bold; margin-bottom: 8px;">⭐ Good Deeds</h4>
+          ${goodDeeds.map(deed => `<div>✓ ${deed}</div>`).join('')}
+        </div>
+        <div class="deeds-section">
+          <h4 style="font-weight: bold; margin-bottom: 8px;">⚠️ Areas to Improve</h4>
+          ${naughtyDeeds.map(deed => `<div>• ${deed}</div>`).join('')}
+        </div>
+        <p style="text-align: center; font-size: 12px; color: #6b7280; margin-top: 16px; font-style: italic;">
+          Report generated by Santa's Elf Monitoring System™
+        </p>
+      </div>
+    </div>
+  `;
+}
+const camScenes = {
+  workshop: {
+    title: "Santa's Workshop",
+    videos: ['workshop1.mp4', 'workshop2.mp4', 'workshop3.mp4', 'workshop4.mp4']
+  },
+  office: {
+    title: "Santa's Office",
+    videos: ['office1.mp4', 'office2.mp4', 'office3.mp4', 'office4.mp4']
+  },
+  stable: {
+    title: 'Reindeer Stable',
+    videos: ['stable1.mp4', 'stable2.mp4', 'stable3.mp4', 'stable4.mp4']
+  },
+  kitchen: {
+    title: "Mrs. Claus' Kitchen",
+    videos: ['kitchen1.mp4', 'kitchen2.mp4', 'kitchen3.mp4', 'kitchen4.mp4']
+  },
+  mailroom: {
+    title: 'Mail Room',
+    videos: ['mailroom1.mp4', 'mailroom2.mp4', 'mailroom3.mp4', 'mailroom4.mp4']
+  },
+  lab: {
+    title: 'Toy Testing Lab',
+    videos: ['lab1.mp4', 'lab2.mp4', 'lab3.mp4', 'lab4.mp4']
+  }
+};
+function openCam(key) {
+  const modal = document.getElementById('videoModal');
+  const video = document.getElementById('modalVideo');
+  const title = document.getElementById('modalTitle');
+  const muteBtn = document.getElementById('muteBtn');
+  
+  // Get the scene data
+  const scene = camScenes[key];
+  
+  // Pick a random video from the array
+  const randomIndex = Math.floor(Math.random() * scene.videos.length);
+  const randomVideo = scene.videos[randomIndex];
+  
+  video.src = randomVideo;
+  title.textContent = scene.title;
+  video.muted = false;
+  muteBtn.textContent = '🔊 Mute';
+  modal.classList.add('open');
+  
+  video.play().catch(() => {
+    video.muted = true;
+    muteBtn.textContent = '🔇 Unmute';
+    video.play();
+  });
+}
+
+    function toggleMute() {
+      const video = document.getElementById('modalVideo');
+      const muteBtn = document.getElementById('muteBtn');
+      video.muted = !video.muted;
+      muteBtn.textContent = video.muted ? '🔇 Unmute' : '🔊 Mute';
     }
 
-    // ===== Santa Cam =====
-    const vid = (name) => `/videos/${name}`;
-
-    const camScenes = {
-      workshop:{ title:"Santa's Workshop", videos:[vid('workshop1.mp4'), vid('workshop2.mp4'), vid('workshop3.mp4'), vid('workshop4.mp4')] },
-      office:{   title:"Santa's Office",   videos:[vid('office1.mp4'),   vid('office2.mp4'),   vid('office3.mp4'),   vid('office4.mp4')] },
-      stable:{   title:'Reindeer Stable',  videos:[vid('stable1.mp4'),   vid('stable2.mp4'),   vid('stable3.mp4'),   vid('stable4.mp4')] },
-      kitchen:{  title:"Mrs. Claus' Kitchen", videos:[vid('kitchen1.mp4'), vid('kitchen2.mp4'), vid('kitchen3.mp4'), vid('kitchen4.mp4')] },
-      mailroom:{ title:'Mail Room',        videos:[vid('mailroom1.mp4'), vid('mailroom2.mp4'), vid('mailroom3.mp4'), vid('mailroom4.mp4')] },
-      lab:{      title:'Toy Testing Lab',  videos:[vid('lab1.mp4'),      vid('lab2.mp4'),      vid('lab3.mp4'),      vid('lab4.mp4')] }
-    };
-
-    function openCam(key){
-      const modal=document.getElementById('videoModal');
-      const video=document.getElementById('modalVideo');
-      const title=document.getElementById('modalTitle');
-      const muteBtn=document.getElementById('muteBtn');
-
-      const scene=camScenes[key];
-      const src=scene.videos[(Math.random()*scene.videos.length)|0];
-
-      // Pause and reset video properly
-      video.pause();
+    function restartVideo() {
+      const video = document.getElementById('modalVideo');
       video.currentTime = 0;
-      video.src = src;
-      video.muted = true;
-      video.playsInline = true;
-      
-      title.textContent = scene.title;
-      muteBtn.textContent = '🔇 Unmute';
-      
-      modal.classList.add('open');
-      
-      // Load and play with error handling
-      video.load();
-      setTimeout(() => {
-        video.play().catch(err => {
-          console.warn('Play error:', err);
-        });
-      }, 100);
+      video.play();
     }
 
-    function toggleMute(){
-      const v = document.getElementById('modalVideo');
-      const b = document.getElementById('muteBtn');
-      v.muted = !v.muted;
-      b.textContent = v.muted ? '🔇 Unmute' : '🔊 Mute';
-      if (!v.muted) v.play().catch(()=>{});
-    }
-    function restartVideo(){
-      const v=document.getElementById('modalVideo');
-      v.currentTime=0; v.play().catch(()=>{});
-    }
-    function closeModal(){
-      const m=document.getElementById('videoModal');
-      const v=document.getElementById('modalVideo');
-      try { v.pause(); } catch {}
-      m.classList.remove('open');
-    }
-    document.getElementById('videoModal').addEventListener('click',e=>{ if(e.target.id==='videoModal') closeModal(); });
-
-    // ===== Letters to Santa =====
-    const fromEl = document.getElementById('letterFrom');
-    const wishEl = document.getElementById('wishlist');
-    const bodyEl = document.getElementById('letterBody');
-    const charCount = document.getElementById('charCount');
-    const previewFrom = document.getElementById('previewFrom');
-    const previewWishlist = document.getElementById('previewWishlist');
-    const previewBox = document.getElementById('letterPreview');
-
-    const initialName = document.getElementById('childName').value.trim();
-    if(initialName){ fromEl.value = initialName; }
-    fromEl.addEventListener('input', ()=>{ fromEl.dataset.touched = '1'; updateLetterPreview(); });
-
-    function updateLetterPreview(){
-      const from = (fromEl.value || document.getElementById('childName').value || '').trim();
-      const wishlist = (wishEl.value||'').trim();
-      const body = (bodyEl.value||'').trim();
-      charCount.textContent = body.length;
-      document.getElementById('previewFrom').textContent = from || '—';
-      document.getElementById('previewWishlist').textContent = wishlist || '—';
-      previewBox.querySelector('p').textContent = body ? body : 'Write your letter on the left to see a preview here.';
-    }
-    wishEl.addEventListener('input', updateLetterPreview);
-    bodyEl.addEventListener('input', updateLetterPreview);
-
-    const STORAGE_KEY = 'santaLetters';
-    function getStoredLetters(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]'); }catch{ return []; } }
-    function setStoredLetters(arr){ localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
-
-    function buildLetterObject(){
-      const from = (fromEl.value || document.getElementById('childName').value || '').trim();
-      const wishlist = (wishEl.value||'').trim();
-      const body = (bodyEl.value||'').trim();
-      const now = new Date();
-      return { id: `${now.getTime()}`, from, wishlist, body, createdAt: now.toISOString() };
+    function closeModal() {
+      const modal = document.getElementById('videoModal');
+      const video = document.getElementById('modalVideo');
+      video.pause();
+      modal.classList.remove('open');
     }
 
-    function saveLetter(){
-      const entry = buildLetterObject();
-      const letters = getStoredLetters(); letters.unshift(entry); setStoredLetters(letters);
-      renderLetters();
-      alert('Saved! This letter is stored only on this device.');
-    }
-
-    function downloadLetter(){
-      const entry = buildLetterObject();
-      const content = `Dear Santa,\n\n${entry.body}\n\nFrom,\n${entry.from || '—'}\n\nWishlist: ${entry.wishlist || '—'}\nDate: ${new Date(entry.createdAt).toLocaleString()}`;
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = `letter-to-santa_${new Date().toISOString().slice(0,10)}.txt`;
-      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-    }
-
-    function printLetter(){
-      const entry = buildLetterObject();
-      const w = window.open('', '_blank');
-      w.document.write(`<!DOCTYPE html><html><head><title>Letter to Santa</title><style>body{font-family:Georgia,serif; padding:40px; background:#faf7e8; color:#2b2b2b;} h1{color:#7c2d12} .meta{margin-top:20px; font-size:14px; color:#555}</style></head><body><h1>Dear Santa,</h1><p style="white-space:pre-wrap; line-height:1.8">${(entry.body||'').replace(/</g,'&lt;')}</p><div class="meta"><b>From:</b> ${entry.from||'—'}<br><b>Wishlist:</b> ${entry.wishlist||'—'}<br><b>Date:</b> ${new Date(entry.createdAt).toLocaleString()}</div></body></html>`);
-      w.document.close(); w.focus(); w.print();
-    }
-
-    async function shareLetter(){
-      const entry = buildLetterObject();
-      const text = `Dear Santa,\n\n${entry.body}\n\nFrom, ${entry.from || '—'}\nWishlist: ${entry.wishlist || '—'}`;
-      if(navigator.share){
-        try{ await navigator.share({ title: 'Letter to Santa', text }); } catch(e){}
-      } else {
-        const subject = encodeURIComponent('Letter to Santa');
-        const body = encodeURIComponent(text);
-        window.location.href = `mailto:?subject=${subject}&body=${body}`;
-      }
-    }
-
-    // Snowburst
-    function snowburstAt(x, y) {
-      const layer = document.getElementById('burstLayer');
-      const flakes = ['❄','❅','❆','✸','✻','✼'];
-      const count = 28 + Math.floor(Math.random()*10);
-      for (let i = 0; i < count; i++) {
-        const el = document.createElement('div');
-        el.className = 'burst-flake';
-        el.textContent = flakes[Math.floor(Math.random()*flakes.length)];
-        const spread = 160 + Math.random()*120;
-        const angle = Math.random() * Math.PI * 2;
-        const dx = Math.cos(angle) * spread;
-        const dy = Math.sin(angle) * (spread * 0.8) + 180 + Math.random()*120;
-
-        el.style.left = `${x}px`;
-        el.style.top  = `${y}px`;
-        el.style.setProperty('--x', '0px');
-        el.style.setProperty('--y', '0px');
-        el.style.setProperty('--dx', `${dx}px`);
-        el.style.setProperty('--dy', `${dy}px`);
-        el.style.setProperty('--rot', `${(Math.random()*360)|0}deg`);
-        el.style.fontSize = `${16 + Math.random()*10}px`;
-        el.style.animationDuration = `${0.9 + Math.random()*0.9}s`;
-        el.style.opacity = `${0.8 + Math.random()*0.2}`;
-
-        layer.appendChild(el);
-        setTimeout(()=> el.remove(), 2000);
-      }
-    }
-    function snowburstFromButton(btn) {
-      const rect = btn.getBoundingClientRect();
-      const x = rect.left + rect.width/2 + window.scrollX;
-      const y = rect.top + rect.height/2 + window.scrollY - 10;
-      snowburstAt(x, y);
-    }
-
-    // Fake send
-    function showToast(message = 'Message sent to Santa! 🎅📬', ms = 2200) {
-      const el = document.getElementById('toast');
-      if (!el) return alert(message);
-      el.textContent = message;
-      el.classList.add('show');
-      setTimeout(() => el.classList.remove('show'), ms);
-    }
-    async function sendLetter(ev){
-      const btn = document.getElementById('sendBtn');
-      const prevText = btn.textContent;
-      btn.disabled = true; btn.textContent = 'Sending…';
-      const entry = buildLetterObject();
-      try {
-        const OUTBOX_KEY = 'santaOutbox';
-        const box = JSON.parse(localStorage.getItem(OUTBOX_KEY) || '[]');
-        box.unshift(entry);
-        localStorage.setItem(OUTBOX_KEY, JSON.stringify(box));
-      } catch {}
-      await new Promise(r => setTimeout(r, 900));
-      snowburstFromButton(btn);
-      showToast('Message sent to Santa! 🎅📬');
-      btn.disabled = false; btn.textContent = prevText;
-    }
-    function renderLetters(){
-      const letters = getStoredLetters();
-      const html = letters.map(l=>{
-        const date = new Date(l.createdAt).toLocaleString();
-        return `<div class="letter-item"><div><b>${l.from||'—'}</b><div class="hint">${date}</div></div><div class="pill-row"><span class="pill">Saved</span><button class="btn ghost" onclick="restoreLetter('${l.id}')">Open</button><button class="btn ghost" onclick="deleteLetter('${l.id}')">Delete</button></div></div>`;
-      }).join('');
-      document.getElementById('lettersList').innerHTML = html;
-    }
-    function restoreLetter(id){
-      const l = getStoredLetters().find(x=>x.id===id); if(!l) return;
-      document.getElementById('letterFrom').value = l.from||'';
-      document.getElementById('wishlist').value = l.wishlist||'';
-      document.getElementById('letterBody').value = l.body||'';
-      updateLetterPreview();
-      const letterTabBtn = Array.from(document.querySelectorAll('.tab')).find(b=>b.textContent.includes('Letter'));
-      if(letterTabBtn){ switchTab({target:letterTabBtn}, 'letter'); }
-    }
-    function deleteLetter(id){
-      const rest = getStoredLetters().filter(x=>x.id!==id); setStoredLetters(rest); renderLetters();
-    }
-
-    // Countdown
-    (function christmasCountdown(){
-      const $days = document.getElementById('cd-days');
-      const $hours = document.getElementById('cd-hours');
-      const $mins = document.getElementById('cd-mins');
-      const $secs = document.getElementById('cd-secs');
-      const $bar = document.getElementById('countdownBar');
-
-      function nextChristmasTarget(now = new Date()){
-        const year = now.getFullYear();
-        const target = new Date(year, 11, 25, 0, 0, 0);
-        return (now > target) ? new Date(year + 1, 11, 25, 0, 0, 0) : target;
-      }
-      function pad(n){ return String(n).padStart(2,'0'); }
-
-      function tick(){
-        const now = new Date();
-        const target = nextChristmasTarget(now);
-        let diff = target - now;
-        if (diff <= 0) {
-          $days.textContent = '00'; $hours.textContent = '00';
-          $mins.textContent = '00'; $secs.textContent = '00';
-          $bar.querySelector('.countdown-title').textContent = '🎅 It\'s Christmas Day!';
-          $bar.classList.remove('countdown-soon');
-          return;
-        }
-        const sec = Math.floor(diff / 1000) % 60;
-        const min = Math.floor(diff / (1000*60)) % 60;
-        const hr  = Math.floor(diff / (1000*60*60)) % 24;
-        const day = Math.floor(diff / (1000*60*60*24));
-        $days.textContent  = pad(day);
-        $hours.textContent = pad(hr);
-        $mins.textContent  = pad(min);
-        $secs.textContent  = pad(sec);
-        if (day < 7) $bar.classList.add('countdown-soon');
-        else $bar.classList.remove('countdown-soon');
-      }
-      tick();
-      setInterval(tick, 1000);
-    })();
-
-    // Elf Name
-    function generateElfName() {
-      const prefixes = ['Jingle','Twinkle','Sparkle','Merry','Jolly','Peppy','Snowy','Frosty','Candy','Sugar','Holly','Cookie','Ginger','Sprinkle','Bubble','Tinsel','Starlight','Snowflake','Crystal','Glitter','Shimmer','Dazzle','Cheer','Ribbon','Bells','Cocoa','Cinnamon','Nutmeg','Peppermint','Vanilla'];
-      const suffixes = ['toes','bells','sparkles','whiskers','twinkle','bright','joy','cheer','frost','snow','star','glow','shine','beam','dust','flake','wonder','magic','wishes','dreams','giggles','bounces','jingles','shimmer','glimmer','dazzle','sprinkle','merriment','laughter','delight'];
-      const titles  = ['the Cheerful','the Merry','the Jolly','the Bright','the Swift','the Kind','the Helpful','the Clever','the Wise','the Joyful','the Quick','the Gentle','the Brave','the Happy','the Magical','the Sparkly','the Wonderful','the Fantastic','the Amazing','the Incredible'];
-      const elfName = `${prefixes[(Math.random()*prefixes.length)|0]}${suffixes[(Math.random()*suffixes.length)|0]}`;
-      const fullTitle = `${elfName} ${titles[(Math.random()*titles.length)|0]}`;
-      const nameEl = document.getElementById('elfNameText');
-      const displayEl = document.getElementById('elfNameDisplay');
-      displayEl.style.transform = 'scale(0.95)'; displayEl.style.opacity = '0.7';
-      setTimeout(() => {
-        nameEl.textContent = fullTitle;
-        displayEl.querySelector('.subtitle').textContent = '✨ Official North Pole Registry ✨';
-        displayEl.style.transform = 'scale(1)'; displayEl.style.opacity = '1'; displayEl.style.transition = 'all 0.3s ease';
-      }, 200);
-    }
-
-    // ===== Present Catcher Game =====
-    (function(){
-      const canvas = document.getElementById('presentCanvas');
-      const ctx = canvas.getContext('2d');
-      const DPR = Math.min(window.devicePixelRatio || 1, 2);
-      const baseW = 900, baseH = 520;
-
-      function fitCanvas(){
-        const w = Math.floor(baseW * DPR);
-        const h = Math.floor(baseH * DPR);
-        canvas.width = w; canvas.height = h;
-        ctx.setTransform(DPR,0,0,DPR,0,0);
-      }
-      fitCanvas();
-      window.addEventListener('resize', fitCanvas);
-
-      // Game state
-      let running = false;
-      let paused = false;
-      let last = 0;
-      let lastDt = 16;
-      let score = 0;
-      let lives = 3;
-      let level = 1;
-      let streak = 0;
-
-      let fallSpeed = 1.6;
-      let baseSpawnEvery = 1200;
-      let spawnTimer = 0;
-      let spawnInterval = baseSpawnEvery;
-      let missCooldown = 0;
-
-      let presents = [];
-      let particles = [];
-      let popups = [];
-      let keys = { left:false, right:false, down:false };
-      let basket = { x: baseW/2 - 60, y: baseH - 56, w: 120, h: 26, speed: 7.5, squish: 0 };
-
-      function maxActive(){
-        return Math.min(2 + Math.floor((level - 1) / 2), 6);
-      }
-
-      const elScore = document.getElementById('gScore');
-      const elLives = document.getElementById('gLives');
-      const elLevel = document.getElementById('gLevel');
-      const elStreak = document.getElementById('gStreak');
-      const btnStart = document.getElementById('gStart');
-      const btnPause = document.getElementById('gPause');
-      const btnSound = document.getElementById('gSound');
-
-      let soundOn = true;
-      let audioCtx = null;
-      function beep(type='catch'){
-        if(!soundOn) return;
-        if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.connect(g); g.connect(audioCtx.destination);
-        o.frequency.setValueAtTime(type==='catch'?880:type==='miss'?140:520, audioCtx.currentTime);
-        g.gain.setValueAtTime(0.12, audioCtx.currentTime);
-        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.18);
-        o.start(); o.stop(audioCtx.currentTime + 0.2);
-      }
-
-      function resetGame(){
-        score = 0; lives = 3; level = 1; streak = 0;
-        fallSpeed = 1.6;
-        baseSpawnEvery = 1200;
-        spawnTimer = -600;
-        spawnInterval = baseSpawnEvery;
-        missCooldown = 0;
-        presents.length = 0; particles.length = 0; popups.length = 0;
-        basket.x = baseW/2 - basket.w/2;
-        updateHud();
-      }
-      function updateHud(){
-        elScore.textContent = score;
-        elLives.textContent = lives;
-        elLevel.textContent = level;
-        elStreak.textContent = streak;
-      }
-
-      function spawnPresent(){
-        const size = 26 + Math.random()*18;
-        const kinds = [
-          { emoji:'🎁', value: 10, color:'#dc2626' },
-          { emoji:'🧸', value: 14, color:'#059669' },
-          { emoji:'🍪', value: 8,  color:'#f59e0b' },
-          { emoji:'🧦', value: 12, color:'#2563eb' }
-        ];
-        const k = kinds[(Math.random()*kinds.length)|0];
-        const x = 20 + Math.random()*(baseW-40 - size);
-        const rot = (Math.random()*0.04) - 0.02;
-        presents.push({ x, y: -size, w:size, h:size, vy: fallSpeed + Math.random()*1.2, emoji: k.emoji, value: k.value, rot: 0, rotv: rot });
-      }
-      function retargetSpawnInterval(){
-        spawnInterval = Math.max(380, baseSpawnEvery + (Math.random()*240 - 120));
-      }
-
-      const stars = Array.from({length: 60}, () => ({
-        x: Math.random()*baseW,
-        y: Math.random()*baseH,
-        r: Math.random()*1.6 + 0.4,
-        s: Math.random()*0.6 + 0.2
-      }));
-      function drawStars(dt){
-        ctx.save();
-        ctx.globalAlpha = 0.7;
-        stars.forEach(st=>{
-          st.x -= st.s * dt/1000 * 18;
-          if(st.x < -2) st.x = baseW + 2;
-          ctx.beginPath();
-          ctx.fillStyle = 'rgba(255,255,255,.85)';
-          ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
-          ctx.fill();
-        });
-        ctx.restore();
-      }
-
-      function drawBackground(){
-        const grd = ctx.createLinearGradient(0, baseH-140, 0, baseH);
-        grd.addColorStop(0, 'rgba(255,255,255,0.12)');
-        grd.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.fillStyle = grd;
-        ctx.fillRect(0, baseH-140, baseW, 140);
-        ctx.fillStyle = 'rgba(255,255,255,0.2)';
-        ctx.fillRect(0, baseH-28, baseW, 2);
-      }
-
-      function drawBasketGlow(){
-        const r = 120;
-        const cx = basket.x + basket.w/2;
-        const cy = basket.y + basket.h/2 + 6;
-        const g = ctx.createRadialGradient(cx, cy, 6, cx, cy, r);
-        g.addColorStop(0, 'rgba(255,255,255,.35)');
-        g.addColorStop(1, 'rgba(255,255,255,0)');
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
-      }
-
-      function drawBasket(){
-        const s = 1 - basket.squish * 0.15;
-        ctx.save();
-        ctx.translate(basket.x + basket.w/2, basket.y + basket.h/2);
-        ctx.scale(1, s);
-        ctx.translate(-basket.w/2, -basket.h/2);
-
-        ctx.fillStyle = 'rgba(255,255,255,0.92)';
-        ctx.beginPath(); ctx.roundRect(0, 0, basket.w, basket.h, 8); ctx.fill();
-        ctx.fillStyle = 'rgba(220,38,38,.9)'; ctx.fillRect(6, 6, basket.w-12, basket.h-12);
-
-        ctx.restore();
-
-        basket.squish *= 0.85;
-        if (basket.squish < 0.001) basket.squish = 0;
-      }
-
-      function drawPresents(){
-        presents.forEach(p=>{
-          ctx.save();
-          ctx.translate(p.x + p.w/2, p.y + p.h/2);
-          ctx.rotate(p.rot);
-
-          ctx.shadowColor = 'rgba(0,0,0,.35)';
-          ctx.shadowBlur = 12;
-          ctx.shadowOffsetY = 4;
-
-          ctx.font = `${Math.max(22, p.w)}px serif`;
-          ctx.textAlign = 'center';
-          ctx.textBaseline = 'middle';
-          ctx.lineWidth = 4;
-          ctx.strokeStyle = 'rgba(0,0,0,.4)';
-          ctx.strokeText(p.emoji, 0, 0);
-
-          ctx.shadowColor = 'transparent';
-          ctx.fillText(p.emoji, 0, 0);
-
-          ctx.restore();
-        });
-      }
-
-      function addParticles(x,y){
-        for(let i=0;i<8;i++){
-          particles.push({ x, y, vx:(Math.random()*2-1)*2.2, vy:(Math.random()*-2.2)-0.6, life: 18 + (Math.random()*8|0) });
-        }
-      }
-      function drawParticles(){
-        for(let i=particles.length-1;i>=0;i--){
-          const a = particles[i];
-          a.x += a.vx; a.y += a.vy; a.vy += 0.08; a.life--;
-          ctx.fillStyle = `rgba(255,255,255,${Math.max(0,a.life/26)})`;
-          ctx.fillRect(a.x, a.y, 2, 2);
-          if(a.life<=0) particles.splice(i,1);
-        }
-      }
-
-      function drawPopups(){
-        for(let i=popups.length-1;i>=0;i--){
-          const q = popups[i];
-          q.y += q.vy;
-          q.a -= 0.02;
-          ctx.save();
-          ctx.globalAlpha = Math.max(0, q.a);
-          ctx.fillStyle = '#fff';
-          ctx.font = 'bold 18px system-ui, sans-serif';
-          ctx.textAlign = 'center';
-          ctx.fillText(q.text, q.x, q.y);
-          ctx.restore();
-          if(q.a <= 0) popups.splice(i,1);
-        }
-      }
-
-      function rectsOverlap(ax, ay, aw, ah, bx, by, bw, bh){
-        return ax < bx + bw && ax + aw > bx && ay < by + bh && ay + ah > by;
-      }
-
-      let bannerTimer = 0, bannerText = '';
-      function flashBanner(txt){ bannerText = txt; bannerTimer = 60; }
-      function drawBanner(){
-        if(bannerTimer>0){
-          ctx.save();
-          const t = bannerTimer/60;
-          ctx.globalAlpha = Math.min(1, t*1.2);
-          ctx.fillStyle = 'rgba(0,0,0,.4)';
-          ctx.fillRect(baseW*0.25, 30, baseW*0.5, 54);
-          ctx.strokeStyle = 'rgba(255,255,255,.6)';
-          ctx.strokeRect(baseW*0.25, 30, baseW*0.5, 54);
-          ctx.fillStyle = '#fff';
-          ctx.shadowColor = '#fff';
-          ctx.shadowBlur = 12;
-          ctx.font = 'bold 24px system-ui, sans-serif';
-          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillText(bannerText, baseW/2, 57);
-          ctx.restore(); bannerTimer--;
-        }
-      }
-      function drawHUDOverlay(){
-        ctx.save();
-        ctx.font = 'bold 16px system-ui, sans-serif';
-        ctx.fillStyle = 'rgba(255,255,255,.85)';
-        ctx.fillText('← / → Move • ↓ Fast-drop • Space Pause/Start', 16, baseH-8);
-        ctx.restore();
-      }
-      function drawGameOver(){
-        ctx.save();
-        ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0,0,baseW,baseH);
-        ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
-        ctx.font = 'bold 38px system-ui, sans-serif'; ctx.fillText('Game Over', baseW/2, baseH/2 - 12);
-        ctx.font = 'bold 20px system-ui, sans-serif'; ctx.fillText(`Score: ${score}`, baseW/2, baseH/2 + 20);
-        ctx.fillText('Press Start to play again', baseW/2, baseH/2 + 48);
-        ctx.restore();
-      }
-
-      function missPresent(p){
-        lives--; streak = 0;
-        beep('miss'); addParticles(p.x+p.w/2, baseH-20);
-        missCooldown = 900;
-        spawnTimer = Math.min(spawnTimer, 0);
-        if(lives<=0){ running = false; saveHighScore(score); drawGameOver(); }
-        else { flashBanner('Missed! 💥'); }
-        updateHud();
-      }
-      function catchPresent(p){
-        const gain = p.value * Math.max(1, Math.min(5, Math.floor(streak/5)+1));
-        score += gain; streak++; addParticles(p.x+p.w/2, p.y+p.h/2); beep('catch');
-
-        basket.squish = 1;
-        for(let i=0;i<4;i++) particles.push({ x:p.x+p.w/2, y:p.y+p.h/2, vx:(Math.random()*2-1)*1.5, vy:-Math.random()*2.2, life: 14+(Math.random()*6|0) });
-        popups.push({ x: p.x + p.w/2, y: p.y, a: 1, vy: -0.5, text: `+${gain}` });
-
-        if (score > level * 150){
-          level++;
-          fallSpeed += 0.35;
-          baseSpawnEvery = Math.max(700, baseSpawnEvery - 60);
-          flashBanner(`Level ${level}! 🎄`);
-          retargetSpawnInterval();
-        }
-        updateHud();
-      }
-
-      function step(dt){
-        if(!running || paused) return;
-
-        spawnTimer += dt;
-        if (missCooldown > 0) missCooldown -= dt;
-
-        if (missCooldown <= 0 && spawnTimer >= spawnInterval && presents.length < maxActive()) {
-          spawnPresent();
-          spawnTimer = 0;
-          retargetSpawnInterval();
-        }
-
-        let vx = 0;
-        if(keys.left) vx -= basket.speed;
-        if(keys.right) vx += basket.speed;
-        basket.x = Math.max(6, Math.min(baseW - basket.w - 6, basket.x + vx));
-        basket.y = keys.down ? (baseH - 50) : (baseH - 56);
-
-        for(let i=presents.length-1;i>=0;i--){
-          const p = presents[i];
-          p.y += p.vy; p.rot += p.rotv;
-          if(keys.down) p.y += 3;
-          if(rectsOverlap(basket.x, basket.y, basket.w, basket.h, p.x, p.y, p.w, p.h)){
-            catchPresent(p); presents.splice(i,1); continue;
-          }
-          if(p.y > baseH - 18){
-            missPresent(p); presents.splice(i,1);
-          }
-        }
-      }
-      function render(){
-        ctx.clearRect(0,0,baseW,baseH);
-
-        drawStars(lastDt);
-        drawBackground();
-
-        drawPresents();
-        drawPopups();
-        drawParticles();
-
-        drawBasketGlow();
-        drawBasket();
-
-        drawBanner();
-        drawHUDOverlay();
-
-        if(!running){
-          ctx.save();
-          ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(0,0,baseW,baseH);
-          ctx.fillStyle = '#fff'; ctx.textAlign='center';
-          ctx.font='bold 28px system-ui, sans-serif'; ctx.fillText('🎁 Present Catcher 🎁', baseW/2, baseH/2 - 40);
-          ctx.font='16px system-ui, sans-serif'; ctx.fillText('Catch gifts, avoid misses. Build streaks for multipliers!', baseW/2, baseH/2 - 12);
-          ctx.fillText('Press Start or Space to begin', baseW/2, baseH/2 + 16);
-          ctx.restore();
-        } else if(paused){
-          ctx.save();
-          ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(0,0,baseW,baseH);
-          ctx.fillStyle = '#fff'; ctx.textAlign='center'; ctx.font='bold 28px system-ui, sans-serif';
-          ctx.fillText('Paused', baseW/2, baseH/2);
-          ctx.restore();
-        }
-      }
-      function loop(ts){
-        if(!last) last = ts;
-        const dt = ts - last; last = ts; lastDt = dt;
-        if(running && !paused) step(dt);
-        render();
-        requestAnimationFrame(loop);
-      }
-      requestAnimationFrame(loop);
-
-      const HS_KEY = 'presentCatcherHS';
-      function loadHighScores(){ try{ return JSON.parse(localStorage.getItem(HS_KEY)||'[]'); }catch{ return []; } }
-      function saveHighScore(val){
-        const arr = loadHighScores(); arr.push({ score: val, at: new Date().toISOString() });
-        arr.sort((a,b)=>b.score - a.score);
-        localStorage.setItem(HS_KEY, JSON.stringify(arr.slice(0,10)));
-        renderHighScores();
-      }
-      function renderHighScores(){
-        const box = document.getElementById('hsList');
-        const arr = loadHighScores();
-        box.innerHTML = arr.length===0
-          ? '<div class="hs-item"><span>No scores yet</span><span>—</span></div>'
-          : arr.map((r,i)=>`<div class="hs-item"><span>#${i+1}</span><span>${r.score}</span></div>`).join('');
-      }
-      window.clearHighScores = function(){ localStorage.removeItem(HS_KEY); renderHighScores(); }
-      renderHighScores();
-
-      function startGame(){ resetGame(); running = true; paused = false; btnPause.textContent = 'Pause'; }
-      function togglePause(){ if(!running){ startGame(); return; } paused = !paused; btnPause.textContent = paused ? 'Resume' : 'Pause'; }
-
-      btnStart.addEventListener('click', startGame);
-      btnPause.addEventListener('click', togglePause);
-      btnSound.addEventListener('click', ()=>{ soundOn = !soundOn; btnSound.textContent = `Sound: ${soundOn ? 'On' : 'Off'}`; if(soundOn) beep('ui'); });
-
-      document.addEventListener('keydown', (e)=>{
-        if(e.code==='ArrowLeft') keys.left = true;
-        if(e.code==='ArrowRight') keys.right = true;
-        if(e.code==='ArrowDown') keys.down = true;
-        if(e.code==='Space'){ e.preventDefault(); togglePause(); }
-      });
-      document.addEventListener('keyup', (e)=>{
-        if(e.code==='ArrowLeft') keys.left = false;
-        if(e.code==='ArrowRight') keys.right = false;
-        if(e.code==='ArrowDown') keys.down = false;
-      });
-
-      const leftBtnEl = document.getElementById('leftBtn');
-      const rightBtnEl = document.getElementById('rightBtn');
-      const dropBtnEl = document.getElementById('dropBtn');
-
-      function bindHold(btn, on, off){
-        const start = (ev)=>{ ev.preventDefault(); on(); };
-        const end = ()=>{ off && off(); };
-        btn.addEventListener('mousedown', start);
-        btn.addEventListener('touchstart', start, {passive:false});
-        ['mouseup','mouseleave','touchend','touchcancel'].forEach(evt=>btn.addEventListener(evt, end));
-      }
-      bindHold(leftBtnEl, ()=>{ keys.left = true; }, ()=>{ keys.left=false; });
-      bindHold(rightBtnEl, ()=>{ keys.right = true; }, ()=>{ keys.right=false; });
-      bindHold(dropBtnEl, ()=>{ keys.down = true; }, ()=>{ keys.down=false; });
-    })();
-
-    // Init
-    updateButtonText();
-    updateLetterPreview();
-    renderLetters();
+    // Close modal on background click
+    document.getElementById('videoModal').addEventListener('click', (e) => {
+      if (e.target.id === 'videoModal') closeModal();
+    });
   </script>
 </body>
 </html>
