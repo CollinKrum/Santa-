@@ -2,31 +2,31 @@
   "workshop": {
     "title": "Santa's Workshop",
     "base": "/videos/workshop",
-    "files": ["workshop1.mp4", "workshop2.mp4"]
+    "files": ["workshop1.mp4", "workshop4.mp4"]
   },
   "office": {
     "title": "Santa's Office",
     "base": "/videos/office",
-    "files": ["office1.mp4", "office2.mp4"]
+    "files": ["office1.mp4", "office2.mp4", "office3.mp4", "office4.mp4"]
   },
   "stable": {
     "title": "Reindeer Stable",
     "base": "/videos/stable",
-    "files": ["stable1.mp4"]
+    "files": ["stable1.mp4", "stable2.mp4", "stable3.mp4", "stable4.mp4"]
   },
   "kitchen": {
     "title": "Mrs. Claus' Kitchen",
     "base": "/videos/kitchen",
-    "files": ["kitchen1.mp4"]
+    "files": ["kitchen1.mp4", "kitchen2.mp4", "kitchen3.mp4", "kitchen4.mp4"]
   },
   "mailroom": {
     "title": "Mail Room",
     "base": "/videos/mailroom",
-    "files": ["mailroom1.mp4"]
+    "files": ["mailroom1.mp4", "mailroom2.mp4", "mailroom3.mp4", "mailroom4.mp4"]
   },
   "lab": {
     "title": "Toy Testing Lab",
     "base": "/videos/lab",
-    "files": ["lab1.mp4"]
+    "files": ["lab1.mp4", "lab2.mp4", "lab3.mp4", "lab4.mp4"]
   }
 }
