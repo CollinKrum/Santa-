@@ -2,10 +2,13 @@
   "builds": [
     { "src": "index.html", "use": "@vercel/static" },
     { "src": "public/**", "use": "@vercel/static" },
-    { "src": "api/**/*.js", "use": "@vercel/node" }
+    { "src": "api/**/*.[jt]s", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+    { "src": "/videos/(.*)", "dest": "/videos/$1" },                     // allow videos & manifest through
+    { "src": "/(.*\\.(?:json|png|jpg|jpeg|gif|svg|webp|css|js|mp4|webm|ogg|mp3))", "dest": "/$1" },
+    { "src": "/", "dest": "/index.html" },                               // root serves your page
+    { "src": "/(.*)", "dest": "/index.html" }                            // optional SPA fallback
   ]
 }
