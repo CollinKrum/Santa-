@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7145940911173373"
-     crossorigin="anonymous"></script>
+  <!-- Ads (unchanged) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7145940911173373" crossorigin="anonymous"></script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Santa's Command Center</title>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: linear-gradient(to bottom right, #450a0a, #7f1d1d, #14532d);
@@ -16,390 +17,81 @@
       color: white;
       padding: 20px;
     }
-
-    @keyframes wiggle {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(-5deg); }
-      75% { transform: rotate(5deg); }
-    }
-
+    @keyframes wiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-5deg)} 75%{transform:rotate(5deg)} }
     @keyframes float {
       0% { transform: translateY(-100px) translateX(0); opacity: 0; }
       50% { transform: translateY(50vh) translateX(30px); opacity: 0.2; }
       100% { transform: translateY(110vh) translateX(0); opacity: 0; }
     }
+    .snowflake { position: fixed; top: -50px; color: white; font-size: 20px; opacity: 0.2; pointer-events: none; animation: float linear infinite; z-index: 1; }
+    .container { max-width: 800px; margin: 0 auto; position: relative; z-index: 10; }
+    .header { text-align: center; margin-bottom: 30px; }
+    .header h1 { font-size: clamp(32px, 5vw, 48px); font-weight: bold; margin-bottom: 8px; }
+    .santa-icon { display: inline-block; font-size: 64px; animation: wiggle 2s ease-in-out infinite; }
+    .subtitle { color: #fecaca; font-size: 18px; }
+    .card { background: rgba(255,255,255,.1); backdrop-filter: blur(10px); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+    .name-input-section { background: linear-gradient(to right, #dc2626, #ef4444, #16a34a); padding: 24px; }
+    .name-input-section label { display:block; color:white; font-size:12px; font-weight:bold; letter-spacing:1px; margin-bottom:12px; }
+    .name-input-section input { width:100%; padding:16px 20px; border-radius:16px; border:none; font-size:18px; outline:none; }
 
-    .snowflake {
-      position: fixed;
-      top: -50px;
-      color: white;
-      font-size: 20px;
-      opacity: 0.2;
-      pointer-events: none;
-      animation: float linear infinite;
-      z-index: 1;
-    }
+    .tabs { display:flex; background: rgba(255,255,255,.05); border-bottom:1px solid rgba(255,255,255,.1); }
+    .tab { flex:1; padding:20px; text-align:center; cursor:pointer; background:transparent; border:none; color:rgba(255,255,255,.6); font-size:14px; font-weight:600; transition:.3s; position:relative; }
+    .tab:hover { color:rgba(255,255,255,.9); }
+    .tab.active { color:white; background: rgba(255,255,255,.1); }
+    .tab.active::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background: linear-gradient(to right, #dc2626, #16a34a); border-radius:3px 3px 0 0; }
+    .tab-icon { display:block; font-size:24px; margin-bottom:4px; }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 10;
-    }
+    .tab-content { padding:24px; min-height:500px; }
+    .tab-pane { display:none; }
+    .tab-pane.active { display:block; }
 
-    .header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+    .message-buttons { display:flex; flex-direction:column; gap:12px; }
+    .message-btn { display:flex; justify-content:space-between; align-items:center; padding:20px; border-radius:16px; border:none; font-size:16px; font-weight:600; color:white; cursor:pointer; transition: transform .2s; position:relative; }
+    .message-btn:hover:not(:disabled){ transform: scale(1.05); }
+    .message-btn:active:not(:disabled){ transform: scale(0.95); }
+    .message-btn:disabled{ opacity:.6; cursor:not-allowed; transform:none !important; }
+    .message-btn.nice{ background: linear-gradient(135deg, #10b981, #059669); }
+    .message-btn.naughty{ background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .message-btn.neutral{ background: linear-gradient(135deg, #3b82f6, #2563eb); }
 
-    .header h1 {
-      font-size: clamp(32px, 5vw, 48px);
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
+    .speaking-indicator { margin-top:16px; padding:16px; background: linear-gradient(135deg, #dc2626, #16a34a); border-radius:16px; text-align:center; font-weight:bold; animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
 
-    .santa-icon {
-      display: inline-block;
-      font-size: 64px;
-      animation: wiggle 2s ease-in-out infinite;
-    }
+    .generate-btn { width:100%; padding:24px; border-radius:16px; border:none; background: linear-gradient(135deg, #dc2626, #ef4444, #16a34a); color:white; font-size:18px; font-weight:bold; cursor:pointer; margin-bottom:24px; transition: transform .2s; }
+    .generate-btn:hover{ transform: scale(1.05); }
 
-    .subtitle {
-      color: #fecaca;
-      font-size: 18px;
-    }
+    .report-card{ background:white; color:#1f2937; border-radius:20px; overflow:hidden; }
+    .report-header{ background: linear-gradient(135deg, #dc2626, #16a34a); color:white; padding:24px; text-align:center; }
+    .report-content{ padding:24px; }
+    .report-scores{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+    .score-box{ padding:20px; border-radius:16px; text-align:center; }
+    .score-box.nice{ background:#d1fae5; }
+    .score-box.naughty{ background:#fee2e2; }
+    .score-number{ font-size:48px; font-weight:bold; }
 
-    .card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    }
+    .deeds-section{ background:#f3f4f6; padding:16px; border-radius:12px; margin:16px 0; }
 
-    .name-input-section {
-      background: linear-gradient(to right, #dc2626, #ef4444, #16a34a);
-      padding: 24px;
-    }
+    .cam-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:12px; }
+    @media (min-width:640px){ .cam-grid{ grid-template-columns: repeat(3,1fr); } }
+    .cam-button{ padding:20px; border-radius:16px; border:none; color:white; font-weight:bold; cursor:pointer; transition: transform .2s; text-align:center; }
+    .cam-button:hover{ transform: scale(1.05); }
+    .cam-emoji{ font-size:40px; display:block; margin-bottom:8px; }
+    .cam-title{ font-size:14px; display:block; }
 
-    .name-input-section label {
-      display: block;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-    }
+    .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.9); z-index:1000; padding:20px; }
+    .modal.open{ display:flex; align-items:center; justify-content:center; }
+    .modal-content{ width:100%; max-width:1000px; background:#000; border-radius:16px; overflow:hidden; }
+    .modal-header{ display:flex; justify-content:space-between; align-items:center; padding:16px; background:#1f1f1f; }
+    .close-btn{ background:#dc2626; color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:bold; }
 
-    .name-input-section input {
-      width: 100%;
-      padding: 16px 20px;
-      border-radius: 16px;
-      border: none;
-      font-size: 18px;
-      outline: none;
-    }
+    .video-container{ background:#000; display:flex; align-items:center; justify-content:center; min-height:400px; }
+    .video-container video{ width:100%; max-height:80vh; object-fit:contain; display:block; }
 
-    .tabs {
-      display: flex;
-      background: rgba(255, 255, 255, 0.05);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
+    .video-controls{ padding:16px; background:#1f1f1f; display:flex; gap:12px; justify-content:center; }
+    .control-btn{ background:#374151; color:white; border:none; padding:8px 16px; border-radius:8px; cursor:pointer; font-weight:600; font-size:14px; }
+    .control-btn:hover{ background:#4b5563; }
 
-    .tab {
-      flex: 1;
-      padding: 20px;
-      text-align: center;
-      cursor: pointer;
-      background: transparent;
-      border: none;
-      color: rgba(255, 255, 255, 0.6);
-      font-size: 14px;
-      font-weight: 600;
-      transition: all 0.3s;
-      position: relative;
-    }
-
-    .tab:hover {
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    .tab.active {
-      color: white;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .tab.active::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(to right, #dc2626, #16a34a);
-      border-radius: 3px 3px 0 0;
-    }
-
-    .tab-icon {
-      display: block;
-      font-size: 24px;
-      margin-bottom: 4px;
-    }
-
-    .tab-content {
-      padding: 24px;
-      min-height: 500px;
-    }
-
-    .tab-pane {
-      display: none;
-    }
-
-    .tab-pane.active {
-      display: block;
-    }
-
-    .message-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .message-btn {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px;
-      border-radius: 16px;
-      border: none;
-      font-size: 16px;
-      font-weight: 600;
-      color: white;
-      cursor: pointer;
-      transition: transform 0.2s;
-      position: relative;
-    }
-
-    .message-btn:hover:not(:disabled) {
-      transform: scale(1.05);
-    }
-
-    .message-btn:active:not(:disabled) {
-      transform: scale(0.95);
-    }
-
-    .message-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none !important;
-    }
-
-    .message-btn.nice { background: linear-gradient(135deg, #10b981, #059669); }
-    .message-btn.naughty { background: linear-gradient(135deg, #ef4444, #dc2626); }
-    .message-btn.neutral { background: linear-gradient(135deg, #3b82f6, #2563eb); }
-
-    .speaking-indicator {
-      margin-top: 16px;
-      padding: 16px;
-      background: linear-gradient(135deg, #dc2626, #16a34a);
-      border-radius: 16px;
-      text-align: center;
-      font-weight: bold;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-
-    .generate-btn {
-      width: 100%;
-      padding: 24px;
-      border-radius: 16px;
-      border: none;
-      background: linear-gradient(135deg, #dc2626, #ef4444, #16a34a);
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-bottom: 24px;
-      transition: transform 0.2s;
-    }
-
-    .generate-btn:hover {
-      transform: scale(1.05);
-    }
-
-    .report-card {
-      background: white;
-      color: #1f2937;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .report-header {
-      background: linear-gradient(135deg, #dc2626, #16a34a);
-      color: white;
-      padding: 24px;
-      text-align: center;
-    }
-
-    .report-content {
-      padding: 24px;
-    }
-
-    .report-scores {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin: 20px 0;
-    }
-
-    .score-box {
-      padding: 20px;
-      border-radius: 16px;
-      text-align: center;
-    }
-
-    .score-box.nice { background: #d1fae5; }
-    .score-box.naughty { background: #fee2e2; }
-
-    .score-number {
-      font-size: 48px;
-      font-weight: bold;
-    }
-
-    .deeds-section {
-      background: #f3f4f6;
-      padding: 16px;
-      border-radius: 12px;
-      margin: 16px 0;
-    }
-
-    .cam-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    @media (min-width: 640px) {
-      .cam-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    .cam-button {
-      padding: 20px;
-      border-radius: 16px;
-      border: none;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.2s;
-      text-align: center;
-    }
-
-    .cam-button:hover {
-      transform: scale(1.05);
-    }
-
-    .cam-emoji {
-      font-size: 40px;
-      display: block;
-      margin-bottom: 8px;
-    }
-
-    .cam-title {
-      font-size: 14px;
-      display: block;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.9);
-      z-index: 1000;
-      padding: 20px;
-    }
-
-    .modal.open {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .modal-content {
-      width: 100%;
-      max-width: 1000px;
-      background: #000;
-      border-radius: 16px;
-      overflow: hidden;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px;
-      background: #1f1f1f;
-    }
-
-    .close-btn {
-      background: #dc2626;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .video-container {
-      background: #000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 400px;
-    }
-
-    .video-container video {
-      width: 100%;
-      max-height: 80vh;
-      object-fit: contain;
-      display: block;
-    }
-
-    .video-controls {
-      padding: 16px;
-      background: #1f1f1f;
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-    }
-
-    .control-btn {
-      background: #374151;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .control-btn:hover {
-      background: #4b5563;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 40px;
-      opacity: 0.6;
-      font-size: 14px;
-    }
+    .footer{ text-align:center; margin-top:40px; opacity:.6; font-size:14px; }
   </style>
 </head>
 <body>
@@ -424,15 +116,16 @@
 
       <!-- Tabs -->
       <div class="tabs">
-        <button class="tab active" onclick="switchTab('soundboard')">
+        <!-- NOTE: we pass the button element into switchTab to avoid relying on global event -->
+        <button class="tab active" onclick="switchTab(this,'soundboard')">
           <span class="tab-icon">🔊</span>
           <span>Soundboard</span>
         </button>
-        <button class="tab" onclick="switchTab('report')">
+        <button class="tab" onclick="switchTab(this,'report')">
           <span class="tab-icon">📄</span>
           <span>Report Card</span>
         </button>
-        <button class="tab" onclick="switchTab('cam')">
+        <button class="tab" onclick="switchTab(this,'cam')">
           <span class="tab-icon">📹</span>
           <span>Santa Cam</span>
         </button>
@@ -443,17 +136,12 @@
         <!-- Soundboard -->
         <div id="soundboard" class="tab-pane active">
           <div class="message-buttons" id="messageButtons"></div>
-
-          <div id="speakingIndicator" style="display: none;" class="speaking-indicator">
-            🔊 Santa is speaking...
-          </div>
+          <div id="speakingIndicator" style="display: none;" class="speaking-indicator">🔊 Santa is speaking...</div>
         </div>
 
         <!-- Report Card -->
         <div id="report" class="tab-pane">
-          <button class="generate-btn" onclick="generateReport()">
-            ✨ Generate Report Card
-          </button>
+          <button class="generate-btn" onclick="generateReport()">✨ Generate Report Card</button>
           <div id="reportResult"></div>
         </div>
 
@@ -461,28 +149,22 @@
         <div id="cam" class="tab-pane">
           <div class="cam-grid">
             <button class="cam-button" style="background: linear-gradient(135deg, #d97706, #ea580c);" onclick="openCam('workshop')">
-              <span class="cam-emoji">🎁</span>
-              <span class="cam-title">Workshop</span>
+              <span class="cam-emoji">🎁</span><span class="cam-title">Workshop</span>
             </button>
             <button class="cam-button" style="background: linear-gradient(135deg, #dc2626, #991b1b);" onclick="openCam('office')">
-              <span class="cam-emoji">📋</span>
-              <span class="cam-title">Office</span>
+              <span class="cam-emoji">📋</span><span class="cam-title">Office</span>
             </button>
             <button class="cam-button" style="background: linear-gradient(135deg, #475569, #334155);" onclick="openCam('stable')">
-              <span class="cam-emoji">🦌</span>
-              <span class="cam-title">Stable</span>
+              <span class="cam-emoji">🦌</span><span class="cam-title">Stable</span>
             </button>
             <button class="cam-button" style="background: linear-gradient(135deg, #ec4899, #be185d);" onclick="openCam('kitchen')">
-              <span class="cam-emoji">🍪</span>
-              <span class="cam-title">Kitchen</span>
+              <span class="cam-emoji">🍪</span><span class="cam-title">Kitchen</span>
             </button>
             <button class="cam-button" style="background: linear-gradient(135deg, #2563eb, #1e40af);" onclick="openCam('mailroom')">
-              <span class="cam-emoji">✉️</span>
-              <span class="cam-title">Mail Room</span>
+              <span class="cam-emoji">✉️</span><span class="cam-title">Mail Room</span>
             </button>
             <button class="cam-button" style="background: linear-gradient(135deg, #059669, #047857);" onclick="openCam('lab')">
-              <span class="cam-emoji">🧸</span>
-              <span class="cam-title">Toy Lab</span>
+              <span class="cam-emoji">🧸</span><span class="cam-title">Toy Lab</span>
             </button>
           </div>
         </div>
@@ -490,7 +172,7 @@
     </div>
 
     <div class="footer">
-      Made with holiday magic & Christmas spirit<br>
+      Made with holiday magic & Christmas spirit<br />
       © 2024 North Pole Technologies
     </div>
   </div>
@@ -503,41 +185,43 @@
         <button class="close-btn" onclick="closeModal()">Close</button>
       </div>
       <div class="video-container">
+        <!-- We'll inject a <source> so we can set type="video/mp4" for better codec handling -->
         <video id="modalVideo" autoplay loop playsinline></video>
       </div>
       <div class="video-controls">
-        <button class="control-btn" id="muteBtn" onclick="toggleMute()">🔊 Unmute</button>
+        <button class="control-btn" id="muteBtn" onclick="toggleMute()">🔊 Mute</button>
         <button class="control-btn" onclick="restartVideo()">↻ Restart</button>
       </div>
     </div>
   </div>
 
   <script>
-    // Global state
-    let currentAudio = null;
-
-    // Create snowflakes
+    /**************  UTIL & DECORATION  **************/
+    // Snowflakes
     const snowflakesContainer = document.getElementById('snowflakes');
-    for (let i = 0; i < 20; i++) {
-      const snowflake = document.createElement('div');
-      snowflake.className = 'snowflake';
-      snowflake.textContent = '❄';
-      snowflake.style.left = Math.random() * 100 + '%';
-      snowflake.style.animationDelay = Math.random() * 5 + 's';
-      snowflake.style.animationDuration = Math.random() * 10 + 15 + 's';
-      snowflakesContainer.appendChild(snowflake);
-    }
+    (function makeSnowflakes(){
+      for (let i = 0; i < 20; i++) {
+        const s = document.createElement('div');
+        s.className = 'snowflake';
+        s.textContent = '❄';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.animationDelay = Math.random() * 5 + 's';
+        s.style.animationDuration = Math.random() * 10 + 15 + 's';
+        snowflakesContainer.appendChild(s);
+      }
+    })();
 
-    // Tab switching
-    function switchTab(tabName) {
+    // Tabs (no reliance on global event)
+    function switchTab(btnEl, tabName) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-      
-      event.target.closest('.tab').classList.add('active');
+      btnEl.classList.add('active');
       document.getElementById(tabName).classList.add('active');
     }
 
-    // Soundboard Messages
+    /**************  SOUNDBOARD + ELEVENLABS TTS  **************/
+    let currentAudio = null;
+
     const messages = [
       { text: "Ho ho ho! You've been very good today, {name}!", type: "nice", emoji: "🎅" },
       { text: "{name}, you're on the nice list this year!", type: "nice", emoji: "⭐" },
@@ -553,21 +237,18 @@
 
     const messageButtonsContainer = document.getElementById('messageButtons');
 
-    // Function to update button text dynamically
     function updateButtonText() {
-      const name = document.getElementById('childName').value.trim() || 'little one';
+      const name = (document.getElementById('childName').value || '').trim() || 'little one';
       const buttons = document.querySelectorAll('.message-btn');
       buttons.forEach((btn, idx) => {
         const msg = messages[idx];
-        const buttonText = btn.querySelector('.btn-text');
-        if (buttonText) {
-          buttonText.innerHTML = msg.text.replace(/{name}/g, `<strong>${name}</strong>`);
-        }
+        const span = btn.querySelector('.btn-text');
+        if (span) span.innerHTML = msg.text.replace(/{name}/g, `<strong>${name}</strong>`);
       });
     }
 
-    // Create buttons
-    messages.forEach((msg, idx) => {
+    // Build buttons
+    messages.forEach((msg) => {
       const btn = document.createElement('button');
       btn.className = `message-btn ${msg.type}`;
       btn.innerHTML = `
@@ -578,224 +259,193 @@
       messageButtonsContainer.appendChild(btn);
     });
 
-    // Update button text when name changes
     document.getElementById('childName').addEventListener('input', updateButtonText);
 
-    // ElevenLabs TTS Function using serverless backend
+    // ElevenLabs via your serverless endpoint: /api/santa-voice
     async function speakMessage(text) {
-      const name = document.getElementById('childName').value.trim() || 'little one';
+      const name = (document.getElementById('childName').value || '').trim() || 'little one';
       const personalized = text.replace(/{name}/g, name);
 
-      // Stop any current audio
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio = null;
-      }
+      // Stop any currently playing audio
+      if (currentAudio) { currentAudio.pause(); currentAudio = null; }
 
-      // Disable all buttons
       const buttons = document.querySelectorAll('.message-btn');
-      buttons.forEach(btn => btn.disabled = true);
-
+      buttons.forEach(b => b.disabled = true);
       const indicator = document.getElementById('speakingIndicator');
       indicator.style.display = 'block';
 
       try {
-        // Call YOUR serverless function
         const response = await fetch('/api/santa-voice', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            text: personalized
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: personalized })
         });
 
         if (!response.ok) {
-          throw new Error(`API Error: ${response.status} - ${response.statusText}`);
+          const detail = await response.text().catch(()=>'');
+          throw new Error(`API Error: ${response.status} ${response.statusText}\n${detail}`);
         }
 
         const audioBlob = await response.blob();
         const audioUrl = URL.createObjectURL(audioBlob);
-        
+
         currentAudio = new Audio(audioUrl);
         currentAudio.onended = () => {
           indicator.style.display = 'none';
-          buttons.forEach(btn => btn.disabled = false);
+          buttons.forEach(b => b.disabled = false);
           currentAudio = null;
         };
         currentAudio.onerror = () => {
           indicator.style.display = 'none';
-          buttons.forEach(btn => btn.disabled = false);
-          alert('Error playing audio');
+          buttons.forEach(b => b.disabled = false);
+          alert('Error playing audio. (Check returned Content-Type: audio/mpeg)');
         };
-        
-        await currentAudio.play();
 
-      } catch (error) {
-        console.error('Error generating Santa voice:', error);
+        await currentAudio.play();
+      } catch (err) {
+        console.error('Error generating Santa voice:', err);
         indicator.style.display = 'none';
-        buttons.forEach(btn => btn.disabled = false);
-        alert('Error generating Santa voice. Please try again.\n\n' + error.message);
+        buttons.forEach(b => b.disabled = false);
+        alert('Error generating Santa voice. Please try again.\n\n' + (err?.message || err));
       }
     }
 
-    // Report Card
-function generateReport() {
-  const name = document.getElementById('childName').value.trim() || 'this child';
-  const niceScore = Math.floor(Math.random() * 40) + 60;
-  const naughtyScore = 100 - niceScore;
-  
-  const status = niceScore >= 75 ? 'NICE LIST' : niceScore >= 60 ? 'WATCH LIST' : 'NAUGHTY LIST';
-  const statusEmoji = niceScore >= 75 ? '⭐' : niceScore >= 60 ? '⚠️' : '🎅';
-  
-  // Arrays of possible good deeds
-  const allGoodDeeds = [
-    'Shared toys with siblings',
-    'Helped with chores without being asked',
-    'Was kind to classmates',
-    'Did homework on time',
-    'Cleaned their room',
-    'Said please and thank you',
-    'Helped a friend in need',
-    'Was respectful to adults',
-    'Took care of a pet',
-    'Made their bed every morning',
-    'Ate vegetables without complaining',
-    'Brushed teeth without reminders',
-    'Helped carry groceries',
-    'Shared snacks with others',
-    'Was patient while waiting',
-    'Used kind words',
-    'Helped set the dinner table',
-    'Picked up after themselves',
-    'Was a good sport in games',
-    'Showed empathy to others'
-  ];
-  
-  // Arrays of possible areas to improve
-  const allNaughtyDeeds = [
-    'Argued with siblings',
-    'Didn\'t listen the first time',
-    'Left toys scattered around',
-    'Complained about bedtime',
-    'Forgot to do assigned chores',
-    'Talked back occasionally',
-    'Needed reminders to clean up',
-    'Interrupted adults talking',
-    'Was grumpy in the morning',
-    'Fought over screen time',
-    'Didn\'t finish dinner',
-    'Procrastinated on homework',
-    'Made excuses for mistakes',
-    'Whined about going outside',
-    'Refused to share sometimes',
-    'Was too rough with pets',
-    'Stayed up past bedtime',
-    'Complained about chores',
-    'Left wet towels on the floor',
-    'Needed multiple reminders'
-  ];
-  
-  // Randomly select 4 good deeds
-  const shuffledGood = [...allGoodDeeds].sort(() => 0.5 - Math.random());
-  const goodDeeds = shuffledGood.slice(0, 4);
-  
-  // Randomly select 2-3 areas to improve
-  const shuffledBad = [...allNaughtyDeeds].sort(() => 0.5 - Math.random());
-  const improvementCount = Math.floor(Math.random() * 2) + 2; // 2 or 3 items
-  const naughtyDeeds = shuffledBad.slice(0, improvementCount);
-  
-  document.getElementById('reportResult').innerHTML = `
-    <div class="report-card">
-      <div class="report-header">
-        <div style="font-size: 40px; margin-bottom: 8px;">🎄</div>
-        <h2 style="font-size: 24px; font-weight: bold;">OFFICIAL SANTA REPORT</h2>
-        <p style="font-size: 14px; margin-top: 4px;">North Pole • ${new Date().toLocaleDateString()}</p>
-      </div>
-      <div class="report-content">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <h3 style="font-size: 24px; font-weight: bold;">${name}</h3>
-          <span style="background: ${status.includes('NICE') ? '#10b981' : status.includes('WATCH') ? '#fbbf24' : '#ef4444'}; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px;">
-            ${statusEmoji} ${status}
-          </span>
-        </div>
-        <div class="report-scores">
-          <div class="score-box nice">
-            <div class="score-number" style="color: #059669;">${niceScore}%</div>
-            <div style="font-size: 14px; font-weight: 600; color: #059669;">Nice Score</div>
+    /**************  REPORT CARD  **************/
+    function generateReport() {
+      const name = (document.getElementById('childName').value || '').trim() || 'this child';
+      const niceScore = Math.floor(Math.random() * 40) + 60;
+      const naughtyScore = 100 - niceScore;
+      const status = niceScore >= 75 ? 'NICE LIST' : niceScore >= 60 ? 'WATCH LIST' : 'NAUGHTY LIST';
+      const statusEmoji = niceScore >= 75 ? '⭐' : niceScore >= 60 ? '⚠️' : '🎅';
+
+      const allGoodDeeds = [
+        'Shared toys with siblings','Helped with chores without being asked','Was kind to classmates',
+        'Did homework on time','Cleaned their room','Said please and thank you','Helped a friend in need',
+        'Was respectful to adults','Took care of a pet','Made their bed every morning','Ate vegetables without complaining',
+        'Brushed teeth without reminders','Helped carry groceries','Shared snacks with others','Was patient while waiting',
+        'Used kind words','Helped set the dinner table','Picked up after themselves','Was a good sport in games','Showed empathy to others'
+      ];
+      const allNaughtyDeeds = [
+        'Argued with siblings',"Didn't listen the first time",'Left toys scattered around','Complained about bedtime',
+        'Forgot to do assigned chores','Talked back occasionally','Needed reminders to clean up','Interrupted adults talking',
+        'Was grumpy in the morning','Fought over screen time',"Didn't finish dinner",'Procrastinated on homework',
+        'Made excuses for mistakes','Whined about going outside','Refused to share sometimes','Was too rough with pets',
+        'Stayed up past bedtime','Complained about chores','Left wet towels on the floor','Needed multiple reminders'
+      ];
+
+      const goodDeeds = [...allGoodDeeds].sort(()=>0.5-Math.random()).slice(0,4);
+      const naughtyDeeds = [...allNaughtyDeeds].sort(()=>0.5-Math.random()).slice(0, Math.floor(Math.random()*2)+2);
+
+      document.getElementById('reportResult').innerHTML = `
+        <div class="report-card">
+          <div class="report-header">
+            <div style="font-size:40px; margin-bottom:8px;">🎄</div>
+            <h2 style="font-size:24px; font-weight:bold;">OFFICIAL SANTA REPORT</h2>
+            <p style="font-size:14px; margin-top:4px;">North Pole • ${new Date().toLocaleDateString()}</p>
           </div>
-          <div class="score-box naughty">
-            <div class="score-number" style="color: #dc2626;">${naughtyScore}%</div>
-            <div style="font-size: 14px; font-weight: 600; color: #dc2626;">Naughty Score</div>
+          <div class="report-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+              <h3 style="font-size:24px; font-weight:bold;">${name}</h3>
+              <span style="background:${status.includes('NICE') ? '#10b981' : status.includes('WATCH') ? '#fbbf24' : '#ef4444'}; color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:12px;">
+                ${statusEmoji} ${status}
+              </span>
+            </div>
+            <div class="report-scores">
+              <div class="score-box nice">
+                <div class="score-number" style="color:#059669;">${niceScore}%</div>
+                <div style="font-size:14px; font-weight:600; color:#059669;">Nice Score</div>
+              </div>
+              <div class="score-box naughty">
+                <div class="score-number" style="color:#dc2626;">${naughtyScore}%</div>
+                <div style="font-size:14px; font-weight:600; color:#dc2626;">Naughty Score</div>
+              </div>
+            </div>
+            <div class="deeds-section">
+              <h4 style="font-weight:bold; margin-bottom:8px;">⭐ Good Deeds</h4>
+              ${goodDeeds.map(d => `<div>✓ ${d}</div>`).join('')}
+            </div>
+            <div class="deeds-section">
+              <h4 style="font-weight:bold; margin-bottom:8px;">⚠️ Areas to Improve</h4>
+              ${naughtyDeeds.map(d => `<div>• ${d}</div>`).join('')}
+            </div>
+            <p style="text-align:center; font-size:12px; color:#6b7280; margin-top:16px; font-style:italic;">
+              Report generated by Santa's Elf Monitoring System™
+            </p>
           </div>
         </div>
-        <div class="deeds-section">
-          <h4 style="font-weight: bold; margin-bottom: 8px;">⭐ Good Deeds</h4>
-          ${goodDeeds.map(deed => `<div>✓ ${deed}</div>`).join('')}
-        </div>
-        <div class="deeds-section">
-          <h4 style="font-weight: bold; margin-bottom: 8px;">⚠️ Areas to Improve</h4>
-          ${naughtyDeeds.map(deed => `<div>• ${deed}</div>`).join('')}
-        </div>
-        <p style="text-align: center; font-size: 12px; color: #6b7280; margin-top: 16px; font-style: italic;">
-          Report generated by Santa's Elf Monitoring System™
-        </p>
-      </div>
-    </div>
-  `;
-}
-const camScenes = {
-  workshop: {
-    title: "Santa's Workshop",
-    videos: ['workshop1.mp4', 'workshop2.mp4', 'workshop3.mp4', 'workshop4.mp4']
-  },
-  office: {
-    title: "Santa's Office",
-    videos: ['office1.mp4', 'office2.mp4', 'office3.mp4', 'office4.mp4']
-  },
-  stable: {
-    title: 'Reindeer Stable',
-    videos: ['stable1.mp4', 'stable2.mp4', 'stable3.mp4', 'stable4.mp4']
-  },
-  kitchen: {
-    title: "Mrs. Claus' Kitchen",
-    videos: ['kitchen1.mp4', 'kitchen2.mp4', 'kitchen3.mp4', 'kitchen4.mp4']
-  },
-  mailroom: {
-    title: 'Mail Room',
-    videos: ['mailroom1.mp4', 'mailroom2.mp4', 'mailroom3.mp4', 'mailroom4.mp4']
-  },
-  lab: {
-    title: 'Toy Testing Lab',
-    videos: ['lab1.mp4', 'lab2.mp4', 'lab3.mp4', 'lab4.mp4']
-  }
-};
-function openCam(key) {
-  const modal = document.getElementById('videoModal');
-  const video = document.getElementById('modalVideo');
-  const title = document.getElementById('modalTitle');
-  const muteBtn = document.getElementById('muteBtn');
-  
-  // Get the scene data
-  const scene = camScenes[key];
-  
-  // Pick a random video from the array
-  const randomIndex = Math.floor(Math.random() * scene.videos.length);
-  const randomVideo = scene.videos[randomIndex];
-  
-  video.src = randomVideo;
-  title.textContent = scene.title;
-  video.muted = false;
-  muteBtn.textContent = '🔊 Mute';
-  modal.classList.add('open');
-  
-  video.play().catch(() => {
-    video.muted = true;
-    muteBtn.textContent = '🔇 Unmute';
-    video.play();
-  });
-}
+      `;
+    }
+
+    /**************  SANTA CAM – MANIFEST-BASED LOADING  **************/
+    /*
+      Place this file at: public/videos/index.json
+
+      Example:
+      {
+        "workshop": { "title": "Santa's Workshop", "base": "/videos/workshop", "files": ["workshop1.mp4","workshop2.mp4"] },
+        "office":   { "title": "Santa's Office",   "base": "/videos/office",   "files": ["office1.mp4"] },
+        "stable":   { "title": "Reindeer Stable",  "base": "/videos/stable",   "files": ["stable1.mp4"] },
+        "kitchen":  { "title": "Mrs. Claus' Kitchen", "base": "/videos/kitchen", "files": ["kitchen1.mp4"] },
+        "mailroom": { "title": "Mail Room",        "base": "/videos/mailroom", "files": ["mailroom1.mp4"] },
+        "lab":      { "title": "Toy Testing Lab",  "base": "/videos/lab",      "files": ["lab1.mp4"] }
+      }
+    */
+    let camManifest = null;
+
+    async function loadCamManifest() {
+      if (camManifest) return camManifest;
+      const res = await fetch('/videos/index.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('Failed to load videos manifest');
+      camManifest = await res.json();
+      return camManifest;
+    }
+
+    async function openCam(key) {
+      const modal = document.getElementById('videoModal');
+      const video = document.getElementById('modalVideo');
+      const title = document.getElementById('modalTitle');
+      const muteBtn = document.getElementById('muteBtn');
+
+      const manifest = await loadCamManifest();
+      const scene = manifest[key];
+      if (!scene || !Array.isArray(scene.files) || scene.files.length === 0) {
+        alert('No videos found for this scene yet.');
+        return;
+      }
+
+      const choice = scene.files[Math.floor(Math.random() * scene.files.length)];
+      // Build URL like /videos/workshop/workshop1.mp4
+      const src = `${(scene.base || '').replace(/\/$/, '')}/${choice}`;
+
+      // Cleanly reset <video> and inject a <source> with type for better codec support
+      try { video.pause(); } catch {}
+      video.removeAttribute('src');
+      video.innerHTML = '';
+      video.load();
+
+      const source = document.createElement('source');
+      source.src = src;
+      source.type = 'video/mp4';
+      video.appendChild(source);
+
+      title.textContent = scene.title || 'Santa Cam';
+      video.muted = false;
+      muteBtn.textContent = '🔊 Mute';
+      modal.classList.add('open');
+
+      // Try to play; if blocked, retry muted (browser policy)
+      video.play().catch(() => {
+        video.muted = true;
+        muteBtn.textContent = '🔇 Unmute';
+        video.play().catch(() => {
+          alert('This video format may not be supported by the browser.');
+        });
+      });
+
+      video.onerror = () => {
+        console.warn('Video error; check path/codec:', src);
+      };
+    }
 
     function toggleMute() {
       const video = document.getElementById('modalVideo');
@@ -807,13 +457,13 @@ function openCam(key) {
     function restartVideo() {
       const video = document.getElementById('modalVideo');
       video.currentTime = 0;
-      video.play();
+      video.play().catch(()=>{});
     }
 
     function closeModal() {
       const modal = document.getElementById('videoModal');
       const video = document.getElementById('modalVideo');
-      video.pause();
+      try { video.pause(); } catch {}
       modal.classList.remove('open');
     }
 
