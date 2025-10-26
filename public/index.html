@@ -132,6 +132,10 @@
           <span class="tab-icon">✉️</span>
           <span>Letter to Santa</span>
         </button>
+        <button class="tab" onclick="switchTab(this,'elf')">
+          <span class="tab-icon">🧝</span>
+          <span>Elf Name</span>
+        </button>
         <button class="tab" onclick="switchTab(this,'cam')">
           <span class="tab-icon">📹</span>
           <span>Santa Cam</span>
@@ -182,6 +186,28 @@
           </div>
           
           <div id="letterStatus" style="display: none;"></div>
+        </div>
+
+        <!-- Elf Name Generator -->
+        <div id="elf" class="tab-pane">
+          <div style="background: white; color: #1f2937; border-radius: 20px; padding: 24px;">
+            <div style="text-align: center; margin-bottom: 24px;">
+              <div style="font-size: 64px; margin-bottom: 12px;">🧝‍♂️✨🧝‍♀️</div>
+              <h2 style="font-size: 28px; font-weight: bold; color: #16a34a;">Elf Name Generator</h2>
+              <p style="font-size: 14px; color: #6b7280; margin-top: 8px;">Discover your official North Pole elf name!</p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #374151;">Enter Your Name:</label>
+              <input type="text" id="elfNameInput" placeholder="Your name..." style="width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 18px; outline: none; transition: 0.2s;" onfocus="this.style.borderColor='#16a34a'" onblur="this.style.borderColor='#e5e7eb'" />
+            </div>
+            
+            <button onclick="generateElfName()" style="width: 100%; padding: 18px; border: none; border-radius: 12px; background: linear-gradient(135deg, #16a34a, #059669); color: white; font-size: 18px; font-weight: bold; cursor: pointer; transition: transform 0.2s; margin-bottom: 24px;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+              ✨ Generate My Elf Name
+            </button>
+            
+            <div id="elfNameResult" style="display: none;"></div>
+          </div>
         </div>
 
         <!-- Santa Cam -->
@@ -473,6 +499,68 @@
         </div>
       `;
       statusDiv.style.display = 'block';
+    }
+
+    /**************  ELF NAME GENERATOR  **************/
+    function generateElfName() {
+      const name = document.getElementById('elfNameInput').value.trim();
+      
+      if (!name) {
+        alert('Please enter your name!');
+        return;
+      }
+
+      const prefixes = [
+        'Sparkle', 'Jingle', 'Twinkle', 'Sugar', 'Jolly', 'Merry', 'Cocoa', 'Candy',
+        'Ginger', 'Snowflake', 'Peppermint', 'Holly', 'Frosty', 'Tinsel', 'Glitter',
+        'Cinnamon', 'Cookie', 'Mistletoe', 'Starlight', 'Chestnut', 'Nutmeg', 'Angel',
+        'Berry', 'Sparkly', 'Cheery', 'Snowy', 'Elfie', 'Pudding', 'Caramel', 'Zippy'
+      ];
+
+      const suffixes = [
+        'toes', 'bells', 'shine', 'plum', 'whiskers', 'bright', 'flakes', 'paws',
+        'nose', 'sparkle', 'jingles', 'cheeks', 'buttons', 'wings', 'giggles',
+        'twirl', 'bounce', 'dash', 'frost', 'sweet', 'star', 'berry', 'shoes',
+        'hat', 'ears', 'glow', 'hop', 'skip', 'jump', 'smile'
+      ];
+
+      const titles = [
+        'Chief Toy Inspector', 'Master Gift Wrapper', 'Head Cookie Taster',
+        'Lead Reindeer Trainer', 'Senior Sleigh Engineer', 'Top Tinsel Arranger',
+        'Premier Present Sorter', 'Chief Snow Sculptor', 'Master List Checker',
+        'Head Jingle Composer', 'Lead Stocking Stuffer', 'Senior Candy Cane Maker',
+        'Top Ornament Designer', 'Chief Wish Granter', 'Master Elf Motivator',
+        'Head Chimney Navigator', 'Lead Magic Distributor', 'Senior Joy Spreader'
+      ];
+
+      // Generate consistent name based on input
+      const nameHash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const prefix = prefixes[nameHash % prefixes.length];
+      const suffix = suffixes[(nameHash * 7) % suffixes.length];
+      const title = titles[(nameHash * 13) % titles.length];
+      const elfNumber = (nameHash % 999) + 1;
+
+      const elfName = `${prefix}${suffix}`;
+      
+      const resultDiv = document.getElementById('elfNameResult');
+      resultDiv.innerHTML = `
+        <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); padding: 24px; border-radius: 16px; text-align: center; animation: bounce 0.5s ease-out;">
+          <div style="font-size: 48px; margin-bottom: 12px;">🧝‍♂️✨</div>
+          <h3 style="font-size: 14px; color: #059669; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Your Official Elf Name</h3>
+          <div style="font-size: 32px; font-weight: bold; color: #16a34a; margin-bottom: 8px;">${elfName}</div>
+          <div style="background: white; padding: 12px; border-radius: 12px; margin: 16px 0;">
+            <p style="font-size: 14px; color: #6b7280; margin-bottom: 4px;">Official Title:</p>
+            <p style="font-size: 18px; font-weight: 600; color: #374151;">${title}</p>
+          </div>
+          <div style="display: inline-block; background: #16a34a; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;">
+            ELF #${String(elfNumber).padStart(3, '0')}
+          </div>
+          <p style="font-size: 12px; color: #6b7280; margin-top: 16px; font-style: italic;">
+            Welcome to Santa's Workshop, ${elfName}! 🎄
+          </p>
+        </div>
+      `;
+      resultDiv.style.display = 'block';
     }
 
     /**************  SANTA CAM  **************/
