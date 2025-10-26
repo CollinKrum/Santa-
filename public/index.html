@@ -23,6 +23,11 @@
       50% { transform: translateY(50vh) translateX(30px); opacity: 0.2; }
       100% { transform: translateY(110vh) translateX(0); opacity: 0; }
     }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
     .snowflake { position: fixed; top: -50px; color: white; font-size: 20px; opacity: 0.2; pointer-events: none; animation: float linear infinite; z-index: 1; }
     .container { max-width: 800px; margin: 0 auto; position: relative; z-index: 10; }
     .header { text-align: center; margin-bottom: 30px; }
@@ -55,7 +60,6 @@
     .message-btn.neutral{ background: linear-gradient(135deg, #3b82f6, #2563eb); }
 
     .speaking-indicator { margin-top:16px; padding:16px; background: linear-gradient(135deg, #dc2626, #16a34a); border-radius:16px; text-align:center; font-weight:bold; animation: pulse 1.5s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
 
     .generate-btn { width:100%; padding:24px; border-radius:16px; border:none; background: linear-gradient(135deg, #dc2626, #ef4444, #16a34a); color:white; font-size:18px; font-weight:bold; cursor:pointer; margin-bottom:24px; transition: transform .2s; }
     .generate-btn:hover{ transform: scale(1.05); }
@@ -116,7 +120,6 @@
 
       <!-- Tabs -->
       <div class="tabs">
-        <!-- NOTE: we pass the button element into switchTab to avoid relying on global event -->
         <button class="tab active" onclick="switchTab(this,'soundboard')">
           <span class="tab-icon">🔊</span>
           <span>Soundboard</span>
@@ -124,6 +127,10 @@
         <button class="tab" onclick="switchTab(this,'report')">
           <span class="tab-icon">📄</span>
           <span>Report Card</span>
+        </button>
+        <button class="tab" onclick="switchTab(this,'letter')">
+          <span class="tab-icon">✉️</span>
+          <span>Letter to Santa</span>
         </button>
         <button class="tab" onclick="switchTab(this,'cam')">
           <span class="tab-icon">📹</span>
@@ -143,6 +150,38 @@
         <div id="report" class="tab-pane">
           <button class="generate-btn" onclick="generateReport()">✨ Generate Report Card</button>
           <div id="reportResult"></div>
+        </div>
+
+        <!-- Letter to Santa -->
+        <div id="letter" class="tab-pane">
+          <div style="background: white; color: #1f2937; border-radius: 20px; padding: 24px; margin-bottom: 20px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <div style="font-size: 48px; margin-bottom: 8px;">🎅📮</div>
+              <h2 style="font-size: 24px; font-weight: bold; color: #dc2626;">Write a Letter to Santa</h2>
+              <p style="font-size: 14px; color: #6b7280; margin-top: 8px;">Tell Santa what you'd like for Christmas!</p>
+            </div>
+            
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #374151;">Your Name:</label>
+              <input type="text" id="letterName" placeholder="Enter your name..." style="width: 100%; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; outline: none; transition: 0.2s;" onfocus="this.style.borderColor='#dc2626'" onblur="this.style.borderColor='#e5e7eb'" />
+            </div>
+            
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #374151;">Your Letter:</label>
+              <textarea id="letterContent" placeholder="Dear Santa,&#10;&#10;This year I have been very good! For Christmas, I would like...&#10;&#10;Thank you!" style="width: 100%; min-height: 250px; padding: 12px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 16px; font-family: 'Comic Sans MS', cursive; outline: none; resize: vertical; transition: 0.2s;" onfocus="this.style.borderColor='#dc2626'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 12px;">
+              <button onclick="saveLetterLocally()" style="flex: 1; padding: 16px; border: none; border-radius: 12px; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                💾 Save Locally
+              </button>
+              <button onclick="sendLetterToSanta()" style="flex: 1; padding: 16px; border: none; border-radius: 12px; background: linear-gradient(135deg, #dc2626, #16a34a); color: white; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                📮 Send to Santa
+              </button>
+            </div>
+          </div>
+          
+          <div id="letterStatus" style="display: none;"></div>
         </div>
 
         <!-- Santa Cam -->
@@ -185,7 +224,6 @@
         <button class="close-btn" onclick="closeModal()">Close</button>
       </div>
       <div class="video-container">
-        <!-- We'll inject a <source> so we can set type="video/mp4" for better codec handling -->
         <video id="modalVideo" autoplay loop playsinline></video>
       </div>
       <div class="video-controls">
@@ -211,7 +249,7 @@
       }
     })();
 
-    // Tabs (no reliance on global event)
+    // Tabs
     function switchTab(btnEl, tabName) {
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
@@ -261,12 +299,11 @@
 
     document.getElementById('childName').addEventListener('input', updateButtonText);
 
-    // ElevenLabs via your serverless endpoint: /api/santa-voice
+    // ElevenLabs via serverless endpoint: /api/santa-voice
     async function speakMessage(text) {
       const name = (document.getElementById('childName').value || '').trim() || 'little one';
       const personalized = text.replace(/{name}/g, name);
 
-      // Stop any currently playing audio
       if (currentAudio) { currentAudio.pause(); currentAudio = null; }
 
       const buttons = document.querySelectorAll('.message-btn');
@@ -298,7 +335,7 @@
         currentAudio.onerror = () => {
           indicator.style.display = 'none';
           buttons.forEach(b => b.disabled = false);
-          alert('Error playing audio. (Check returned Content-Type: audio/mpeg)');
+          alert('Error playing audio.');
         };
 
         await currentAudio.play();
@@ -376,20 +413,69 @@
       `;
     }
 
-    /**************  SANTA CAM – MANIFEST-BASED LOADING  **************/
-    /*
-      Place this file at: public/videos/index.json
-
-      Example:
-      {
-        "workshop": { "title": "Santa's Workshop", "base": "/videos/workshop", "files": ["workshop1.mp4","workshop2.mp4"] },
-        "office":   { "title": "Santa's Office",   "base": "/videos/office",   "files": ["office1.mp4"] },
-        "stable":   { "title": "Reindeer Stable",  "base": "/videos/stable",   "files": ["stable1.mp4"] },
-        "kitchen":  { "title": "Mrs. Claus' Kitchen", "base": "/videos/kitchen", "files": ["kitchen1.mp4"] },
-        "mailroom": { "title": "Mail Room",        "base": "/videos/mailroom", "files": ["mailroom1.mp4"] },
-        "lab":      { "title": "Toy Testing Lab",  "base": "/videos/lab",      "files": ["lab1.mp4"] }
+    /**************  LETTER TO SANTA  **************/
+    function saveLetterLocally() {
+      const name = document.getElementById('letterName').value.trim();
+      const content = document.getElementById('letterContent').value.trim();
+      
+      if (!name || !content) {
+        alert('Please fill in both your name and letter content!');
+        return;
       }
-    */
+      
+      const letterText = `Letter to Santa from ${name}\n${new Date().toLocaleDateString()}\n\n${content}`;
+      const blob = new Blob([letterText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Letter_to_Santa_${name.replace(/\s+/g, '_')}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showLetterStatus('💾 Letter saved to your device!', '#3b82f6');
+    }
+    
+    function sendLetterToSanta() {
+      const name = document.getElementById('letterName').value.trim();
+      const content = document.getElementById('letterContent').value.trim();
+      
+      if (!name || !content) {
+        alert('Please fill in both your name and letter content!');
+        return;
+      }
+      
+      showLetterStatus('📮 Sending to the North Pole...', '#fbbf24');
+      
+      setTimeout(() => {
+        showLetterStatus(`
+          <div style="text-align: center;">
+            <div style="font-size: 64px; margin-bottom: 16px; animation: bounce 1s ease-in-out;">🎅✨</div>
+            <h3 style="font-size: 24px; font-weight: bold; color: #059669; margin-bottom: 8px;">Letter Delivered!</h3>
+            <p style="font-size: 16px; color: #374151;">Santa has received your letter, ${name}!</p>
+            <p style="font-size: 14px; color: #6b7280; margin-top: 8px;">He's checking it twice and adding it to his special list. 🎄</p>
+          </div>
+        `, 'linear-gradient(135deg, #d1fae5, #a7f3d0)');
+        
+        setTimeout(() => {
+          document.getElementById('letterName').value = '';
+          document.getElementById('letterContent').value = '';
+        }, 2000);
+      }, 2000);
+    }
+    
+    function showLetterStatus(message, bgColor) {
+      const statusDiv = document.getElementById('letterStatus');
+      statusDiv.innerHTML = `
+        <div style="background: ${bgColor}; color: #1f2937; border-radius: 16px; padding: 20px; text-align: center; font-weight: 600;">
+          ${message}
+        </div>
+      `;
+      statusDiv.style.display = 'block';
+    }
+
+    /**************  SANTA CAM  **************/
     let camManifest = null;
 
     async function loadCamManifest() {
@@ -414,10 +500,8 @@
       }
 
       const choice = scene.files[Math.floor(Math.random() * scene.files.length)];
-      // Build URL like /videos/workshop/workshop1.mp4
       const src = `${(scene.base || '').replace(/\/$/, '')}/${choice}`;
 
-      // Cleanly reset <video> and inject a <source> with type for better codec support
       try { video.pause(); } catch {}
       video.removeAttribute('src');
       video.innerHTML = '';
@@ -433,7 +517,6 @@
       muteBtn.textContent = '🔊 Mute';
       modal.classList.add('open');
 
-      // Try to play; if blocked, retry muted (browser policy)
       video.play().catch(() => {
         video.muted = true;
         muteBtn.textContent = '🔇 Unmute';
@@ -467,7 +550,6 @@
       modal.classList.remove('open');
     }
 
-    // Close modal on background click
     document.getElementById('videoModal').addEventListener('click', (e) => {
       if (e.target.id === 'videoModal') closeModal();
     });
