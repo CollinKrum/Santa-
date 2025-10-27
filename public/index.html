@@ -325,6 +325,21 @@
 
     document.getElementById('childName').addEventListener('input', updateButtonText);
 
+    // Auto-fill name across all sections
+    document.getElementById('childName').addEventListener('input', function() {
+      const name = this.value;
+      // Update letter name
+      const letterNameInput = document.getElementById('letterName');
+      if (letterNameInput && !letterNameInput.value) {
+        letterNameInput.value = name;
+      }
+      // Update elf name input
+      const elfNameInput = document.getElementById('elfNameInput');
+      if (elfNameInput && !elfNameInput.value) {
+        elfNameInput.value = name;
+      }
+    });
+
     // ElevenLabs via serverless endpoint: /api/santa-voice
     async function speakMessage(text) {
       const name = (document.getElementById('childName').value || '').trim() || 'little one';
@@ -441,8 +456,13 @@
 
     /**************  LETTER TO SANTA  **************/
     function saveLetterLocally() {
-      const name = document.getElementById('letterName').value.trim();
+      let name = document.getElementById('letterName').value.trim();
       const content = document.getElementById('letterContent').value.trim();
+      
+      // Use main name if letter name is empty
+      if (!name) {
+        name = document.getElementById('childName').value.trim();
+      }
       
       if (!name || !content) {
         alert('Please fill in both your name and letter content!');
@@ -464,8 +484,13 @@
     }
     
     function sendLetterToSanta() {
-      const name = document.getElementById('letterName').value.trim();
+      let name = document.getElementById('letterName').value.trim();
       const content = document.getElementById('letterContent').value.trim();
+      
+      // Use main name if letter name is empty
+      if (!name) {
+        name = document.getElementById('childName').value.trim();
+      }
       
       if (!name || !content) {
         alert('Please fill in both your name and letter content!');
@@ -503,10 +528,15 @@
 
     /**************  ELF NAME GENERATOR  **************/
     function generateElfName() {
-      const name = document.getElementById('elfNameInput').value.trim();
+      let name = document.getElementById('elfNameInput').value.trim();
+      
+      // Use main name if elf name input is empty
+      if (!name) {
+        name = document.getElementById('childName').value.trim();
+      }
       
       if (!name) {
-        alert('Please enter your name!');
+        alert('Please enter your name in the name field at the top!');
         return;
       }
 
