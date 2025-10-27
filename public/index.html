@@ -328,14 +328,17 @@
     // Auto-fill name across all sections
     document.getElementById('childName').addEventListener('input', function() {
       const name = this.value;
-      // Update letter name
+      updateButtonText(); // Update soundboard buttons
+      
+      // Update letter name if empty
       const letterNameInput = document.getElementById('letterName');
-      if (letterNameInput && !letterNameInput.value) {
+      if (letterNameInput) {
         letterNameInput.value = name;
       }
-      // Update elf name input
+      
+      // Update elf name input if empty
       const elfNameInput = document.getElementById('elfNameInput');
-      if (elfNameInput && !elfNameInput.value) {
+      if (elfNameInput) {
         elfNameInput.value = name;
       }
     });
