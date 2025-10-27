@@ -169,6 +169,214 @@
       background: linear-gradient(135deg, #16a34a, #059669);
       animation: glow 2s ease-in-out infinite;
     }
+    
+    .advent-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: 12px;
+      padding: 20px;
+      background: white;
+      border-radius: 20px;
+    }
+    .advent-day {
+      aspect-ratio: 1;
+      background: linear-gradient(135deg, #dc2626, #991b1b);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      border: 3px solid #7f1d1d;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .advent-day:hover:not(.locked):not(.opened) {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
+    }
+    .advent-day.locked {
+      background: linear-gradient(135deg, #6b7280, #4b5563);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    .advent-day.opened {
+      background: linear-gradient(135deg, #16a34a, #059669);
+      border-color: #14532d;
+    }
+    .advent-day.today {
+      animation: glow 2s ease-in-out infinite;
+      border-color: #fbbf24;
+    }
+    .advent-number {
+      font-size: 28px;
+      font-weight: bold;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    .advent-icon {
+      font-size: 20px;
+      margin-top: 4px;
+    }
+    .advent-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .advent-modal.open {
+      display: flex;
+    }
+    .advent-modal-content {
+      background: white;
+      border-radius: 24px;
+      padding: 32px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      color: #1f2937;
+    }
+    .advent-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: #dc2626;
+      color: white;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    .advent-surprise {
+      font-size: 64px;
+      margin: 20px 0;
+      animation: bounce 1s ease-out;
+    }
+    
+    .chat-container {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 600px;
+    }
+    .chat-header {
+      background: linear-gradient(135deg, #dc2626, #16a34a);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: #f9fafb;
+    }
+    .chat-message {
+      margin-bottom: 16px;
+      display: flex;
+      gap: 12px;
+    }
+    .chat-message.santa {
+      flex-direction: row;
+    }
+    .chat-message.user {
+      flex-direction: row-reverse;
+    }
+    .chat-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .chat-bubble {
+      max-width: 70%;
+      padding: 12px 16px;
+      border-radius: 16px;
+      color: #1f2937;
+      line-height: 1.5;
+    }
+    .chat-message.santa .chat-bubble {
+      background: white;
+      border: 2px solid #fee2e2;
+      border-radius: 16px 16px 16px 4px;
+    }
+    .chat-message.user .chat-bubble {
+      background: #dbeafe;
+      border-radius: 16px 16px 4px 16px;
+    }
+    .chat-input-area {
+      padding: 16px;
+      background: white;
+      border-top: 2px solid #e5e7eb;
+      display: flex;
+      gap: 12px;
+    }
+    .chat-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 24px;
+      font-size: 16px;
+      outline: none;
+      font-family: inherit;
+    }
+    .chat-input:focus {
+      border-color: #dc2626;
+    }
+    .chat-send-btn {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #dc2626, #16a34a);
+      color: white;
+      border: none;
+      border-radius: 24px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .chat-send-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+    }
+    .chat-send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .chat-typing {
+      display: flex;
+      gap: 4px;
+      padding: 12px 16px;
+    }
+    .chat-typing-dot {
+      width: 8px;
+      height: 8px;
+      background: #9ca3af;
+      border-radius: 50%;
+      animation: typing 1.4s infinite;
+    }
+    .chat-typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .chat-typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    @keyframes typing {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-10px); }
+    }
   </style>
 </head>
 <body>
@@ -220,6 +428,10 @@
           <span class="tab-icon">🔊</span>
           <span>Soundboard</span>
         </button>
+        <button class="tab" onclick="switchTab(this,'chat')">
+          <span class="tab-icon">💬</span>
+          <span>Chat with Santa</span>
+        </button>
         <button class="tab" onclick="switchTab(this,'report')">
           <span class="tab-icon">📄</span>
           <span>Report Card</span>
@@ -227,6 +439,10 @@
         <button class="tab" onclick="switchTab(this,'letter')">
           <span class="tab-icon">✉️</span>
           <span>Letter to Santa</span>
+        </button>
+        <button class="tab" onclick="switchTab(this,'advent')">
+          <span class="tab-icon">🎁</span>
+          <span>Advent Calendar</span>
         </button>
         <button class="tab" onclick="switchTab(this,'elf')">
           <span class="tab-icon">🧝</span>
@@ -244,6 +460,35 @@
         <div id="soundboard" class="tab-pane active">
           <div class="message-buttons" id="messageButtons"></div>
           <div id="speakingIndicator" style="display: none;" class="speaking-indicator">🔊 Santa is speaking...</div>
+        </div>
+
+        <!-- Chat with Santa -->
+        <div id="chat" class="tab-pane">
+          <div class="chat-container">
+            <div class="chat-header">
+              <div style="font-size: 48px; margin-bottom: 8px;">🎅</div>
+              <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 4px;">Chat with Santa Claus</h2>
+              <p style="font-size: 14px; opacity: 0.9;">Ask Santa anything! He's listening from the North Pole</p>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+              <div class="chat-message santa">
+                <div class="chat-avatar">🎅</div>
+                <div class="chat-bubble">
+                  Ho ho ho! Welcome to the North Pole! I'm Santa Claus, and I'm so happy to chat with you! What's your name, my dear friend?
+                </div>
+              </div>
+            </div>
+            <div class="chat-input-area">
+              <input 
+                type="text" 
+                id="chatInput" 
+                class="chat-input" 
+                placeholder="Type your message to Santa..."
+                onkeypress="if(event.key==='Enter') sendChatMessage()"
+              />
+              <button class="chat-send-btn" onclick="sendChatMessage()" id="chatSendBtn">Send 🎁</button>
+            </div>
+          </div>
         </div>
 
         <!-- Report Card -->
@@ -306,6 +551,15 @@
           </div>
         </div>
 
+        <!-- Advent Calendar -->
+        <div id="advent" class="tab-pane">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">🎄 Advent Calendar 🎁</h2>
+            <p style="font-size: 14px; opacity: 0.8;">Open a new surprise each day leading up to Christmas!</p>
+          </div>
+          <div class="advent-grid" id="adventGrid"></div>
+        </div>
+
         <!-- Santa Cam -->
         <div id="cam" class="tab-pane">
           <div class="cam-grid">
@@ -335,6 +589,14 @@
     <div class="footer">
       Made with holiday magic & Christmas spirit<br />
       © 2024 North Pole Technologies
+    </div>
+  </div>
+
+  <!-- Advent Calendar Modal -->
+  <div id="adventModal" class="advent-modal">
+    <div class="advent-modal-content">
+      <button class="advent-close" onclick="closeAdventModal()">×</button>
+      <div id="adventSurpriseContent"></div>
     </div>
   </div>
 
@@ -731,6 +993,216 @@
         </div>
       `;
       resultDiv.style.display = 'block';
+    }
+
+    /**************  ADVENT CALENDAR  **************/
+    const adventSurprises = [
+      { icon: '🎅', title: 'Santa Fact', content: 'Santa has over 2 billion children to visit on Christmas Eve!' },
+      { icon: '🦌', title: 'Reindeer Fact', content: 'Rudolph was almost named Rollo or Reginald!' },
+      { icon: '🍪', title: 'Cookie Recipe', content: 'Santa\'s favorite cookies are chocolate chip with a glass of cold milk!' },
+      { icon: '⛄', title: 'Snowman Joke', content: 'What do snowmen eat for breakfast? Frosted Flakes!' },
+      { icon: '🎄', title: 'Tree Fact', content: 'The tradition of Christmas trees started in Germany over 400 years ago!' },
+      { icon: '🎁', title: 'Gift Fact', content: 'The biggest Christmas gift ever was the Statue of Liberty from France!' },
+      { icon: '🔔', title: 'Jingle Bells', content: 'Jingle Bells was originally written for Thanksgiving, not Christmas!' },
+      { icon: '🧝', title: 'Elf Fact', content: 'Santa\'s elves work in 8-hour shifts around the clock making toys!' },
+      { icon: '✨', title: 'North Pole Fact', content: 'The North Pole temperature can drop to -40°F in winter!' },
+      { icon: '🎅', title: 'Santa\'s Age', content: 'Santa Claus is over 1,750 years old!' },
+      { icon: '🥛', title: 'Milk & Cookies', content: 'Children around the world leave out over 500 million cookies for Santa!' },
+      { icon: '🎵', title: 'Carol Fact', content: 'Silent Night has been translated into over 300 languages!' },
+      { icon: '⭐', title: 'Christmas Star', content: 'The star on top of the tree represents the Star of Bethlehem!' },
+      { icon: '🧦', title: 'Stocking Fact', content: 'The tradition of stockings came from a generous gift from St. Nicholas!' },
+      { icon: '🎪', title: 'Toy Fact', content: 'The most popular toy requested from Santa is LEGO bricks!' },
+      { icon: '❄️', title: 'Snow Fact', content: 'No two snowflakes are exactly alike!' },
+      { icon: '🍬', title: 'Candy Cane', content: 'Candy canes were originally made to keep children quiet in church!' },
+      { icon: '🎺', title: 'Music Fact', content: 'The song "Jingle Bells" was the first song played in space!' },
+      { icon: '🌟', title: 'Wish Upon a Star', content: 'Santa grants wishes to children who believe with all their heart!' },
+      { icon: '🎉', title: 'Celebration', content: 'Over 2 billion people celebrate Christmas worldwide!' },
+      { icon: '🕯️', title: 'Candle Fact', content: 'Candles on Christmas trees were used before electric lights!' },
+      { icon: '🎀', title: 'Wrapping Fact', content: 'Americans spend over $2 billion on Christmas wrapping paper!' },
+      { icon: '🏠', title: 'Gingerbread', content: 'Gingerbread houses started in Germany in the 1800s!' },
+      { icon: '🎊', title: 'Almost Christmas!', content: 'Only 1 day left! Santa is packing his sleigh right now!' },
+      { icon: '🎅', title: 'MERRY CHRISTMAS!', content: 'It\'s Christmas Day! Santa visited last night while you were sleeping! 🎄✨' }
+    ];
+
+    function initAdventCalendar() {
+      const grid = document.getElementById('adventGrid');
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentDay = now.getDate();
+      
+      // Get opened days from localStorage
+      const openedDays = JSON.parse(localStorage.getItem('adventOpened') || '[]');
+      
+      for (let day = 1; day <= 25; day++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'advent-day';
+        
+        const isOpened = openedDays.includes(day);
+        const isDecember = currentMonth === 11; // December is month 11
+        const canOpen = isDecember && currentDay >= day;
+        const isToday = isDecember && currentDay === day;
+        
+        if (!canOpen) {
+          dayDiv.classList.add('locked');
+        } else if (isOpened) {
+          dayDiv.classList.add('opened');
+        }
+        
+        if (isToday && !isOpened) {
+          dayDiv.classList.add('today');
+        }
+        
+        dayDiv.innerHTML = `
+          <div class="advent-number">${day}</div>
+          <div class="advent-icon">${isOpened ? '✨' : canOpen ? '🎁' : '🔒'}</div>
+        `;
+        
+        if (canOpen && !isOpened) {
+          dayDiv.onclick = () => openAdventDay(day);
+        }
+        
+        grid.appendChild(dayDiv);
+      }
+    }
+
+    function openAdventDay(day) {
+      const surprise = adventSurprises[day - 1];
+      const modal = document.getElementById('adventModal');
+      const content = document.getElementById('adventSurpriseContent');
+      
+      content.innerHTML = `
+        <div class="advent-surprise">${surprise.icon}</div>
+        <h2 style="font-size: 28px; font-weight: bold; color: #dc2626; margin-bottom: 12px;">Day ${day}</h2>
+        <h3 style="font-size: 22px; font-weight: 600; color: #16a34a; margin-bottom: 16px;">${surprise.title}</h3>
+        <p style="font-size: 18px; color: #374151; line-height: 1.6;">${surprise.content}</p>
+        <button onclick="closeAdventModal()" style="margin-top: 24px; padding: 12px 32px; background: linear-gradient(135deg, #dc2626, #16a34a); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer;">
+          Close
+        </button>
+      `;
+      
+      modal.classList.add('open');
+      
+      // Mark as opened
+      const openedDays = JSON.parse(localStorage.getItem('adventOpened') || '[]');
+      if (!openedDays.includes(day)) {
+        openedDays.push(day);
+        localStorage.setItem('adventOpened', JSON.stringify(openedDays));
+      }
+      
+      // Refresh calendar to show opened state
+      document.getElementById('adventGrid').innerHTML = '';
+      initAdventCalendar();
+    }
+
+    function closeAdventModal() {
+      document.getElementById('adventModal').classList.remove('open');
+    }
+
+    // Initialize advent calendar when page loads
+    initAdventCalendar();
+
+    /**************  CHAT WITH SANTA  **************/
+    let chatHistory = [];
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      
+      if (!message) return;
+      
+      // Get child's name from top input
+      const childName = document.getElementById('childName').value.trim() || 'friend';
+      
+      // Add user message to chat
+      addChatMessage(message, 'user');
+      input.value = '';
+      
+      // Disable send button
+      const sendBtn = document.getElementById('chatSendBtn');
+      sendBtn.disabled = true;
+      
+      // Show typing indicator
+      showTypingIndicator();
+      
+      try {
+        // Call Claude API
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 1000,
+            system: `You are Santa Claus chatting with a child named ${childName}. Be warm, jolly, kind, and magical. Use "ho ho ho" occasionally. Keep responses short and child-friendly (2-4 sentences). Talk about Christmas, the North Pole, reindeer, elves, toys, and being good. Always be encouraging and positive. Never break character.`,
+            messages: [
+              ...chatHistory,
+              { role: 'user', content: message }
+            ]
+          })
+        });
+        
+        const data = await response.json();
+        const santaReply = data.content[0].text;
+        
+        // Update chat history
+        chatHistory.push({ role: 'user', content: message });
+        chatHistory.push({ role: 'assistant', content: santaReply });
+        
+        // Remove typing indicator
+        removeTypingIndicator();
+        
+        // Add Santa's response
+        addChatMessage(santaReply, 'santa');
+        
+      } catch (error) {
+        console.error('Chat error:', error);
+        removeTypingIndicator();
+        addChatMessage("Ho ho ho! My magic crystal ball is a bit foggy right now. Can you try asking me again?", 'santa');
+      }
+      
+      // Re-enable send button
+      sendBtn.disabled = false;
+    }
+
+    function addChatMessage(text, sender) {
+      const messagesDiv = document.getElementById('chatMessages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `chat-message ${sender}`;
+      
+      const avatar = sender === 'santa' ? '🎅' : '👤';
+      
+      messageDiv.innerHTML = `
+        <div class="chat-avatar">${avatar}</div>
+        <div class="chat-bubble">${text}</div>
+      `;
+      
+      messagesDiv.appendChild(messageDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+      const messagesDiv = document.getElementById('chatMessages');
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'chat-message santa';
+      typingDiv.id = 'typingIndicator';
+      typingDiv.innerHTML = `
+        <div class="chat-avatar">🎅</div>
+        <div class="chat-bubble">
+          <div class="chat-typing">
+            <div class="chat-typing-dot"></div>
+            <div class="chat-typing-dot"></div>
+            <div class="chat-typing-dot"></div>
+          </div>
+        </div>
+      `;
+      messagesDiv.appendChild(typingDiv);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const indicator = document.getElementById('typingIndicator');
+      if (indicator) indicator.remove();
     }
 
     /**************  SANTA CAM  **************/
