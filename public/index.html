@@ -96,6 +96,79 @@
     .control-btn:hover{ background:#4b5563; }
 
     .footer{ text-align:center; margin-top:40px; opacity:.6; font-size:14px; }
+    
+    .countdown-banner { 
+      background: linear-gradient(135deg, #dc2626, #991b1b); 
+      padding: 20px; 
+      text-align: center; 
+      border-radius: 20px; 
+      margin-bottom: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .countdown-banner::before {
+      content: '❄️';
+      position: absolute;
+      font-size: 100px;
+      opacity: 0.1;
+      left: -20px;
+      top: -20px;
+      animation: wiggle 3s ease-in-out infinite;
+    }
+    .countdown-banner::after {
+      content: '🎄';
+      position: absolute;
+      font-size: 100px;
+      opacity: 0.1;
+      right: -20px;
+      bottom: -20px;
+      animation: wiggle 3s ease-in-out infinite reverse;
+    }
+    .countdown-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #fecaca;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .countdown-display {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .countdown-box {
+      background: rgba(255,255,255,.2);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      padding: 16px 20px;
+      min-width: 80px;
+      border: 2px solid rgba(255,255,255,.3);
+    }
+    .countdown-number {
+      font-size: 36px;
+      font-weight: bold;
+      color: white;
+      display: block;
+      line-height: 1;
+    }
+    .countdown-label {
+      font-size: 12px;
+      color: #fecaca;
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    @keyframes glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.5); }
+      50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.8); }
+    }
+    .countdown-banner.christmas-day {
+      background: linear-gradient(135deg, #16a34a, #059669);
+      animation: glow 2s ease-in-out infinite;
+    }
   </style>
 </head>
 <body>
@@ -109,6 +182,29 @@
       </div>
       <h1>Santa's Command Center</h1>
       <p class="subtitle">Live from the North Pole • Powered by ElevenLabs AI</p>
+    </div>
+
+    <!-- Countdown to Christmas -->
+    <div id="countdownBanner" class="countdown-banner">
+      <div class="countdown-title">🎅 Countdown to Christmas 🎄</div>
+      <div class="countdown-display">
+        <div class="countdown-box">
+          <span class="countdown-number" id="days">0</span>
+          <span class="countdown-label">Days</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-number" id="hours">0</span>
+          <span class="countdown-label">Hours</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-number" id="minutes">0</span>
+          <span class="countdown-label">Minutes</span>
+        </div>
+        <div class="countdown-box">
+          <span class="countdown-number" id="seconds">0</span>
+          <span class="countdown-label">Seconds</span>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -260,6 +356,47 @@
   </div>
 
   <script>
+    /**************  COUNTDOWN TO CHRISTMAS  **************/
+    function updateCountdown() {
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      
+      // Set Christmas date (December 25 at midnight)
+      let christmas = new Date(currentYear, 11, 25, 0, 0, 0);
+      
+      // If Christmas has passed this year, set to next year
+      if (now > christmas) {
+        christmas = new Date(currentYear + 1, 11, 25, 0, 0, 0);
+      }
+      
+      const diff = christmas - now;
+      
+      // Calculate time units
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      // Update display
+      document.getElementById('days').textContent = days;
+      document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+      document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+      document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+      
+      // Special handling for Christmas Day
+      const banner = document.getElementById('countdownBanner');
+      if (days === 0 && hours === 0) {
+        banner.classList.add('christmas-day');
+        document.querySelector('.countdown-title').textContent = '🎅 MERRY CHRISTMAS! 🎄';
+      } else {
+        banner.classList.remove('christmas-day');
+      }
+    }
+    
+    // Update countdown immediately and every second
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
     /**************  UTIL & DECORATION  **************/
     // Snowflakes
     const snowflakesContainer = document.getElementById('snowflakes');
