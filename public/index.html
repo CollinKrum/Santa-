@@ -1125,25 +1125,25 @@
       showTypingIndicator();
       
       try {
-        // Call Claude API
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
+        // Call our backend API
+        const response = await fetch('/api/santa-chat', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1000,
-            system: `You are Santa Claus chatting with a child named ${childName}. Be warm, jolly, kind, and magical. Use "ho ho ho" occasionally. Keep responses short and child-friendly (2-4 sentences). Talk about Christmas, the North Pole, reindeer, elves, toys, and being good. Always be encouraging and positive. Never break character.`,
-            messages: [
-              ...chatHistory,
-              { role: 'user', content: message }
-            ]
+            message: message,
+            childName: childName,
+            chatHistory: chatHistory
           })
         });
         
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status}`);
+        }
+        
         const data = await response.json();
-        const santaReply = data.content[0].text;
+        const santaReply = data.reply;
         
         // Update chat history
         chatHistory.push({ role: 'user', content: message });
