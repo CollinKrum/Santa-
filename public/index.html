@@ -1,8 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Google AdSense (as requested, placed in <head>) -->
+  <!-- Google AdSense (bootstrap) -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7145940911173373" crossorigin="anonymous"></script>
+  <!-- Auto ads init -->
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({
+      google_ad_client: "ca-pub-7145940911173373",
+      enable_page_level_ads: true
+    });
+  </script>
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,16 +25,9 @@
       padding: 20px;
     }
     @keyframes wiggle { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-5deg)} 75%{transform:rotate(5deg)} }
-    @keyframes float {
-      0% { transform: translateY(-100px) translateX(0); opacity: 0; }
-      50% { transform: translateY(50vh) translateX(30px); opacity: 0.2; }
-      100% { transform: translateY(110vh) translateX(0); opacity: 0; }
-    }
+    @keyframes float { 0% { transform: translateY(-100px) translateX(0); opacity: 0; } 50% { transform: translateY(50vh) translateX(30px); opacity: 0.2; } 100% { transform: translateY(110vh) translateX(0); opacity: 0; } }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
     .snowflake { position: fixed; top: -50px; color: white; font-size: 20px; opacity: 0.2; pointer-events: none; animation: float linear infinite; z-index: 1; }
     .container { max-width: 800px; margin: 0 auto; position: relative; z-index: 10; }
     .header { text-align: center; margin-bottom: 30px; }
@@ -97,87 +97,18 @@
 
     .footer{ text-align:center; margin-top:40px; opacity:.6; font-size:14px; }
     
-    .countdown-banner { 
-      background: linear-gradient(135deg, #dc2626, #991b1b); 
-      padding: 20px; 
-      text-align: center; 
-      border-radius: 20px; 
-      margin-bottom: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,.3);
-      position: relative;
-      overflow: hidden;
-    }
-    .countdown-banner::before {
-      content: '❄️';
-      position: absolute;
-      font-size: 100px;
-      opacity: 0.1;
-      left: -20px;
-      top: -20px;
-      animation: wiggle 3s ease-in-out infinite;
-    }
-    .countdown-banner::after {
-      content: '🎄';
-      position: absolute;
-      font-size: 100px;
-      opacity: 0.1;
-      right: -20px;
-      bottom: -20px;
-      animation: wiggle 3s ease-in-out infinite reverse;
-    }
-    .countdown-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      color: #fecaca;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-    }
-    .countdown-display {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .countdown-box {
-      background: rgba(255,255,255,.2);
-      backdrop-filter: blur(10px);
-      border-radius: 12px;
-      padding: 16px 20px;
-      min-width: 80px;
-      border: 2px solid rgba(255,255,255,.3);
-    }
-    .countdown-number {
-      font-size: 36px;
-      font-weight: bold;
-      color: white;
-      display: block;
-      line-height: 1;
-    }
-    .countdown-label {
-      font-size: 12px;
-      color: #fecaca;
-      margin-top: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    @keyframes glow {
-      0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.5); }
-      50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.8); }
-    }
-    .countdown-banner.christmas-day {
-      background: linear-gradient(135deg, #16a34a, #059669);
-      animation: glow 2s ease-in-out infinite;
-    }
+    .countdown-banner { background: linear-gradient(135deg, #dc2626, #991b1b); padding: 20px; text-align: center; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,.3); position: relative; overflow: hidden; }
+    .countdown-banner::before { content: '❄️'; position: absolute; font-size: 100px; opacity: 0.1; left: -20px; top: -20px; animation: wiggle 3s ease-in-out infinite; }
+    .countdown-banner::after { content: '🎄'; position: absolute; font-size: 100px; opacity: 0.1; right: -20px; bottom: -20px; animation: wiggle 3s ease-in-out infinite reverse; }
+    .countdown-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #fecaca; letter-spacing: 1px; text-transform: uppercase; }
+    .countdown-display { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+    .countdown-box { background: rgba(255,255,255,.2); backdrop-filter: blur(10px); border-radius: 12px; padding: 16px 20px; min-width: 80px; border: 2px solid rgba(255,255,255,.3); }
+    .countdown-number { font-size: 36px; font-weight: bold; color: white; display: block; line-height: 1; }
+    .countdown-label { font-size: 12px; color: #fecaca; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    @keyframes glow { 0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.5); } 50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.8); } }
+    .countdown-banner.christmas-day { background: linear-gradient(135deg, #16a34a, #059669); animation: glow 2s ease-in-out infinite; }
     
-    .advent-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-      gap: 12px;
-      padding: 20px;
-      background: white;
-      border-radius: 20px;
-    }
+    .advent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; padding: 20px; background: white; border-radius: 20px; }
     .advent-day { aspect-ratio: 1; background: linear-gradient(135deg, #dc2626, #991b1b); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; position: relative; border: 3px solid #7f1d1d; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
     .advent-day:hover:not(.locked):not(.opened) { transform: scale(1.05); box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4); }
     .advent-day.locked { background: linear-gradient(135deg, #6b7280, #4b5563); cursor: not-allowed; opacity: 0.6; }
@@ -191,7 +122,7 @@
     .advent-close { position: absolute; top: 16px; right: 16px; background: #dc2626; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; font-weight: bold; }
     .advent-surprise { font-size: 64px; margin: 20px 0; animation: bounce 1s ease-out; }
 
-    /* ---- Weather styles ---- */
+    /* Weather */
     .weather-card { background: white; color: #1f2937; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
     .weather-header { background: linear-gradient(135deg, #0ea5e9, #2563eb); color: white; padding: 20px; display:flex; align-items:center; justify-content:space-between; }
     .weather-body { padding: 20px; display:grid; gap:16px; }
@@ -204,7 +135,7 @@
     .sub { font-size:12px; color:#6b7280; }
     .toggle { background:#111827; color:white; border:none; padding:8px 12px; border-radius:999px; font-weight:700; cursor:pointer; }
 
-    /* ---- Ornament styles ---- */
+    /* Ornament designer */
     .ornament-wrap { background:white; color:#1f2937; border-radius:20px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.25); }
     .ornament-head { background: linear-gradient(135deg, #16a34a, #059669); color:white; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; }
     .ornament-tools { display:flex; gap:8px; flex-wrap:wrap; padding:12px; background:#f9fafb; border-bottom:1px solid #e5e7eb; }
@@ -219,6 +150,9 @@
     .label { font-size:12px; color:#6b7280; font-weight:700; }
     .norad { text-align:center; margin-top:8px; font-size:14px; }
     .norad a { color:#93c5fd; text-decoration:underline; }
+    
+    /* Ad block spacing helper */
+    .ad-wrap { margin: 16px 0 8px 0; }
   </style>
 </head>
 <body>
@@ -245,6 +179,20 @@
       </div>
     </div>
 
+    <!-- Responsive Ad Block (manual) -->
+    <div class="ad-wrap">
+      <!-- Replace YOUR_SLOT_ID with your actual slot id -->
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-7145940911173373"
+           data-ad-slot="YOUR_SLOT_ID"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+
     <div class="card">
       <!-- Name Input -->
       <div class="name-input-section">
@@ -254,30 +202,14 @@
 
       <!-- Tabs -->
       <div class="tabs">
-        <button class="tab active" onclick="switchTab(this,'soundboard')">
-          <span class="tab-icon">🔊</span><span>Soundboard</span>
-        </button>
-        <button class="tab" onclick="switchTab(this,'weather')">
-          <span class="tab-icon">🌨️</span><span>North Pole Weather</span>
-        </button>
-        <button class="tab" onclick="switchTab(this,'ornament')">
-          <span class="tab-icon">🧷</span><span>Design an Ornament</span>
-        </button>
-        <button class="tab" onclick="switchTab(this,'report')">
-          <span class="tab-icon">📄</span><span>Report Card</span>
-        </button>
-        <button class="tab" onclick="switchTab(this,'letter')">
-          <span class="tab-icon">✉️</span><span>Letter to Santa</span>
-        </button>
-        <button class="tab" onclick="switchTab(this,'advent')">
-          <span class="tab-icon">🎁</span><span>Advent Calendar</span>
-        </button>
-        <button class="tab" onclick="switchTab(this,'elf')">
-          <span class="tab-icon">🧝</span><span>Elf Name</span>
-        </button>
-        <button class="tab" onclick="switchTab(this,'cam')">
-          <span class="tab-icon">📹</span><span>Santa Cam</span>
-        </button>
+        <button class="tab active" onclick="switchTab(this,'soundboard')"><span class="tab-icon">🔊</span><span>Soundboard</span></button>
+        <button class="tab" onclick="switchTab(this,'weather')"><span class="tab-icon">🌨️</span><span>North Pole Weather</span></button>
+        <button class="tab" onclick="switchTab(this,'ornament')"><span class="tab-icon">🧷</span><span>Design an Ornament</span></button>
+        <button class="tab" onclick="switchTab(this,'report')"><span class="tab-icon">📄</span><span>Report Card</span></button>
+        <button class="tab" onclick="switchTab(this,'letter')"><span class="tab-icon">✉️</span><span>Letter to Santa</span></button>
+        <button class="tab" onclick="switchTab(this,'advent')"><span class="tab-icon">🎁</span><span>Advent Calendar</span></button>
+        <button class="tab" onclick="switchTab(this,'elf')"><span class="tab-icon">🧝</span><span>Elf Name</span></button>
+        <button class="tab" onclick="switchTab(this,'cam')"><span class="tab-icon">📹</span><span>Santa Cam</span></button>
       </div>
 
       <!-- Tab Content -->
@@ -373,23 +305,14 @@
               </div>
               <div class="tool-row" style="gap:6px;">
                 <span class="label">Color</span>
-                <div id="swatches" style="display:flex; gap:6px;">
-                  <!-- swatches injected -->
-                </div>
+                <div id="swatches" style="display:flex; gap:6px;"><!-- swatches injected --></div>
               </div>
               <button id="eraserBtn" class="orn-btn alt" onclick="toggleEraser(false)">🧼 Eraser: Off</button>
               <div class="tool-row">
                 <span class="label">Sticker</span>
                 <select id="stickerSel" class="orn-select" onchange="setSticker(this.value)">
                   <option value="">(none)</option>
-                  <option>❄️</option>
-                  <option>🎄</option>
-                  <option>🎅</option>
-                  <option>🦌</option>
-                  <option>⭐</option>
-                  <option>🍬</option>
-                  <option>🧁</option>
-                  <option>🎁</option>
+                  <option>❄️</option><option>🎄</option><option>🎅</option><option>🦌</option><option>⭐</option><option>🍬</option><option>🧁</option><option>🎁</option>
                 </select>
                 <button class="orn-btn" onclick="placeSticker()">➕ Place Sticker</button>
               </div>
@@ -605,10 +528,7 @@
     messages.forEach((msg) => {
       const btn = document.createElement('button');
       btn.className = `message-btn ${msg.type}`;
-      btn.innerHTML = `
-        <span class="btn-text">${msg.text.replace(/{name}/g, '<strong>little one</strong>')}</span>
-        <span style="font-size: 30px;">${msg.emoji}</span>
-      `;
+      btn.innerHTML = `<span class="btn-text">${msg.text.replace(/{name}/g, '<strong>little one</strong>')}</span><span style="font-size: 30px;">${msg.emoji}</span>`;
       btn.onclick = () => speakMessage(msg.text);
       messageButtonsContainer.appendChild(btn);
     });
@@ -1001,11 +921,7 @@
     }
     function showLetterStatus(message, bgColor) {
       const statusDiv = document.getElementById('letterStatus');
-      statusDiv.innerHTML = `
-        <div style="background: ${bgColor}; color: #1f2937; border-radius: 16px; padding: 20px; text-align: center; font-weight: 600;">
-          ${message}
-        </div>
-      `;
+      statusDiv.innerHTML = `<div style="background: ${bgColor}; color: #1f2937; border-radius: 16px; padding: 20px; text-align: center; font-weight: 600;">${message}</div>`;
       statusDiv.style.display = 'block';
     }
 
