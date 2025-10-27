@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Ads (unchanged) -->
+  <!-- Google AdSense (as requested, placed in <head>) -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7145940911173373" crossorigin="anonymous"></script>
 
   <meta charset="UTF-8" />
@@ -178,20 +178,7 @@
       background: white;
       border-radius: 20px;
     }
-    .advent-day {
-      aspect-ratio: 1;
-      background: linear-gradient(135deg, #dc2626, #991b1b);
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.3s;
-      position: relative;
-      border: 3px solid #7f1d1d;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
+    .advent-day { aspect-ratio: 1; background: linear-gradient(135deg, #dc2626, #991b1b); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; position: relative; border: 3px solid #7f1d1d; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
     .advent-day:hover:not(.locked):not(.opened) { transform: scale(1.05); box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4); }
     .advent-day.locked { background: linear-gradient(135deg, #6b7280, #4b5563); cursor: not-allowed; opacity: 0.6; }
     .advent-day.opened { background: linear-gradient(135deg, #16a34a, #059669); border-color: #14532d; }
@@ -479,7 +466,7 @@
               ✨ Generate My Elf Name
             </button>
             
-            <div id="elfNameResult" style="display: none;"></div>
+            <div id="elfNameResult" style="display:  none;"></div>
           </div>
         </div>
 
@@ -568,7 +555,6 @@
     setInterval(updateCountdown, 1000);
 
     /**************  UTIL & DECORATION  **************/
-    // Snowflakes
     const snowflakesContainer = document.getElementById('snowflakes');
     (function makeSnowflakes(){
       for (let i = 0; i < 20; i++) {
@@ -616,7 +602,6 @@
       });
     }
 
-    // Build buttons
     messages.forEach((msg) => {
       const btn = document.createElement('button');
       btn.className = `message-btn ${msg.type}`;
@@ -629,7 +614,6 @@
     });
     document.getElementById('childName').addEventListener('input', updateButtonText);
 
-    // Auto-fill name across sections
     document.getElementById('childName').addEventListener('input', function() {
       const name = this.value;
       updateButtonText();
@@ -639,7 +623,6 @@
       if (elfNameInput) { elfNameInput.value = name; }
     });
 
-    // ElevenLabs via serverless endpoint: /api/santa-voice
     async function speakMessage(text) {
       const name = (document.getElementById('childName').value || '').trim() || 'little one';
       const personalized = text.replace(/{name}/g, name);
@@ -655,7 +638,7 @@
           body: JSON.stringify({ text: personalized })
         });
         if (!response.ok) {
-          const detail = await response.text().catch(()=>'');
+          const detail = await response.text().catch(()=> '');
           throw new Error(`API Error: ${response.status} ${response.statusText}\n${detail}`);
         }
         const audioBlob = await response.blob();
@@ -755,15 +738,10 @@
     function initOrnament() {
       const c = document.getElementById('ornCanvas');
       ORN.canvas = c; ORN.ctx = c.getContext('2d');
-      // Hi-DPI scale
       const w = 512, h = 512, d = ORN.dpr;
       c.style.width = w + 'px'; c.style.height = h + 'px';
       c.width = w * d; c.height = h * d; ORN.ctx.scale(d, d);
-
-      // Draw ornament cap & string for vibes
       drawBaseOrnament();
-
-      // Events
       const start = e => { ORN.drawing = true; const p = pos(e); ORN.ctx.beginPath(); ORN.ctx.moveTo(p.x,p.y); };
       const move = e => {
         if (!ORN.drawing) return;
@@ -783,7 +761,6 @@
       c.addEventListener('touchmove', e=>{ e.preventDefault(); move(e.touches[0]); }, {passive:false});
       window.addEventListener('touchend', e=>{ e.preventDefault(); end(); }, {passive:false});
 
-      // Build color swatches
       const colors = ['#dc2626','#16a34a','#2563eb','#f59e0b','#a855f7','#ef4444','#10b981','#14b8a6','#f97316','#94a3b8','#111827','#ffffff'];
       const sw = document.getElementById('swatches'); sw.innerHTML='';
       colors.forEach((c,i)=>{
@@ -795,16 +772,12 @@
     }
     function drawBaseOrnament(){
       const ctx = ORN.ctx;
-      // clear
       ctx.clearRect(0,0,ORN.canvas.width/ORN.dpr,ORN.canvas.height/ORN.dpr);
-      // ornament circle shading already from CSS background; add hanger
       ctx.save();
       ctx.strokeStyle='#9ca3af'; ctx.lineWidth=4;
       ctx.beginPath(); ctx.moveTo(256, 40); ctx.lineTo(256, 78); ctx.stroke();
-      // cap
       ctx.fillStyle='#e5e7eb'; ctx.strokeStyle='#9ca3af';
-      ctx.lineWidth=3; ctx.beginPath(); ctx.roundRect?.(228,78,56,24,6);
-      if(!ctx.roundRect){ ctx.rect(228,78,56,24); }
+      ctx.lineWidth=3; ctx.beginPath(); ctx.rect(228,78,56,24);
       ctx.fill(); ctx.stroke();
       ctx.restore();
     }
@@ -827,7 +800,6 @@
     function setSticker(v){ ORN.sticker = v || ''; }
     function placeSticker(){
       if (!ORN.sticker) { alert('Choose a sticker first!'); return; }
-      // Place in middle; user can draw around it
       const ctx = ORN.ctx;
       ctx.save();
       ctx.font = '64px Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif';
@@ -837,29 +809,23 @@
     }
     function clearOrnament(){ drawBaseOrnament(); }
     function downloadOrnament(){
-      // Flatten CSS ornament gradient by drawing a circle background before export
-      // (We’ll composite a soft gradient behind current strokes)
       const tmp = document.createElement('canvas');
       tmp.width = ORN.canvas.width; tmp.height = ORN.canvas.height;
       const d = ORN.dpr;
       const tctx = tmp.getContext('2d');
       tctx.scale(d,d);
-      // soft radial bg
       const grad = tctx.createRadialGradient(256,200,50, 256,256,260);
       grad.addColorStop(0,'#ffffff'); grad.addColorStop(0.6,'#f3f4f6'); grad.addColorStop(1,'#e5e7eb');
       tctx.fillStyle=grad; tctx.beginPath(); tctx.arc(256,256,240,0,Math.PI*2); tctx.fill();
-      // hanger + cap
       tctx.strokeStyle='#9ca3af'; tctx.lineWidth=4; tctx.beginPath(); tctx.moveTo(256,40); tctx.lineTo(256,78); tctx.stroke();
       tctx.fillStyle='#e5e7eb'; tctx.strokeStyle='#9ca3af'; tctx.lineWidth=3; tctx.beginPath();
       tctx.rect(228,78,56,24); tctx.fill(); tctx.stroke();
-      // user art on top
       tctx.drawImage(ORN.canvas, 0,0, ORN.canvas.width/d, ORN.canvas.height/d);
       const link = document.createElement('a');
       link.download = 'My_Ornament.png';
       link.href = tmp.toDataURL('image/png');
       link.click();
     }
-    // init ornament after DOM paints
     requestAnimationFrame(initOrnament);
 
     /**************  ADVENT CALENDAR  **************/
@@ -942,7 +908,6 @@
       if (!tabsBar || !tabContent || !adventTabBtn || !adventPane) return;
       const now = new Date();
       const isDecember = now.getMonth() === 11;
-      // Days until next Dec 1
       const currentYear = now.getFullYear();
       const dec1ThisYear = new Date(currentYear, 11, 1, 0, 0, 0);
       const target = now <= dec1ThisYear ? dec1ThisYear : new Date(currentYear + 1, 11, 1, 0, 0, 0);
@@ -992,14 +957,13 @@
           </div>
         `;
         tabContent.appendChild(teaserPane);
-        // live countdown (updates once per day)
         setInterval(() => {
           const now2 = new Date();
           const target2 = now2.getMonth() <= 10 ? new Date(now2.getFullYear(),11,1) : new Date(now2.getFullYear()+1,11,1);
           const left = Math.max(0, Math.ceil((target2 - now2) / (1000*60*60*24)));
           const el = document.getElementById('adventCountdown');
           if (el) el.textContent = left === 0 ? 'Almost there!' : `${left} day${left===1?'':'s'} to go`;
-        }, 60_000); // no need to spam; hourly/day would also be fine
+        }, 60_000);
       }
     })();
 
