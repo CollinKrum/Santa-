@@ -39,8 +39,8 @@
     .name-input-section label { display:block; color:white; font-size:12px; font-weight:bold; letter-spacing:1px; margin-bottom:12px; }
     .name-input-section input { width:100%; padding:16px 20px; border-radius:16px; border:none; font-size:18px; outline:none; }
 
-    .tabs { display:flex; background: rgba(255,255,255,.05); border-bottom:1px solid rgba(255,255,255,.1); }
-    .tab { flex:1; padding:20px; text-align:center; cursor:pointer; background:transparent; border:none; color:rgba(255,255,255,.6); font-size:14px; font-weight:600; transition:.3s; position:relative; }
+    .tabs { display:flex; flex-wrap:wrap; background: rgba(255,255,255,.05); border-bottom:1px solid rgba(255,255,255,.1); }
+    .tab { flex:1 1 25%; padding:20px; text-align:center; cursor:pointer; background:transparent; border:none; color:rgba(255,255,255,.6); font-size:14px; font-weight:600; transition:.3s; position:relative; }
     .tab:hover { color:rgba(255,255,255,.9); }
     .tab.active { color:white; background: rgba(255,255,255,.1); }
     .tab.active::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; background: linear-gradient(to right, #dc2626, #16a34a); border-radius:3px 3px 0 0; }
@@ -192,109 +192,46 @@
       border: 3px solid #7f1d1d;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
-    .advent-day:hover:not(.locked):not(.opened) {
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
-    }
-    .advent-day.locked {
-      background: linear-gradient(135deg, #6b7280, #4b5563);
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-    .advent-day.opened {
-      background: linear-gradient(135deg, #16a34a, #059669);
-      border-color: #14532d;
-    }
-    .advent-day.today {
-      animation: glow 2s ease-in-out infinite;
-      border-color: #fbbf24;
-    }
-    .advent-number {
-      font-size: 28px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    .advent-icon {
-      font-size: 20px;
-      margin-top: 4px;
-    }
-    .advent-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.9);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .advent-modal.open {
-      display: flex;
-    }
-    .advent-modal-content {
-      background: white;
-      border-radius: 24px;
-      padding: 32px;
-      max-width: 500px;
-      width: 100%;
-      text-align: center;
-      position: relative;
-      color: #1f2937;
-    }
-    .advent-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: #dc2626;
-      color: white;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 18px;
-      font-weight: bold;
-    }
-    .advent-surprise {
-      font-size: 64px;
-      margin: 20px 0;
-      animation: bounce 1s ease-out;
-    }
+    .advent-day:hover:not(.locked):not(.opened) { transform: scale(1.05); box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4); }
+    .advent-day.locked { background: linear-gradient(135deg, #6b7280, #4b5563); cursor: not-allowed; opacity: 0.6; }
+    .advent-day.opened { background: linear-gradient(135deg, #16a34a, #059669); border-color: #14532d; }
+    .advent-day.today { animation: glow 2s ease-in-out infinite; border-color: #fbbf24; }
+    .advent-number { font-size: 28px; font-weight: bold; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+    .advent-icon { font-size: 20px; margin-top: 4px; }
+    .advent-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+    .advent-modal.open { display: flex; }
+    .advent-modal-content { background: white; border-radius: 24px; padding: 32px; max-width: 500px; width: 100%; text-align: center; position: relative; color: #1f2937; }
+    .advent-close { position: absolute; top: 16px; right: 16px; background: #dc2626; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; font-weight: bold; }
+    .advent-surprise { font-size: 64px; margin: 20px 0; animation: bounce 1s ease-out; }
 
     /* ---- Weather styles ---- */
-    .weather-card {
-      background: white;
-      color: #1f2937;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
-    }
-    .weather-header {
-      background: linear-gradient(135deg, #0ea5e9, #2563eb);
-      color: white;
-      padding: 20px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-    }
+    .weather-card { background: white; color: #1f2937; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    .weather-header { background: linear-gradient(135deg, #0ea5e9, #2563eb); color: white; padding: 20px; display:flex; align-items:center; justify-content:space-between; }
     .weather-body { padding: 20px; display:grid; gap:16px; }
     .weather-row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
-    .tile {
-      background:#f3f4f6; border-radius:14px; padding:14px; display:flex; align-items:center; justify-content:space-between;
-    }
+    .tile { background:#f3f4f6; border-radius:14px; padding:14px; display:flex; align-items:center; justify-content:space-between; }
     .big-temp { font-size:48px; font-weight:800; }
     .thermo { width: 100%; height: 14px; background: #e5e7eb; border-radius: 999px; overflow:hidden; margin-left:12px; }
     .thermo-fill { height:100%; background: linear-gradient(90deg, #22c55e, #ef4444); width:50%; }
     .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:#111827; color:white; font-size:12px; font-weight:700; }
     .sub { font-size:12px; color:#6b7280; }
     .toggle { background:#111827; color:white; border:none; padding:8px 12px; border-radius:999px; font-weight:700; cursor:pointer; }
-    .norad {
-      text-align:center; margin-top:8px; font-size:14px;
-    }
-    .norad a {
-      color:#93c5fd; text-decoration:underline;
-    }
+
+    /* ---- Ornament styles ---- */
+    .ornament-wrap { background:white; color:#1f2937; border-radius:20px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.25); }
+    .ornament-head { background: linear-gradient(135deg, #16a34a, #059669); color:white; padding:16px 20px; display:flex; align-items:center; justify-content:space-between; }
+    .ornament-tools { display:flex; gap:8px; flex-wrap:wrap; padding:12px; background:#f9fafb; border-bottom:1px solid #e5e7eb; }
+    .orn-btn { border:none; border-radius:10px; padding:10px 12px; font-weight:700; cursor:pointer; background:#111827; color:white; }
+    .orn-btn.alt { background:#dc2626; }
+    .orn-select { padding:9px 10px; border:2px solid #e5e7eb; border-radius:10px; background:white; font-weight:600; }
+    .orn-canvas-wrap { display:flex; align-items:center; justify-content:center; padding:16px; background:#fff; }
+    .orn-canvas { background: radial-gradient(circle at 50% 35%, #ffffff 0%, #f3f4f6 60%, #e5e7eb 100%); border-radius:16px; box-shadow: inset 0 0 0 8px rgba(0,0,0,0.05); }
+    .swatch { width:28px; height:28px; border-radius:50%; border:2px solid #e5e7eb; cursor:pointer; }
+    .swatch.active { outline:3px solid #16a34a; }
+    .tool-row { display:flex; align-items:center; gap:10px; }
+    .label { font-size:12px; color:#6b7280; font-weight:700; }
+    .norad { text-align:center; margin-top:8px; font-size:14px; }
+    .norad a { color:#93c5fd; text-decoration:underline; }
   </style>
 </head>
 <body>
@@ -314,22 +251,10 @@
     <div id="countdownBanner" class="countdown-banner">
       <div class="countdown-title">🎅 Countdown to Christmas 🎄</div>
       <div class="countdown-display">
-        <div class="countdown-box">
-          <span class="countdown-number" id="days">0</span>
-          <span class="countdown-label">Days</span>
-        </div>
-        <div class="countdown-box">
-          <span class="countdown-number" id="hours">0</span>
-          <span class="countdown-label">Hours</span>
-        </div>
-        <div class="countdown-box">
-          <span class="countdown-number" id="minutes">0</span>
-          <span class="countdown-label">Minutes</span>
-        </div>
-        <div class="countdown-box">
-          <span class="countdown-number" id="seconds">0</span>
-          <span class="countdown-label">Seconds</span>
-        </div>
+        <div class="countdown-box"><span class="countdown-number" id="days">0</span><span class="countdown-label">Days</span></div>
+        <div class="countdown-box"><span class="countdown-number" id="hours">0</span><span class="countdown-label">Hours</span></div>
+        <div class="countdown-box"><span class="countdown-number" id="minutes">0</span><span class="countdown-label">Minutes</span></div>
+        <div class="countdown-box"><span class="countdown-number" id="seconds">0</span><span class="countdown-label">Seconds</span></div>
       </div>
     </div>
 
@@ -343,32 +268,28 @@
       <!-- Tabs -->
       <div class="tabs">
         <button class="tab active" onclick="switchTab(this,'soundboard')">
-          <span class="tab-icon">🔊</span>
-          <span>Soundboard</span>
+          <span class="tab-icon">🔊</span><span>Soundboard</span>
         </button>
         <button class="tab" onclick="switchTab(this,'weather')">
-          <span class="tab-icon">🌨️</span>
-          <span>North Pole Weather</span>
+          <span class="tab-icon">🌨️</span><span>North Pole Weather</span>
+        </button>
+        <button class="tab" onclick="switchTab(this,'ornament')">
+          <span class="tab-icon">🧷</span><span>Design an Ornament</span>
         </button>
         <button class="tab" onclick="switchTab(this,'report')">
-          <span class="tab-icon">📄</span>
-          <span>Report Card</span>
+          <span class="tab-icon">📄</span><span>Report Card</span>
         </button>
         <button class="tab" onclick="switchTab(this,'letter')">
-          <span class="tab-icon">✉️</span>
-          <span>Letter to Santa</span>
+          <span class="tab-icon">✉️</span><span>Letter to Santa</span>
         </button>
         <button class="tab" onclick="switchTab(this,'advent')">
-          <span class="tab-icon">🎁</span>
-          <span>Advent Calendar</span>
+          <span class="tab-icon">🎁</span><span>Advent Calendar</span>
         </button>
         <button class="tab" onclick="switchTab(this,'elf')">
-          <span class="tab-icon">🧝</span>
-          <span>Elf Name</span>
+          <span class="tab-icon">🧝</span><span>Elf Name</span>
         </button>
         <button class="tab" onclick="switchTab(this,'cam')">
-          <span class="tab-icon">📹</span>
-          <span>Santa Cam</span>
+          <span class="tab-icon">📹</span><span>Santa Cam</span>
         </button>
       </div>
 
@@ -380,7 +301,7 @@
           <div id="speakingIndicator" style="display: none;" class="speaking-indicator">🔊 Santa is speaking...</div>
         </div>
 
-        <!-- North Pole Weather (new tab replacing chat) -->
+        <!-- North Pole Weather -->
         <div id="weather" class="tab-pane">
           <div class="weather-card">
             <div class="weather-header">
@@ -415,7 +336,7 @@
                 <div class="tile">
                   <div>
                     <div style="font-weight:700;">Wind</div>
-                    <div id="windTxt" class="sub">12 mph (NNE)</div>
+                    <div id="windTxt" class="sub">12 mph (gusts 20)</div>
                   </div>
                   <span id="windBadge" class="badge">Calm</span>
                 </div>
@@ -447,6 +368,48 @@
                   🎅 Big night! <a href="https://www.noradsanta.org" target="_blank" rel="noopener">Track Santa with NORAD</a>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ornament Designer -->
+        <div id="ornament" class="tab-pane">
+          <div class="ornament-wrap">
+            <div class="ornament-head">
+              <div style="font-weight:800; font-size:18px;">Design Your Christmas Ornament</div>
+              <button class="orn-btn" onclick="downloadOrnament()">⬇️ Download PNG</button>
+            </div>
+            <div class="ornament-tools">
+              <div class="tool-row">
+                <span class="label">Brush</span>
+                <input id="brushSize" type="range" min="2" max="40" value="12" class="orn-select" oninput="setBrushSize(this.value)" />
+              </div>
+              <div class="tool-row" style="gap:6px;">
+                <span class="label">Color</span>
+                <div id="swatches" style="display:flex; gap:6px;">
+                  <!-- swatches injected -->
+                </div>
+              </div>
+              <button id="eraserBtn" class="orn-btn alt" onclick="toggleEraser(false)">🧼 Eraser: Off</button>
+              <div class="tool-row">
+                <span class="label">Sticker</span>
+                <select id="stickerSel" class="orn-select" onchange="setSticker(this.value)">
+                  <option value="">(none)</option>
+                  <option>❄️</option>
+                  <option>🎄</option>
+                  <option>🎅</option>
+                  <option>🦌</option>
+                  <option>⭐</option>
+                  <option>🍬</option>
+                  <option>🧁</option>
+                  <option>🎁</option>
+                </select>
+                <button class="orn-btn" onclick="placeSticker()">➕ Place Sticker</button>
+              </div>
+              <button class="orn-btn" onclick="clearOrnament()">🗑️ Clear</button>
+            </div>
+            <div class="orn-canvas-wrap">
+              <canvas id="ornCanvas" class="orn-canvas" width="512" height="512"></canvas>
             </div>
           </div>
         </div>
@@ -489,6 +452,15 @@
           <div id="letterStatus" style="display: none;"></div>
         </div>
 
+        <!-- Advent Calendar -->
+        <div id="advent" class="tab-pane">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">🎄 Advent Calendar 🎁</h2>
+            <p style="font-size: 14px; opacity: 0.8;">Open a new surprise each day leading up to Christmas!</p>
+          </div>
+          <div class="advent-grid" id="adventGrid"></div>
+        </div>
+
         <!-- Elf Name Generator -->
         <div id="elf" class="tab-pane">
           <div style="background: white; color: #1f2937; border-radius: 20px; padding: 24px;">
@@ -509,15 +481,6 @@
             
             <div id="elfNameResult" style="display: none;"></div>
           </div>
-        </div>
-
-        <!-- Advent Calendar -->
-        <div id="advent" class="tab-pane">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">🎄 Advent Calendar 🎁</h2>
-            <p style="font-size: 14px; opacity: 0.8;">Open a new surprise each day leading up to Christmas!</p>
-          </div>
-          <div class="advent-grid" id="adventGrid"></div>
         </div>
 
         <!-- Santa Cam -->
@@ -717,61 +680,31 @@
       }
     }
 
-    /**************  WEATHER (fun, client-side generator)  **************/
+    /**************  WEATHER (client-side generator)  **************/
     let useCelsius = false;
-    function toggleUnits() {
-      useCelsius = !useCelsius;
-      renderWeather(generateWeather(true));
-    }
-
+    function toggleUnits() { useCelsius = !useCelsius; renderWeather(generateWeather(true)); }
     function mulberry32(a){ return function(){ let t = a += 0x6D2B79F5; t = Math.imul(t ^ t>>>15, t | 1); t ^= t + Math.imul(t ^ t>>>7, t | 61); return ((t ^ t>>>14) >>> 0) / 4294967296; } }
-    function seededRand(seed, min, max) {
-      const r = mulberry32(seed)();
-      return Math.floor(min + r * (max - min + 1));
-    }
-
-    function generateWeather(persist=false){
-      // Seed with YYYYMMDDHH for gentle drift each hour
+    function generateWeather(){
       const now = new Date();
       const key = Number(`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}`);
       const rand = mulberry32(key);
       const icons = ['❄️','🌨️','🌬️','🌫️','☁️','🌟'];
-      const phrases = [
-        'Snow showers & candy-cane flurries',
-        'Diamond-dust sparkle in the air',
-        'Elf hat–tossing gusts',
-        'Low sugar-plum fog',
-        'Polar calm with twinkling stars',
-        'North wind with sleigh-track drifts'
-      ];
-      // Base temps (F)
-      const base = -30 - Math.floor(rand()*25); // -30 to -54
-      const wind = 5 + Math.floor(rand()*26);   // 5–30 mph
-      const gust = wind + 5 + Math.floor(rand()*16); // gust 10–45
+      const phrases = ['Snow showers & candy-cane flurries','Diamond-dust sparkle in the air','Elf hat–tossing gusts','Low sugar-plum fog','Polar calm with twinkling stars','North wind with sleigh-track drifts'];
+      const base = -30 - Math.floor(rand()*25);
+      const wind = 5 + Math.floor(rand()*26);
+      const gust = wind + 5 + Math.floor(rand()*16);
       const feels = base - Math.floor(wind/2) - Math.floor(rand()*6);
-      const aurora = Math.floor(rand()*101); // %
-      const kp = 1 + Math.floor(rand()*7);   // 1–7
+      const aurora = Math.floor(rand()*101);
+      const kp = 1 + Math.floor(rand()*7);
       const emoji = icons[Math.floor(rand()*icons.length)];
       const phrase = phrases[Math.floor(rand()*phrases.length)];
       const deerIdx = ['Chilly','Good','Great','Excellent','Legendary'][Math.min(4, Math.floor((70 - Math.abs(base+20))/12)+Math.floor(rand()*2))];
       const letter = { 'Chilly':'B-', 'Good':'B+', 'Great':'A', 'Excellent':'A+', 'Legendary':'S' }[deerIdx];
-
-      const outlooks = [
-        'Snowy sprinkles tapering this evening. Perfect cookie-cooling weather.',
-        'Light flurries all day—ideal for reindeer sprints.',
-        'Blustery bursts; elves advised to secure hats.',
-        'Crystal-clear skies tonight for bedtime sleigh checks.',
-        'Jolly cold snap continues—keep cocoa close!'
-      ];
-      const outlook = outlooks[Math.floor(rand()*outlooks.length)];
-
-      return { base, feels, wind, gust, emoji, phrase, aurora, kp, deerIdx, letter, outlook, seed:key };
+      const outlooks = ['Snowy sprinkles tapering this evening. Perfect cookie-cooling weather.','Light flurries all day—ideal for reindeer sprints.','Blustery bursts; elves advised to secure hats.','Crystal-clear skies tonight for bedtime sleigh checks.','Jolly cold snap continues—keep cocoa close!'];
+      return { base, feels, wind, gust, emoji, phrase, aurora, kp, deerIdx, letter, outlook: outlooks[Math.floor(rand()*outlooks.length)] };
     }
-
     function FtoC(f){ return Math.round((f - 32) * 5/9); }
-    function fmtTemp(f){
-      return useCelsius ? `${FtoC(f)}°` : `${f}°`;
-    }
+    function fmtTemp(f){ return useCelsius ? `${FtoC(f)}°` : `${f}°`; }
     function renderWeather(w){
       const tempNow = document.getElementById('tempNow');
       const tempFeels = document.getElementById('tempFeels');
@@ -796,14 +729,9 @@
       auroraTxt.textContent = `${w.aurora}% (KP ${w.kp})`;
       reindeerTxt.textContent = `Training: ${w.deerIdx}`;
       reindeerBadge.textContent = w.letter;
-
-      // Simple wind badge
       windBadge.textContent = w.wind < 10 ? 'Calm' : w.wind < 20 ? 'Breezy' : 'Gusty';
-
-      // Aurora badge
       auroraBadge.textContent = w.aurora < 25 ? 'Low' : w.aurora < 60 ? 'Good' : 'High';
 
-      // Thermometer fill based on temp range [-60F to 10F]
       const minF = -60, maxF = 10;
       const clamped = Math.max(minF, Math.min(maxF, w.base));
       const pct = Math.round(((clamped - minF) / (maxF - minF)) * 100);
@@ -811,86 +739,269 @@
 
       outlookTxt.textContent = w.outlook;
 
-      // NORAD CTA shows only on Dec 24
       const now = new Date();
       const norad = document.getElementById('noradCta');
-      if (now.getMonth() === 11 && now.getDate() === 24) {
-        norad.style.display = 'block';
-      } else {
-        norad.style.display = 'none';
-      }
+      norad.style.display = (now.getMonth() === 11 && now.getDate() === 24) ? 'block' : 'none';
     }
-
-    // Init weather and refresh every 60s (hourly seed changes)
     let currentWeather = generateWeather();
     renderWeather(currentWeather);
-    setInterval(() => { currentWeather = generateWeather(true); renderWeather(currentWeather); }, 60000);
+    setInterval(() => { currentWeather = generateWeather(); renderWeather(currentWeather); }, 60000);
 
-    /**************  REPORT CARD  **************/
-    function generateReport() {
-      const name = (document.getElementById('childName').value || '').trim() || 'this child';
-      const niceScore = Math.floor(Math.random() * 40) + 60;
-      const naughtyScore = 100 - niceScore;
-      const status = niceScore >= 75 ? 'NICE LIST' : niceScore >= 60 ? 'WATCH LIST' : 'NAUGHTY LIST';
-      const statusEmoji = niceScore >= 75 ? '⭐' : niceScore >= 60 ? '⚠️' : '🎅';
+    /**************  ORNAMENT DESIGNER  **************/
+    const ORN = {
+      canvas: null, ctx: null, dpr: Math.max(1, window.devicePixelRatio || 1),
+      drawing:false, erasing:false, color:'#dc2626', size:12, sticker:''
+    };
+    function initOrnament() {
+      const c = document.getElementById('ornCanvas');
+      ORN.canvas = c; ORN.ctx = c.getContext('2d');
+      // Hi-DPI scale
+      const w = 512, h = 512, d = ORN.dpr;
+      c.style.width = w + 'px'; c.style.height = h + 'px';
+      c.width = w * d; c.height = h * d; ORN.ctx.scale(d, d);
 
-      const allGoodDeeds = [
-        'Shared toys with siblings','Helped with chores without being asked','Was kind to classmates',
-        'Did homework on time','Cleaned their room','Said please and thank you','Helped a friend in need',
-        'Was respectful to adults','Took care of a pet','Made their bed every morning','Ate vegetables without complaining',
-        'Brushed teeth without reminders','Helped carry groceries','Shared snacks with others','Was patient while waiting',
-        'Used kind words','Helped set the dinner table','Picked up after themselves','Was a good sport in games','Showed empathy to others'
-      ];
-      const allNaughtyDeeds = [
-        'Argued with siblings',"Didn't listen the first time",'Left toys scattered around','Complained about bedtime',
-        'Forgot to do assigned chores','Talked back occasionally','Needed reminders to clean up','Interrupted adults talking',
-        'Was grumpy in the morning','Fought over screen time',"Didn't finish dinner",'Procrastinated on homework',
-        'Made excuses for mistakes','Whined about going outside','Refused to share sometimes','Was too rough with pets',
-        'Stayed up past bedtime','Complained about chores','Left wet towels on the floor','Needed multiple reminders'
-      ];
+      // Draw ornament cap & string for vibes
+      drawBaseOrnament();
 
-      const goodDeeds = [...allGoodDeeds].sort(()=>0.5-Math.random()).slice(0,4);
-      const naughtyDeeds = [...allNaughtyDeeds].sort(()=>0.5-Math.random()).slice(0, Math.floor(Math.random()*2)+2);
+      // Events
+      const start = e => { ORN.drawing = true; const p = pos(e); ORN.ctx.beginPath(); ORN.ctx.moveTo(p.x,p.y); };
+      const move = e => {
+        if (!ORN.drawing) return;
+        const p = pos(e);
+        ORN.ctx.lineCap = 'round'; ORN.ctx.lineJoin = 'round';
+        ORN.ctx.lineWidth = ORN.size; 
+        ORN.ctx.strokeStyle = ORN.erasing ? 'rgba(255,255,255,1)' : ORN.color;
+        ORN.ctx.globalCompositeOperation = ORN.erasing ? 'destination-out' : 'source-over';
+        ORN.ctx.lineTo(p.x,p.y); ORN.ctx.stroke();
+      };
+      const end = ()=>{ ORN.drawing=false; ORN.ctx.globalCompositeOperation='source-over'; };
 
-      document.getElementById('reportResult').innerHTML = `
-        <div class="report-card">
-          <div class="report-header">
-            <div style="font-size:40px; margin-bottom:8px;">🎄</div>
-            <h2 style="font-size:24px; font-weight:bold;">OFFICIAL SANTA REPORT</h2>
-            <p style="font-size:14px; margin-top:4px;">North Pole • ${new Date().toLocaleDateString()}</p>
-          </div>
-          <div class="report-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-              <h3 style="font-size:24px; font-weight:bold;">${name}</h3>
-              <span style="background:${status.includes('NICE') ? '#10b981' : status.includes('WATCH') ? '#fbbf24' : '#ef4444'}; color:white; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:12px;">
-                ${statusEmoji} ${status}
+      c.addEventListener('mousedown', start);
+      c.addEventListener('mousemove', move);
+      window.addEventListener('mouseup', end);
+      c.addEventListener('touchstart', e=>{ e.preventDefault(); start(e.touches[0]); }, {passive:false});
+      c.addEventListener('touchmove', e=>{ e.preventDefault(); move(e.touches[0]); }, {passive:false});
+      window.addEventListener('touchend', e=>{ e.preventDefault(); end(); }, {passive:false});
+
+      // Build color swatches
+      const colors = ['#dc2626','#16a34a','#2563eb','#f59e0b','#a855f7','#ef4444','#10b981','#14b8a6','#f97316','#94a3b8','#111827','#ffffff'];
+      const sw = document.getElementById('swatches'); sw.innerHTML='';
+      colors.forEach((c,i)=>{
+        const b = document.createElement('button');
+        b.className='swatch' + (i===0 ? ' active':'');
+        b.style.background=c; b.title=c; b.onclick=()=>setColor(c,b);
+        sw.appendChild(b);
+      });
+    }
+    function drawBaseOrnament(){
+      const ctx = ORN.ctx;
+      // clear
+      ctx.clearRect(0,0,ORN.canvas.width/ORN.dpr,ORN.canvas.height/ORN.dpr);
+      // ornament circle shading already from CSS background; add hanger
+      ctx.save();
+      ctx.strokeStyle='#9ca3af'; ctx.lineWidth=4;
+      ctx.beginPath(); ctx.moveTo(256, 40); ctx.lineTo(256, 78); ctx.stroke();
+      // cap
+      ctx.fillStyle='#e5e7eb'; ctx.strokeStyle='#9ca3af';
+      ctx.lineWidth=3; ctx.beginPath(); ctx.roundRect?.(228,78,56,24,6);
+      if(!ctx.roundRect){ ctx.rect(228,78,56,24); }
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+    }
+    function pos(e){
+      const r = ORN.canvas.getBoundingClientRect();
+      return { x: (e.clientX - r.left), y: (e.clientY - r.top) };
+    }
+    function setBrushSize(v){ ORN.size = Number(v)||12; }
+    function setColor(c, btn){
+      ORN.color = c; ORN.erasing=false;
+      document.querySelectorAll('#swatches .swatch').forEach(s=>s.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const eb = document.getElementById('eraserBtn'); eb.textContent='🧼 Eraser: Off'; eb.classList.add('alt');
+    }
+    function toggleEraser(toggle=true){
+      ORN.erasing = toggle ? !ORN.erasing : false;
+      const eb = document.getElementById('eraserBtn');
+      eb.textContent = `🧼 Eraser: ${ORN.erasing ? 'On' : 'Off'}`;
+    }
+    function setSticker(v){ ORN.sticker = v || ''; }
+    function placeSticker(){
+      if (!ORN.sticker) { alert('Choose a sticker first!'); return; }
+      // Place in middle; user can draw around it
+      const ctx = ORN.ctx;
+      ctx.save();
+      ctx.font = '64px Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji, sans-serif';
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(ORN.sticker, 256, 280);
+      ctx.restore();
+    }
+    function clearOrnament(){ drawBaseOrnament(); }
+    function downloadOrnament(){
+      // Flatten CSS ornament gradient by drawing a circle background before export
+      // (We’ll composite a soft gradient behind current strokes)
+      const tmp = document.createElement('canvas');
+      tmp.width = ORN.canvas.width; tmp.height = ORN.canvas.height;
+      const d = ORN.dpr;
+      const tctx = tmp.getContext('2d');
+      tctx.scale(d,d);
+      // soft radial bg
+      const grad = tctx.createRadialGradient(256,200,50, 256,256,260);
+      grad.addColorStop(0,'#ffffff'); grad.addColorStop(0.6,'#f3f4f6'); grad.addColorStop(1,'#e5e7eb');
+      tctx.fillStyle=grad; tctx.beginPath(); tctx.arc(256,256,240,0,Math.PI*2); tctx.fill();
+      // hanger + cap
+      tctx.strokeStyle='#9ca3af'; tctx.lineWidth=4; tctx.beginPath(); tctx.moveTo(256,40); tctx.lineTo(256,78); tctx.stroke();
+      tctx.fillStyle='#e5e7eb'; tctx.strokeStyle='#9ca3af'; tctx.lineWidth=3; tctx.beginPath();
+      tctx.rect(228,78,56,24); tctx.fill(); tctx.stroke();
+      // user art on top
+      tctx.drawImage(ORN.canvas, 0,0, ORN.canvas.width/d, ORN.canvas.height/d);
+      const link = document.createElement('a');
+      link.download = 'My_Ornament.png';
+      link.href = tmp.toDataURL('image/png');
+      link.click();
+    }
+    // init ornament after DOM paints
+    requestAnimationFrame(initOrnament);
+
+    /**************  ADVENT CALENDAR  **************/
+    const adventSurprises = [
+      { icon: '🎅', title: 'Santa Fact', content: 'Santa has over 2 billion children to visit on Christmas Eve!' },
+      { icon: '🦌', title: 'Reindeer Fact', content: 'Rudolph was almost named Rollo or Reginald!' },
+      { icon: '🍪', title: 'Cookie Recipe', content: 'Santa\'s favorite cookies are chocolate chip with a glass of cold milk!' },
+      { icon: '⛄', title: 'Snowman Joke', content: 'What do snowmen eat for breakfast? Frosted Flakes!' },
+      { icon: '🎄', title: 'Tree Fact', content: 'The tradition of Christmas trees started in Germany over 400 years ago!' },
+      { icon: '🎁', title: 'Gift Fact', content: 'The biggest Christmas gift ever was the Statue of Liberty from France!' },
+      { icon: '🔔', title: 'Jingle Bells', content: 'Jingle Bells was originally written for Thanksgiving, not Christmas!' },
+      { icon: '🧝', title: 'Elf Fact', content: 'Santa\'s elves work in 8-hour shifts around the clock making toys!' },
+      { icon: '✨', title: 'North Pole Fact', content: 'The North Pole temperature can drop to -40°F in winter!' },
+      { icon: '🎅', title: 'Santa\'s Age', content: 'Santa Claus is over 1,750 years old!' },
+      { icon: '🥛', title: 'Milk & Cookies', content: 'Children around the world leave out over 500 million cookies for Santa!' },
+      { icon: '🎵', title: 'Carol Fact', content: 'Silent Night has been translated into over 300 languages!' },
+      { icon: '⭐', title: 'Christmas Star', content: 'The star on top of the tree represents the Star of Bethlehem!' },
+      { icon: '🧦', title: 'Stocking Fact', content: 'The tradition of stockings came from a generous gift from St. Nicholas!' },
+      { icon: '🎪', title: 'Toy Fact', content: 'The most popular toy requested from Santa is LEGO bricks!' },
+      { icon: '❄️', title: 'Snow Fact', content: 'No two snowflakes are exactly alike!' },
+      { icon: '🍬', title: 'Candy Cane', content: 'Candy canes were originally made to keep children quiet in church!' },
+      { icon: '🎺', title: 'Music Fact', content: 'The song "Jingle Bells" was the first song played in space!' },
+      { icon: '🌟', title: 'Wish Upon a Star', content: 'Santa grants wishes to children who believe with all their heart!' },
+      { icon: '🎉', title: 'Celebration', content: 'Over 2 billion people celebrate Christmas worldwide!' },
+      { icon: '🕯️', title: 'Candle Fact', content: 'Candles on Christmas trees were used before electric lights!' },
+      { icon: '🎀', title: 'Wrapping Fact', content: 'Americans spend over $2 billion on Christmas wrapping paper!' },
+      { icon: '🏠', title: 'Gingerbread', content: 'Gingerbread houses started in Germany in the 1800s!' },
+      { icon: '🎊', title: 'Almost Christmas!', content: 'Only 1 day left! Santa is packing his sleigh right now!' },
+      { icon: '🎅', title: 'MERRY CHRISTMAS!', content: 'It\'s Christmas Day! Santa visited last night while you were sleeping! 🎄✨' }
+    ];
+    function initAdventCalendar() {
+      const grid = document.getElementById('adventGrid');
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentDay = now.getDate();
+      const openedDays = JSON.parse(localStorage.getItem('adventOpened') || '[]');
+      for (let day = 1; day <= 25; day++) {
+        const dayDiv = document.createElement('div');
+        dayDiv.className = 'advent-day';
+        const isOpened = openedDays.includes(day);
+        const isDecember = currentMonth === 11;
+        const canOpen = isDecember && currentDay >= day;
+        const isToday = isDecember && currentDay === day;
+        if (!canOpen) { dayDiv.classList.add('locked'); }
+        else if (isOpened) { dayDiv.classList.add('opened'); }
+        if (isToday && !isOpened) { dayDiv.classList.add('today'); }
+        dayDiv.innerHTML = `<div class="advent-number">${day}</div><div class="advent-icon">${isOpened ? '✨' : canOpen ? '🎁' : '🔒'}</div>`;
+        if (canOpen && !isOpened) { dayDiv.onclick = () => openAdventDay(day); }
+        grid.appendChild(dayDiv);
+      }
+    }
+    function openAdventDay(day) {
+      const surprise = adventSurprises[day - 1];
+      const modal = document.getElementById('adventModal');
+      const content = document.getElementById('adventSurpriseContent');
+      content.innerHTML = `
+        <div class="advent-surprise">${surprise.icon}</div>
+        <h2 style="font-size: 28px; font-weight: bold; color: #dc2626; margin-bottom: 12px;">Day ${day}</h2>
+        <h3 style="font-size: 22px; font-weight: 600; color: #16a34a; margin-bottom: 16px;">${surprise.title}</h3>
+        <p style="font-size: 18px; color: #374151; line-height: 1.6;">${surprise.content}</p>
+        <button onclick="closeAdventModal()" style="margin-top: 24px; padding: 12px 32px; background: linear-gradient(135deg, #dc2626, #16a34a); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer;">
+          Close
+        </button>
+      `;
+      modal.classList.add('open');
+      const openedDays = JSON.parse(localStorage.getItem('adventOpened') || '[]');
+      if (!openedDays.includes(day)) { openedDays.push(day); localStorage.setItem('adventOpened', JSON.stringify(openedDays)); }
+      document.getElementById('adventGrid').innerHTML = '';
+      initAdventCalendar();
+    }
+    function closeAdventModal() { document.getElementById('adventModal').classList.remove('open'); }
+    initAdventCalendar();
+
+    /**************  HIDE ADVENT UNTIL DECEMBER + TEASER TAB  **************/
+    (function setupAdventVisibility() {
+      const tabsBar = document.querySelector('.tabs');
+      const tabContent = document.querySelector('.tab-content');
+      const adventTabBtn = document.querySelector('.tabs button[onclick*="advent"]');
+      const adventPane = document.getElementById('advent');
+      if (!tabsBar || !tabContent || !adventTabBtn || !adventPane) return;
+      const now = new Date();
+      const isDecember = now.getMonth() === 11;
+      // Days until next Dec 1
+      const currentYear = now.getFullYear();
+      const dec1ThisYear = new Date(currentYear, 11, 1, 0, 0, 0);
+      const target = now <= dec1ThisYear ? dec1ThisYear : new Date(currentYear + 1, 11, 1, 0, 0, 0);
+      const msLeft = target - now;
+      const daysLeft = Math.max(0, Math.ceil(msLeft / (1000 * 60 * 60 * 24)));
+      if (!isDecember) {
+        adventTabBtn.style.display = 'none';
+        adventPane.style.display = 'none';
+        const teaserBtn = document.createElement('button');
+        teaserBtn.className = 'tab';
+        teaserBtn.innerHTML = `<span class="tab-icon">🎁</span><span>Advent (Dec 1)</span>`;
+        teaserBtn.onclick = function(){ switchTab(this, 'adventTeaser'); };
+        tabsBar.insertBefore(teaserBtn, adventTabBtn.nextSibling);
+        const teaserPane = document.createElement('div');
+        teaserPane.id = 'adventTeaser';
+        teaserPane.className = 'tab-pane';
+        teaserPane.innerHTML = `
+          <div style="background:white; color:#1f2937; border-radius:20px; padding:24px; box-shadow:0 10px 30px rgba(0,0,0,.25);">
+            <div style="text-align:center; margin-bottom:12px;">
+              <div style="font-size:48px; margin-bottom:6px;">🎄✨</div>
+              <h2 style="font-size:24px; font-weight:800; color:#dc2626;">Advent Calendar unlocks Dec 1!</h2>
+              <p id="adventCountdown" style="font-size:14px; color:#6b7280;">${daysLeft === 0 ? 'Almost there!' : daysLeft + ' day' + (daysLeft===1?'':'s') + ' to go'}</p>
+            </div>
+            <div style="display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); margin-top:16px;">
+              <div style="background:#f3f4f6; border-radius:14px; padding:14px;">
+                <div style="font-size:24px;">🎅</div><div style="font-weight:700; margin-top:6px;">Santa Facts</div>
+                <div style="font-size:12px; color:#6b7280;">Daily tidbits from the North Pole.</div>
+              </div>
+              <div style="background:#f3f4f6; border-radius:14px; padding:14px;">
+                <div style="font-size:24px;">🦌</div><div style="font-weight:700; margin-top:6px;">Reindeer Moments</div>
+                <div style="font-size:12px; color:#6b7280;">Stable updates & training notes.</div>
+              </div>
+              <div style="background:#f3f4f6; border-radius:14px; padding:14px;">
+                <div style="font-size:24px;">🍪</div><div style="font-weight:700; margin-top:6px;">Cookie Surprises</div>
+                <div style="font-size:12px; color:#6b7280;">Recipes and elf-approved snacks.</div>
+              </div>
+              <div style="background:#f3f4f6; border-radius:14px; padding:14px;">
+                <div style="font-size:24px;">✨</div><div style="font-weight:700; margin-top:6px;">Magical Extras</div>
+                <div style="font-size:12px; color:#6b7280;">Stickers, badges, and more.</div>
+              </div>
+            </div>
+            <div style="margin-top:16px; text-align:center;">
+              <span style="display:inline-block; padding:8px 14px; border-radius:999px; background:linear-gradient(135deg,#dc2626,#16a34a); color:white; font-weight:800; font-size:12px;">
+                Unlocks automatically on December 1
               </span>
             </div>
-            <div class="report-scores">
-              <div class="score-box nice">
-                <div class="score-number" style="color:#059669;">${niceScore}%</div>
-                <div style="font-size:14px; font-weight:600; color:#059669;">Nice Score</div>
-              </div>
-              <div class="score-box naughty">
-                <div class="score-number" style="color:#dc2626;">${naughtyScore}%</div>
-                <div style="font-size:14px; font-weight:600; color:#dc2626;">Naughty Score</div>
-              </div>
-            </div>
-            <div class="deeds-section">
-              <h4 style="font-weight:bold; margin-bottom:8px;">⭐ Good Deeds</h4>
-              ${goodDeeds.map(d => `<div>✓ ${d}</div>`).join('')}
-            </div>
-            <div class="deeds-section">
-              <h4 style="font-weight:bold; margin-bottom:8px;">⚠️ Areas to Improve</h4>
-              ${naughtyDeeds.map(d => `<div>• ${d}</div>`).join('')}
-            </div>
-            <p style="text-align:center; font-size:12px; color:#6b7280; margin-top:16px; font-style:italic;">
-              Report generated by Santa's Elf Monitoring System™
-            </p>
           </div>
-        </div>
-      `;
-    }
+        `;
+        tabContent.appendChild(teaserPane);
+        // live countdown (updates once per day)
+        setInterval(() => {
+          const now2 = new Date();
+          const target2 = now2.getMonth() <= 10 ? new Date(now2.getFullYear(),11,1) : new Date(now2.getFullYear()+1,11,1);
+          const left = Math.max(0, Math.ceil((target2 - now2) / (1000*60*60*24)));
+          const el = document.getElementById('adventCountdown');
+          if (el) el.textContent = left === 0 ? 'Almost there!' : `${left} day${left===1?'':'s'} to go`;
+        }, 60_000); // no need to spam; hourly/day would also be fine
+      }
+    })();
 
     /**************  LETTER TO SANTA  **************/
     function saveLetterLocally() {
@@ -971,77 +1082,6 @@
       `;
       resultDiv.style.display = 'block';
     }
-
-    /**************  ADVENT CALENDAR  **************/
-    const adventSurprises = [
-      { icon: '🎅', title: 'Santa Fact', content: 'Santa has over 2 billion children to visit on Christmas Eve!' },
-      { icon: '🦌', title: 'Reindeer Fact', content: 'Rudolph was almost named Rollo or Reginald!' },
-      { icon: '🍪', title: 'Cookie Recipe', content: 'Santa\'s favorite cookies are chocolate chip with a glass of cold milk!' },
-      { icon: '⛄', title: 'Snowman Joke', content: 'What do snowmen eat for breakfast? Frosted Flakes!' },
-      { icon: '🎄', title: 'Tree Fact', content: 'The tradition of Christmas trees started in Germany over 400 years ago!' },
-      { icon: '🎁', title: 'Gift Fact', content: 'The biggest Christmas gift ever was the Statue of Liberty from France!' },
-      { icon: '🔔', title: 'Jingle Bells', content: 'Jingle Bells was originally written for Thanksgiving, not Christmas!' },
-      { icon: '🧝', title: 'Elf Fact', content: 'Santa\'s elves work in 8-hour shifts around the clock making toys!' },
-      { icon: '✨', title: 'North Pole Fact', content: 'The North Pole temperature can drop to -40°F in winter!' },
-      { icon: '🎅', title: 'Santa\'s Age', content: 'Santa Claus is over 1,750 years old!' },
-      { icon: '🥛', title: 'Milk & Cookies', content: 'Children around the world leave out over 500 million cookies for Santa!' },
-      { icon: '🎵', title: 'Carol Fact', content: 'Silent Night has been translated into over 300 languages!' },
-      { icon: '⭐', title: 'Christmas Star', content: 'The star on top of the tree represents the Star of Bethlehem!' },
-      { icon: '🧦', title: 'Stocking Fact', content: 'The tradition of stockings came from a generous gift from St. Nicholas!' },
-      { icon: '🎪', title: 'Toy Fact', content: 'The most popular toy requested from Santa is LEGO bricks!' },
-      { icon: '❄️', title: 'Snow Fact', content: 'No two snowflakes are exactly alike!' },
-      { icon: '🍬', title: 'Candy Cane', content: 'Candy canes were originally made to keep children quiet in church!' },
-      { icon: '🎺', title: 'Music Fact', content: 'The song "Jingle Bells" was the first song played in space!' },
-      { icon: '🌟', title: 'Wish Upon a Star', content: 'Santa grants wishes to children who believe with all their heart!' },
-      { icon: '🎉', title: 'Celebration', content: 'Over 2 billion people celebrate Christmas worldwide!' },
-      { icon: '🕯️', title: 'Candle Fact', content: 'Candles on Christmas trees were used before electric lights!' },
-      { icon: '🎀', title: 'Wrapping Fact', content: 'Americans spend over $2 billion on Christmas wrapping paper!' },
-      { icon: '🏠', title: 'Gingerbread', content: 'Gingerbread houses started in Germany in the 1800s!' },
-      { icon: '🎊', title: 'Almost Christmas!', content: 'Only 1 day left! Santa is packing his sleigh right now!' },
-      { icon: '🎅', title: 'MERRY CHRISTMAS!', content: 'It\'s Christmas Day! Santa visited last night while you were sleeping! 🎄✨' }
-    ];
-    function initAdventCalendar() {
-      const grid = document.getElementById('adventGrid');
-      const now = new Date();
-      const currentMonth = now.getMonth();
-      const currentDay = now.getDate();
-      const openedDays = JSON.parse(localStorage.getItem('adventOpened') || '[]');
-      for (let day = 1; day <= 25; day++) {
-        const dayDiv = document.createElement('div');
-        dayDiv.className = 'advent-day';
-        const isOpened = openedDays.includes(day);
-        const isDecember = currentMonth === 11;
-        const canOpen = isDecember && currentDay >= day;
-        const isToday = isDecember && currentDay === day;
-        if (!canOpen) { dayDiv.classList.add('locked'); }
-        else if (isOpened) { dayDiv.classList.add('opened'); }
-        if (isToday && !isOpened) { dayDiv.classList.add('today'); }
-        dayDiv.innerHTML = `<div class="advent-number">${day}</div><div class="advent-icon">${isOpened ? '✨' : canOpen ? '🎁' : '🔒'}</div>`;
-        if (canOpen && !isOpened) { dayDiv.onclick = () => openAdventDay(day); }
-        grid.appendChild(dayDiv);
-      }
-    }
-    function openAdventDay(day) {
-      const surprise = adventSurprises[day - 1];
-      const modal = document.getElementById('adventModal');
-      const content = document.getElementById('adventSurpriseContent');
-      content.innerHTML = `
-        <div class="advent-surprise">${surprise.icon}</div>
-        <h2 style="font-size: 28px; font-weight: bold; color: #dc2626; margin-bottom: 12px;">Day ${day}</h2>
-        <h3 style="font-size: 22px; font-weight: 600; color: #16a34a; margin-bottom: 16px;">${surprise.title}</h3>
-        <p style="font-size: 18px; color: #374151; line-height: 1.6;">${surprise.content}</p>
-        <button onclick="closeAdventModal()" style="margin-top: 24px; padding: 12px 32px; background: linear-gradient(135deg, #dc2626, #16a34a); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer;">
-          Close
-        </button>
-      `;
-      modal.classList.add('open');
-      const openedDays = JSON.parse(localStorage.getItem('adventOpened') || '[]');
-      if (!openedDays.includes(day)) { openedDays.push(day); localStorage.setItem('adventOpened', JSON.stringify(openedDays)); }
-      document.getElementById('adventGrid').innerHTML = '';
-      initAdventCalendar();
-    }
-    function closeAdventModal() { document.getElementById('adventModal').classList.remove('open'); }
-    initAdventCalendar();
 
     /**************  SANTA CAM  **************/
     let camManifest = null;
