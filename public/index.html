@@ -261,121 +261,39 @@
       margin: 20px 0;
       animation: bounce 1s ease-out;
     }
-    
-    .chat-container {
+
+    /* ---- Weather styles ---- */
+    .weather-card {
       background: white;
+      color: #1f2937;
       border-radius: 20px;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 600px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
     }
-    .chat-header {
-      background: linear-gradient(135deg, #dc2626, #16a34a);
+    .weather-header {
+      background: linear-gradient(135deg, #0ea5e9, #2563eb);
       color: white;
       padding: 20px;
-      text-align: center;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
     }
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background: #f9fafb;
+    .weather-body { padding: 20px; display:grid; gap:16px; }
+    .weather-row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    .tile {
+      background:#f3f4f6; border-radius:14px; padding:14px; display:flex; align-items:center; justify-content:space-between;
     }
-    .chat-message {
-      margin-bottom: 16px;
-      display: flex;
-      gap: 12px;
+    .big-temp { font-size:48px; font-weight:800; }
+    .thermo { width: 100%; height: 14px; background: #e5e7eb; border-radius: 999px; overflow:hidden; margin-left:12px; }
+    .thermo-fill { height:100%; background: linear-gradient(90deg, #22c55e, #ef4444); width:50%; }
+    .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:#111827; color:white; font-size:12px; font-weight:700; }
+    .sub { font-size:12px; color:#6b7280; }
+    .toggle { background:#111827; color:white; border:none; padding:8px 12px; border-radius:999px; font-weight:700; cursor:pointer; }
+    .norad {
+      text-align:center; margin-top:8px; font-size:14px;
     }
-    .chat-message.santa {
-      flex-direction: row;
-    }
-    .chat-message.user {
-      flex-direction: row-reverse;
-    }
-    .chat-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      flex-shrink: 0;
-    }
-    .chat-bubble {
-      max-width: 70%;
-      padding: 12px 16px;
-      border-radius: 16px;
-      color: #1f2937;
-      line-height: 1.5;
-    }
-    .chat-message.santa .chat-bubble {
-      background: white;
-      border: 2px solid #fee2e2;
-      border-radius: 16px 16px 16px 4px;
-    }
-    .chat-message.user .chat-bubble {
-      background: #dbeafe;
-      border-radius: 16px 16px 4px 16px;
-    }
-    .chat-input-area {
-      padding: 16px;
-      background: white;
-      border-top: 2px solid #e5e7eb;
-      display: flex;
-      gap: 12px;
-    }
-    .chat-input {
-      flex: 1;
-      padding: 12px 16px;
-      border: 2px solid #e5e7eb;
-      border-radius: 24px;
-      font-size: 16px;
-      outline: none;
-      font-family: inherit;
-    }
-    .chat-input:focus {
-      border-color: #dc2626;
-    }
-    .chat-send-btn {
-      padding: 12px 24px;
-      background: linear-gradient(135deg, #dc2626, #16a34a);
-      color: white;
-      border: none;
-      border-radius: 24px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .chat-send-btn:hover:not(:disabled) {
-      transform: scale(1.05);
-    }
-    .chat-send-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .chat-typing {
-      display: flex;
-      gap: 4px;
-      padding: 12px 16px;
-    }
-    .chat-typing-dot {
-      width: 8px;
-      height: 8px;
-      background: #9ca3af;
-      border-radius: 50%;
-      animation: typing 1.4s infinite;
-    }
-    .chat-typing-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-    .chat-typing-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-    @keyframes typing {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-10px); }
+    .norad a {
+      color:#93c5fd; text-decoration:underline;
     }
   </style>
 </head>
@@ -428,9 +346,9 @@
           <span class="tab-icon">🔊</span>
           <span>Soundboard</span>
         </button>
-        <button class="tab" onclick="switchTab(this,'chat')">
-          <span class="tab-icon">💬</span>
-          <span>Chat with Santa</span>
+        <button class="tab" onclick="switchTab(this,'weather')">
+          <span class="tab-icon">🌨️</span>
+          <span>North Pole Weather</span>
         </button>
         <button class="tab" onclick="switchTab(this,'report')">
           <span class="tab-icon">📄</span>
@@ -462,31 +380,73 @@
           <div id="speakingIndicator" style="display: none;" class="speaking-indicator">🔊 Santa is speaking...</div>
         </div>
 
-        <!-- Chat with Santa -->
-        <div id="chat" class="tab-pane">
-          <div class="chat-container">
-            <div class="chat-header">
-              <div style="font-size: 48px; margin-bottom: 8px;">🎅</div>
-              <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 4px;">Chat with Santa Claus</h2>
-              <p style="font-size: 14px; opacity: 0.9;">Ask Santa anything! He's listening from the North Pole</p>
+        <!-- North Pole Weather (new tab replacing chat) -->
+        <div id="weather" class="tab-pane">
+          <div class="weather-card">
+            <div class="weather-header">
+              <div>
+                <div style="font-size:18px; font-weight:800;">North Pole Weather</div>
+                <div class="sub">90°N, 135°W • Live forecast magic</div>
+              </div>
+              <button class="toggle" id="unitToggle" onclick="toggleUnits()">°F / °C</button>
             </div>
-            <div class="chat-messages" id="chatMessages">
-              <div class="chat-message santa">
-                <div class="chat-avatar">🎅</div>
-                <div class="chat-bubble">
-                  Ho ho ho! Welcome to the North Pole! I'm Santa Claus, and I'm so happy to chat with you! What's your name, my dear friend?
+            <div class="weather-body">
+              <div class="tile" style="grid-column:1/-1;">
+                <div style="display:flex; align-items:center; gap:14px;">
+                  <div id="weatherEmoji" style="font-size:40px;">❄️</div>
+                  <div>
+                    <div id="weatherMain" style="font-size:18px; font-weight:700;">Snow showers & candy-cane flurries</div>
+                    <div id="weatherSub" class="sub">Reindeer training: Excellent</div>
+                  </div>
+                </div>
+                <div class="big-temp" id="tempNow">-40°</div>
+              </div>
+
+              <div class="weather-row">
+                <div class="tile">
+                  <div>
+                    <div style="font-weight:700;">Feels like</div>
+                    <div id="tempFeels" class="sub">-52°</div>
+                  </div>
+                  <div style="display:flex; align-items:center; width:55%;">
+                    <div class="thermo"><div id="thermoFill" class="thermo-fill" style="width:40%"></div></div>
+                  </div>
+                </div>
+                <div class="tile">
+                  <div>
+                    <div style="font-weight:700;">Wind</div>
+                    <div id="windTxt" class="sub">12 mph (NNE)</div>
+                  </div>
+                  <span id="windBadge" class="badge">Calm</span>
                 </div>
               </div>
-            </div>
-            <div class="chat-input-area">
-              <input 
-                type="text" 
-                id="chatInput" 
-                class="chat-input" 
-                placeholder="Type your message to Santa..."
-                onkeypress="if(event.key==='Enter') sendChatMessage()"
-              />
-              <button class="chat-send-btn" onclick="sendChatMessage()" id="chatSendBtn">Send 🎁</button>
+
+              <div class="weather-row">
+                <div class="tile">
+                  <div>
+                    <div style="font-weight:700;">Aurora chance</div>
+                    <div id="auroraTxt" class="sub">30% (KP 3)</div>
+                  </div>
+                  <span id="auroraBadge" class="badge">Low</span>
+                </div>
+                <div class="tile">
+                  <div>
+                    <div style="font-weight:700;">Reindeer Index</div>
+                    <div id="reindeerTxt" class="sub">Training: Excellent</div>
+                  </div>
+                  <span id="reindeerBadge" class="badge">A+</span>
+                </div>
+              </div>
+
+              <div class="tile" style="grid-column:1/-1;">
+                <div>
+                  <div style="font-weight:700;">Outlook</div>
+                  <div id="outlookTxt" class="sub">Snowy sprinkles tapering this evening. Perfect cookie-cooling weather.</div>
+                </div>
+                <div class="norad" id="noradCta" style="display:none;">
+                  🎅 Big night! <a href="https://www.noradsanta.org" target="_blank" rel="noopener">Track Santa with NORAD</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -622,30 +582,17 @@
     function updateCountdown() {
       const now = new Date();
       const currentYear = now.getFullYear();
-      
-      // Set Christmas date (December 25 at midnight)
       let christmas = new Date(currentYear, 11, 25, 0, 0, 0);
-      
-      // If Christmas has passed this year, set to next year
-      if (now > christmas) {
-        christmas = new Date(currentYear + 1, 11, 25, 0, 0, 0);
-      }
-      
+      if (now > christmas) { christmas = new Date(currentYear + 1, 11, 25, 0, 0, 0); }
       const diff = christmas - now;
-      
-      // Calculate time units
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      
-      // Update display
       document.getElementById('days').textContent = days;
       document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
       document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
       document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
-      
-      // Special handling for Christmas Day
       const banner = document.getElementById('countdownBanner');
       if (days === 0 && hours === 0) {
         banner.classList.add('christmas-day');
@@ -654,8 +601,6 @@
         banner.classList.remove('christmas-day');
       }
     }
-    
-    // Update countdown immediately and every second
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
@@ -684,7 +629,6 @@
 
     /**************  SOUNDBOARD + ELEVENLABS TTS  **************/
     let currentAudio = null;
-
     const messages = [
       { text: "Ho ho ho! You've been very good today, {name}!", type: "nice", emoji: "🎅" },
       { text: "{name}, you're on the nice list this year!", type: "nice", emoji: "⭐" },
@@ -697,7 +641,6 @@
       { text: "Merry Christmas, {name}! Have a magical holiday!", type: "nice", emoji: "🎄" },
       { text: "{name}, have you been naughty or nice this year?", type: "neutral", emoji: "🎅" },
     ];
-
     const messageButtonsContainer = document.getElementById('messageButtons');
 
     function updateButtonText() {
@@ -721,54 +664,39 @@
       btn.onclick = () => speakMessage(msg.text);
       messageButtonsContainer.appendChild(btn);
     });
-
     document.getElementById('childName').addEventListener('input', updateButtonText);
 
-    // Auto-fill name across all sections
+    // Auto-fill name across sections
     document.getElementById('childName').addEventListener('input', function() {
       const name = this.value;
-      updateButtonText(); // Update soundboard buttons
-      
-      // Update letter name if empty
+      updateButtonText();
       const letterNameInput = document.getElementById('letterName');
-      if (letterNameInput) {
-        letterNameInput.value = name;
-      }
-      
-      // Update elf name input if empty
+      if (letterNameInput) { letterNameInput.value = name; }
       const elfNameInput = document.getElementById('elfNameInput');
-      if (elfNameInput) {
-        elfNameInput.value = name;
-      }
+      if (elfNameInput) { elfNameInput.value = name; }
     });
 
     // ElevenLabs via serverless endpoint: /api/santa-voice
     async function speakMessage(text) {
       const name = (document.getElementById('childName').value || '').trim() || 'little one';
       const personalized = text.replace(/{name}/g, name);
-
       if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-
       const buttons = document.querySelectorAll('.message-btn');
       buttons.forEach(b => b.disabled = true);
       const indicator = document.getElementById('speakingIndicator');
       indicator.style.display = 'block';
-
       try {
         const response = await fetch('/api/santa-voice', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: personalized })
         });
-
         if (!response.ok) {
           const detail = await response.text().catch(()=>'');
           throw new Error(`API Error: ${response.status} ${response.statusText}\n${detail}`);
         }
-
         const audioBlob = await response.blob();
         const audioUrl = URL.createObjectURL(audioBlob);
-
         currentAudio = new Audio(audioUrl);
         currentAudio.onended = () => {
           indicator.style.display = 'none';
@@ -780,7 +708,6 @@
           buttons.forEach(b => b.disabled = false);
           alert('Error playing audio.');
         };
-
         await currentAudio.play();
       } catch (err) {
         console.error('Error generating Santa voice:', err);
@@ -789,6 +716,115 @@
         alert('Error generating Santa voice. Please try again.\n\n' + (err?.message || err));
       }
     }
+
+    /**************  WEATHER (fun, client-side generator)  **************/
+    let useCelsius = false;
+    function toggleUnits() {
+      useCelsius = !useCelsius;
+      renderWeather(generateWeather(true));
+    }
+
+    function mulberry32(a){ return function(){ let t = a += 0x6D2B79F5; t = Math.imul(t ^ t>>>15, t | 1); t ^= t + Math.imul(t ^ t>>>7, t | 61); return ((t ^ t>>>14) >>> 0) / 4294967296; } }
+    function seededRand(seed, min, max) {
+      const r = mulberry32(seed)();
+      return Math.floor(min + r * (max - min + 1));
+    }
+
+    function generateWeather(persist=false){
+      // Seed with YYYYMMDDHH for gentle drift each hour
+      const now = new Date();
+      const key = Number(`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}${String(now.getHours()).padStart(2,'0')}`);
+      const rand = mulberry32(key);
+      const icons = ['❄️','🌨️','🌬️','🌫️','☁️','🌟'];
+      const phrases = [
+        'Snow showers & candy-cane flurries',
+        'Diamond-dust sparkle in the air',
+        'Elf hat–tossing gusts',
+        'Low sugar-plum fog',
+        'Polar calm with twinkling stars',
+        'North wind with sleigh-track drifts'
+      ];
+      // Base temps (F)
+      const base = -30 - Math.floor(rand()*25); // -30 to -54
+      const wind = 5 + Math.floor(rand()*26);   // 5–30 mph
+      const gust = wind + 5 + Math.floor(rand()*16); // gust 10–45
+      const feels = base - Math.floor(wind/2) - Math.floor(rand()*6);
+      const aurora = Math.floor(rand()*101); // %
+      const kp = 1 + Math.floor(rand()*7);   // 1–7
+      const emoji = icons[Math.floor(rand()*icons.length)];
+      const phrase = phrases[Math.floor(rand()*phrases.length)];
+      const deerIdx = ['Chilly','Good','Great','Excellent','Legendary'][Math.min(4, Math.floor((70 - Math.abs(base+20))/12)+Math.floor(rand()*2))];
+      const letter = { 'Chilly':'B-', 'Good':'B+', 'Great':'A', 'Excellent':'A+', 'Legendary':'S' }[deerIdx];
+
+      const outlooks = [
+        'Snowy sprinkles tapering this evening. Perfect cookie-cooling weather.',
+        'Light flurries all day—ideal for reindeer sprints.',
+        'Blustery bursts; elves advised to secure hats.',
+        'Crystal-clear skies tonight for bedtime sleigh checks.',
+        'Jolly cold snap continues—keep cocoa close!'
+      ];
+      const outlook = outlooks[Math.floor(rand()*outlooks.length)];
+
+      return { base, feels, wind, gust, emoji, phrase, aurora, kp, deerIdx, letter, outlook, seed:key };
+    }
+
+    function FtoC(f){ return Math.round((f - 32) * 5/9); }
+    function fmtTemp(f){
+      return useCelsius ? `${FtoC(f)}°` : `${f}°`;
+    }
+    function renderWeather(w){
+      const tempNow = document.getElementById('tempNow');
+      const tempFeels = document.getElementById('tempFeels');
+      const windTxt = document.getElementById('windTxt');
+      const windBadge = document.getElementById('windBadge');
+      const auroraTxt = document.getElementById('auroraTxt');
+      const auroraBadge = document.getElementById('auroraBadge');
+      const reindeerTxt = document.getElementById('reindeerTxt');
+      const reindeerBadge = document.getElementById('reindeerBadge');
+      const outlookTxt = document.getElementById('outlookTxt');
+      const weatherMain = document.getElementById('weatherMain');
+      const weatherSub = document.getElementById('weatherSub');
+      const weatherEmoji = document.getElementById('weatherEmoji');
+      const thermoFill = document.getElementById('thermoFill');
+
+      tempNow.textContent = fmtTemp(w.base);
+      tempFeels.textContent = fmtTemp(w.feels);
+      windTxt.textContent = `${w.wind} mph (gusts ${w.gust})`;
+      weatherMain.textContent = w.phrase;
+      weatherSub.textContent = `Reindeer training: ${w.deerIdx}`;
+      weatherEmoji.textContent = w.emoji;
+      auroraTxt.textContent = `${w.aurora}% (KP ${w.kp})`;
+      reindeerTxt.textContent = `Training: ${w.deerIdx}`;
+      reindeerBadge.textContent = w.letter;
+
+      // Simple wind badge
+      windBadge.textContent = w.wind < 10 ? 'Calm' : w.wind < 20 ? 'Breezy' : 'Gusty';
+
+      // Aurora badge
+      auroraBadge.textContent = w.aurora < 25 ? 'Low' : w.aurora < 60 ? 'Good' : 'High';
+
+      // Thermometer fill based on temp range [-60F to 10F]
+      const minF = -60, maxF = 10;
+      const clamped = Math.max(minF, Math.min(maxF, w.base));
+      const pct = Math.round(((clamped - minF) / (maxF - minF)) * 100);
+      thermoFill.style.width = pct + '%';
+
+      outlookTxt.textContent = w.outlook;
+
+      // NORAD CTA shows only on Dec 24
+      const now = new Date();
+      const norad = document.getElementById('noradCta');
+      if (now.getMonth() === 11 && now.getDate() === 24) {
+        norad.style.display = 'block';
+      } else {
+        norad.style.display = 'none';
+      }
+    }
+
+    // Init weather and refresh every 60s (hourly seed changes)
+    let currentWeather = generateWeather();
+    renderWeather(currentWeather);
+    setInterval(() => { currentWeather = generateWeather(true); renderWeather(currentWeather); }, 60000);
 
     /**************  REPORT CARD  **************/
     function generateReport() {
@@ -860,47 +896,22 @@
     function saveLetterLocally() {
       let name = document.getElementById('letterName').value.trim();
       const content = document.getElementById('letterContent').value.trim();
-      
-      // Use main name if letter name is empty
-      if (!name) {
-        name = document.getElementById('childName').value.trim();
-      }
-      
-      if (!name || !content) {
-        alert('Please fill in both your name and letter content!');
-        return;
-      }
-      
+      if (!name) { name = document.getElementById('childName').value.trim(); }
+      if (!name || !content) { alert('Please fill in both your name and letter content!'); return; }
       const letterText = `Letter to Santa from ${name}\n${new Date().toLocaleDateString()}\n\n${content}`;
       const blob = new Blob([letterText], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = `Letter_to_Santa_${name.replace(/\s+/g, '_')}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
+      a.href = url; a.download = `Letter_to_Santa_${name.replace(/\s+/g, '_')}.txt`;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
       showLetterStatus('💾 Letter saved to your device!', '#3b82f6');
     }
-    
     function sendLetterToSanta() {
       let name = document.getElementById('letterName').value.trim();
       const content = document.getElementById('letterContent').value.trim();
-      
-      // Use main name if letter name is empty
-      if (!name) {
-        name = document.getElementById('childName').value.trim();
-      }
-      
-      if (!name || !content) {
-        alert('Please fill in both your name and letter content!');
-        return;
-      }
-      
+      if (!name) { name = document.getElementById('childName').value.trim(); }
+      if (!name || !content) { alert('Please fill in both your name and letter content!'); return; }
       showLetterStatus('📮 Sending to the North Pole...', '#fbbf24');
-      
       setTimeout(() => {
         showLetterStatus(`
           <div style="text-align: center;">
@@ -910,14 +921,9 @@
             <p style="font-size: 14px; color: #6b7280; margin-top: 8px;">He's checking it twice and adding it to his special list. 🎄</p>
           </div>
         `, 'linear-gradient(135deg, #d1fae5, #a7f3d0)');
-        
-        setTimeout(() => {
-          document.getElementById('letterName').value = '';
-          document.getElementById('letterContent').value = '';
-        }, 2000);
+        setTimeout(() => { document.getElementById('letterName').value = ''; document.getElementById('letterContent').value = ''; }, 2000);
       }, 2000);
     }
-    
     function showLetterStatus(message, bgColor) {
       const statusDiv = document.getElementById('letterStatus');
       statusDiv.innerHTML = `
@@ -931,47 +937,18 @@
     /**************  ELF NAME GENERATOR  **************/
     function generateElfName() {
       let name = document.getElementById('elfNameInput').value.trim();
-      
-      // Use main name if elf name input is empty
-      if (!name) {
-        name = document.getElementById('childName').value.trim();
-      }
-      
-      if (!name) {
-        alert('Please enter your name in the name field at the top!');
-        return;
-      }
+      if (!name) { name = document.getElementById('childName').value.trim(); }
+      if (!name) { alert('Please enter your name in the name field at the top!'); return; }
 
-      const prefixes = [
-        'Sparkle', 'Jingle', 'Twinkle', 'Sugar', 'Jolly', 'Merry', 'Cocoa', 'Candy',
-        'Ginger', 'Snowflake', 'Peppermint', 'Holly', 'Frosty', 'Tinsel', 'Glitter',
-        'Cinnamon', 'Cookie', 'Mistletoe', 'Starlight', 'Chestnut', 'Nutmeg', 'Angel',
-        'Berry', 'Sparkly', 'Cheery', 'Snowy', 'Elfie', 'Pudding', 'Caramel', 'Zippy'
-      ];
+      const prefixes = ['Sparkle','Jingle','Twinkle','Sugar','Jolly','Merry','Cocoa','Candy','Ginger','Snowflake','Peppermint','Holly','Frosty','Tinsel','Glitter','Cinnamon','Cookie','Mistletoe','Starlight','Chestnut','Nutmeg','Angel','Berry','Sparkly','Cheery','Snowy','Elfie','Pudding','Caramel','Zippy'];
+      const suffixes = ['toes','bells','shine','plum','whiskers','bright','flakes','paws','nose','sparkle','jingles','cheeks','buttons','wings','giggles','twirl','bounce','dash','frost','sweet','star','berry','shoes','hat','ears','glow','hop','skip','jump','smile'];
+      const titles = ['Chief Toy Inspector','Master Gift Wrapper','Head Cookie Taster','Lead Reindeer Trainer','Senior Sleigh Engineer','Top Tinsel Arranger','Premier Present Sorter','Chief Snow Sculptor','Master List Checker','Head Jingle Composer','Lead Stocking Stuffer','Senior Candy Cane Maker','Top Ornament Designer','Chief Wish Granter','Master Elf Motivator','Head Chimney Navigator','Lead Magic Distributor','Senior Joy Spreader'];
 
-      const suffixes = [
-        'toes', 'bells', 'shine', 'plum', 'whiskers', 'bright', 'flakes', 'paws',
-        'nose', 'sparkle', 'jingles', 'cheeks', 'buttons', 'wings', 'giggles',
-        'twirl', 'bounce', 'dash', 'frost', 'sweet', 'star', 'berry', 'shoes',
-        'hat', 'ears', 'glow', 'hop', 'skip', 'jump', 'smile'
-      ];
-
-      const titles = [
-        'Chief Toy Inspector', 'Master Gift Wrapper', 'Head Cookie Taster',
-        'Lead Reindeer Trainer', 'Senior Sleigh Engineer', 'Top Tinsel Arranger',
-        'Premier Present Sorter', 'Chief Snow Sculptor', 'Master List Checker',
-        'Head Jingle Composer', 'Lead Stocking Stuffer', 'Senior Candy Cane Maker',
-        'Top Ornament Designer', 'Chief Wish Granter', 'Master Elf Motivator',
-        'Head Chimney Navigator', 'Lead Magic Distributor', 'Senior Joy Spreader'
-      ];
-
-      // Generate consistent name based on input
       const nameHash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
       const prefix = prefixes[nameHash % prefixes.length];
       const suffix = suffixes[(nameHash * 7) % suffixes.length];
       const title = titles[(nameHash * 13) % titles.length];
       const elfNumber = (nameHash % 999) + 1;
-
       const elfName = `${prefix}${suffix}`;
       
       const resultDiv = document.getElementById('elfNameResult');
@@ -1023,53 +1000,31 @@
       { icon: '🎊', title: 'Almost Christmas!', content: 'Only 1 day left! Santa is packing his sleigh right now!' },
       { icon: '🎅', title: 'MERRY CHRISTMAS!', content: 'It\'s Christmas Day! Santa visited last night while you were sleeping! 🎄✨' }
     ];
-
     function initAdventCalendar() {
       const grid = document.getElementById('adventGrid');
       const now = new Date();
       const currentMonth = now.getMonth();
       const currentDay = now.getDate();
-      
-      // Get opened days from localStorage
       const openedDays = JSON.parse(localStorage.getItem('adventOpened') || '[]');
-      
       for (let day = 1; day <= 25; day++) {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'advent-day';
-        
         const isOpened = openedDays.includes(day);
-        const isDecember = currentMonth === 11; // December is month 11
+        const isDecember = currentMonth === 11;
         const canOpen = isDecember && currentDay >= day;
         const isToday = isDecember && currentDay === day;
-        
-        if (!canOpen) {
-          dayDiv.classList.add('locked');
-        } else if (isOpened) {
-          dayDiv.classList.add('opened');
-        }
-        
-        if (isToday && !isOpened) {
-          dayDiv.classList.add('today');
-        }
-        
-        dayDiv.innerHTML = `
-          <div class="advent-number">${day}</div>
-          <div class="advent-icon">${isOpened ? '✨' : canOpen ? '🎁' : '🔒'}</div>
-        `;
-        
-        if (canOpen && !isOpened) {
-          dayDiv.onclick = () => openAdventDay(day);
-        }
-        
+        if (!canOpen) { dayDiv.classList.add('locked'); }
+        else if (isOpened) { dayDiv.classList.add('opened'); }
+        if (isToday && !isOpened) { dayDiv.classList.add('today'); }
+        dayDiv.innerHTML = `<div class="advent-number">${day}</div><div class="advent-icon">${isOpened ? '✨' : canOpen ? '🎁' : '🔒'}</div>`;
+        if (canOpen && !isOpened) { dayDiv.onclick = () => openAdventDay(day); }
         grid.appendChild(dayDiv);
       }
     }
-
     function openAdventDay(day) {
       const surprise = adventSurprises[day - 1];
       const modal = document.getElementById('adventModal');
       const content = document.getElementById('adventSurpriseContent');
-      
       content.innerHTML = `
         <div class="advent-surprise">${surprise.icon}</div>
         <h2 style="font-size: 28px; font-weight: bold; color: #dc2626; margin-bottom: 12px;">Day ${day}</h2>
@@ -1079,135 +1034,17 @@
           Close
         </button>
       `;
-      
       modal.classList.add('open');
-      
-      // Mark as opened
       const openedDays = JSON.parse(localStorage.getItem('adventOpened') || '[]');
-      if (!openedDays.includes(day)) {
-        openedDays.push(day);
-        localStorage.setItem('adventOpened', JSON.stringify(openedDays));
-      }
-      
-      // Refresh calendar to show opened state
+      if (!openedDays.includes(day)) { openedDays.push(day); localStorage.setItem('adventOpened', JSON.stringify(openedDays)); }
       document.getElementById('adventGrid').innerHTML = '';
       initAdventCalendar();
     }
-
-    function closeAdventModal() {
-      document.getElementById('adventModal').classList.remove('open');
-    }
-
-    // Initialize advent calendar when page loads
+    function closeAdventModal() { document.getElementById('adventModal').classList.remove('open'); }
     initAdventCalendar();
-
-    /**************  CHAT WITH SANTA  **************/
-    let chatHistory = [];
-
-    async function sendChatMessage() {
-      const input = document.getElementById('chatInput');
-      const message = input.value.trim();
-      
-      if (!message) return;
-      
-      // Get child's name from top input
-      const childName = document.getElementById('childName').value.trim() || 'friend';
-      
-      // Add user message to chat
-      addChatMessage(message, 'user');
-      input.value = '';
-      
-      // Disable send button
-      const sendBtn = document.getElementById('chatSendBtn');
-      sendBtn.disabled = true;
-      
-      // Show typing indicator
-      showTypingIndicator();
-      
-      try {
-        // Call our backend API
-        const response = await fetch('/api/santa-chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: message,
-            childName: childName,
-            chatHistory: chatHistory
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error(`API Error: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        const santaReply = data.reply;
-        
-        // Update chat history
-        chatHistory.push({ role: 'user', content: message });
-        chatHistory.push({ role: 'assistant', content: santaReply });
-        
-        // Remove typing indicator
-        removeTypingIndicator();
-        
-        // Add Santa's response
-        addChatMessage(santaReply, 'santa');
-        
-      } catch (error) {
-        console.error('Chat error:', error);
-        removeTypingIndicator();
-        addChatMessage("Ho ho ho! My magic crystal ball is a bit foggy right now. Can you try asking me again?", 'santa');
-      }
-      
-      // Re-enable send button
-      sendBtn.disabled = false;
-    }
-
-    function addChatMessage(text, sender) {
-      const messagesDiv = document.getElementById('chatMessages');
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `chat-message ${sender}`;
-      
-      const avatar = sender === 'santa' ? '🎅' : '👤';
-      
-      messageDiv.innerHTML = `
-        <div class="chat-avatar">${avatar}</div>
-        <div class="chat-bubble">${text}</div>
-      `;
-      
-      messagesDiv.appendChild(messageDiv);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    function showTypingIndicator() {
-      const messagesDiv = document.getElementById('chatMessages');
-      const typingDiv = document.createElement('div');
-      typingDiv.className = 'chat-message santa';
-      typingDiv.id = 'typingIndicator';
-      typingDiv.innerHTML = `
-        <div class="chat-avatar">🎅</div>
-        <div class="chat-bubble">
-          <div class="chat-typing">
-            <div class="chat-typing-dot"></div>
-            <div class="chat-typing-dot"></div>
-            <div class="chat-typing-dot"></div>
-          </div>
-        </div>
-      `;
-      messagesDiv.appendChild(typingDiv);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    function removeTypingIndicator() {
-      const indicator = document.getElementById('typingIndicator');
-      if (indicator) indicator.remove();
-    }
 
     /**************  SANTA CAM  **************/
     let camManifest = null;
-
     async function loadCamManifest() {
       if (camManifest) return camManifest;
       const res = await fetch('/videos/index.json', { cache: 'no-store' });
@@ -1215,7 +1052,6 @@
       camManifest = await res.json();
       return camManifest;
     }
-
     async function openCam(key) {
       const modal = document.getElementById('videoModal');
       const video = document.getElementById('modalVideo');
@@ -1250,39 +1086,28 @@
       video.play().catch(() => {
         video.muted = true;
         muteBtn.textContent = '🔇 Unmute';
-        video.play().catch(() => {
-          alert('This video format may not be supported by the browser.');
-        });
+        video.play().catch(() => { alert('This video format may not be supported by the browser.'); });
       });
 
-      video.onerror = () => {
-        console.warn('Video error; check path/codec:', src);
-      };
+      video.onerror = () => { console.warn('Video error; check path/codec:', src); };
     }
-
     function toggleMute() {
       const video = document.getElementById('modalVideo');
       const muteBtn = document.getElementById('muteBtn');
       video.muted = !video.muted;
       muteBtn.textContent = video.muted ? '🔇 Unmute' : '🔊 Mute';
     }
-
     function restartVideo() {
       const video = document.getElementById('modalVideo');
-      video.currentTime = 0;
-      video.play().catch(()=>{});
+      video.currentTime = 0; video.play().catch(()=>{});
     }
-
     function closeModal() {
       const modal = document.getElementById('videoModal');
       const video = document.getElementById('modalVideo');
       try { video.pause(); } catch {}
       modal.classList.remove('open');
     }
-
-    document.getElementById('videoModal').addEventListener('click', (e) => {
-      if (e.target.id === 'videoModal') closeModal();
-    });
+    document.getElementById('videoModal').addEventListener('click', (e) => { if (e.target.id === 'videoModal') closeModal(); });
   </script>
 </body>
 </html>
