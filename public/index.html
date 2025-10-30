@@ -9,6 +9,14 @@
   <title>Santa's Command Center</title>
 
   <style>
+    /*
+      The majority of the base styles were retained from the original
+      implementation.  Structural changes were kept minimal so the page
+      retains its festive look and feel.  The chat tab and panel have been
+      completely removed to satisfy the request.  A unique id was added
+      to the advent tab so it can be toggled based on the date.  Sound
+      functions have been revised for improved fidelity and reliability.
+    */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -261,122 +269,6 @@
       margin: 20px 0;
       animation: bounce 1s ease-out;
     }
-    
-    .chat-container {
-      background: white;
-      border-radius: 20px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 600px;
-    }
-    .chat-header {
-      background: linear-gradient(135deg, #dc2626, #16a34a);
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      background: #f9fafb;
-    }
-    .chat-message {
-      margin-bottom: 16px;
-      display: flex;
-      gap: 12px;
-    }
-    .chat-message.santa {
-      flex-direction: row;
-    }
-    .chat-message.user {
-      flex-direction: row-reverse;
-    }
-    .chat-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      flex-shrink: 0;
-    }
-    .chat-bubble {
-      max-width: 70%;
-      padding: 12px 16px;
-      border-radius: 16px;
-      color: #1f2937;
-      line-height: 1.5;
-    }
-    .chat-message.santa .chat-bubble {
-      background: white;
-      border: 2px solid #fee2e2;
-      border-radius: 16px 16px 16px 4px;
-    }
-    .chat-message.user .chat-bubble {
-      background: #dbeafe;
-      border-radius: 16px 16px 4px 16px;
-    }
-    .chat-input-area {
-      padding: 16px;
-      background: white;
-      border-top: 2px solid #e5e7eb;
-      display: flex;
-      gap: 12px;
-    }
-    .chat-input {
-      flex: 1;
-      padding: 12px 16px;
-      border: 2px solid #e5e7eb;
-      border-radius: 24px;
-      font-size: 16px;
-      outline: none;
-      font-family: inherit;
-    }
-    .chat-input:focus {
-      border-color: #dc2626;
-    }
-    .chat-send-btn {
-      padding: 12px 24px;
-      background: linear-gradient(135deg, #dc2626, #16a34a);
-      color: white;
-      border: none;
-      border-radius: 24px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .chat-send-btn:hover:not(:disabled) {
-      transform: scale(1.05);
-    }
-    .chat-send-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .chat-typing {
-      display: flex;
-      gap: 4px;
-      padding: 12px 16px;
-    }
-    .chat-typing-dot {
-      width: 8px;
-      height: 8px;
-      background: #9ca3af;
-      border-radius: 50%;
-      animation: typing 1.4s infinite;
-    }
-    .chat-typing-dot:nth-child(2) {
-      animation-delay: 0.2s;
-    }
-    .chat-typing-dot:nth-child(3) {
-      animation-delay: 0.4s;
-    }
-    @keyframes typing {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-10px); }
-    }
   </style>
 </head>
 <body>
@@ -428,10 +320,7 @@
           <span class="tab-icon">🔊</span>
           <span>Soundboard</span>
         </button>
-        <button class="tab" onclick="switchTab(this,'chat')">
-          <span class="tab-icon">💬</span>
-          <span>Chat with Santa</span>
-        </button>
+        <!-- Chat with Santa has been removed -->
         <button class="tab" onclick="switchTab(this,'report')">
           <span class="tab-icon">📄</span>
           <span>Report Card</span>
@@ -440,7 +329,7 @@
           <span class="tab-icon">✉️</span>
           <span>Letter to Santa</span>
         </button>
-        <button class="tab" onclick="switchTab(this,'advent')">
+        <button class="tab" id="adventTab" onclick="switchTab(this,'advent')">
           <span class="tab-icon">🎁</span>
           <span>Advent Calendar</span>
         </button>
@@ -460,35 +349,6 @@
         <div id="soundboard" class="tab-pane active">
           <div class="message-buttons" id="messageButtons"></div>
           <div id="speakingIndicator" style="display: none;" class="speaking-indicator">🔊 Santa is speaking...</div>
-        </div>
-
-        <!-- Chat with Santa -->
-        <div id="chat" class="tab-pane">
-          <div class="chat-container">
-            <div class="chat-header">
-              <div style="font-size: 48px; margin-bottom: 8px;">🎅</div>
-              <h2 style="font-size: 24px; font-weight: bold; margin-bottom: 4px;">Chat with Santa Claus</h2>
-              <p style="font-size: 14px; opacity: 0.9;">Ask Santa anything! He's listening from the North Pole</p>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-              <div class="chat-message santa">
-                <div class="chat-avatar">🎅</div>
-                <div class="chat-bubble">
-                  Ho ho ho! Welcome to the North Pole! I'm Santa Claus, and I'm so happy to chat with you! What's your name, my dear friend?
-                </div>
-              </div>
-            </div>
-            <div class="chat-input-area">
-              <input 
-                type="text" 
-                id="chatInput" 
-                class="chat-input" 
-                placeholder="Type your message to Santa..."
-                onkeypress="if(event.key==='Enter') sendChatMessage()"
-              />
-              <button class="chat-send-btn" onclick="sendChatMessage()" id="chatSendBtn">Send 🎁</button>
-            </div>
-          </div>
         </div>
 
         <!-- Report Card -->
@@ -664,98 +524,65 @@
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     const audioCtx = new AudioContext();
 
-    // Sound effect functions using Web Audio API
+    // Ensure the audio context is resumed before playing.  Some browsers
+    // suspend the context until a user gesture is registered.
+    function ensureAudioContext() {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Helper to play a sequence of tones.  Each tone in the array is
+    // scheduled back-to-back for a given duration.  This makes the
+    // resulting sound more melodic and less like a single beep.
+    function playSoundSequence(frequencies, duration) {
+      ensureAudioContext();
+      const now = audioCtx.currentTime;
+      let time = now;
+      frequencies.forEach((freq) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, time);
+        gain.gain.setValueAtTime(0.3, time);
+        gain.gain.exponentialRampToValueAtTime(0.01, time + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(time);
+        osc.stop(time + duration);
+        time += duration;
+      });
+    }
+
+    // Revised sound effect functions.  These functions now call
+    // playSoundSequence with different frequency patterns to better
+    // emulate their intended sounds.  The original oscillator-based
+    // implementations produced simple beeps that didn't match the
+    // descriptions (for example, jingle bells).  These patterns
+    // approximate chimes and simple melodies.
     function playJingleBell() {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      
-      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
-      
-      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-      
-      osc.start(audioCtx.currentTime);
-      osc.stop(audioCtx.currentTime + 0.3);
+      // High-pitched bell tones
+      playSoundSequence([1500, 2000, 2500], 0.12);
     }
 
     function playSleighBell() {
-      const osc1 = audioCtx.createOscillator();
-      const osc2 = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      
-      osc1.connect(gain);
-      osc2.connect(gain);
-      gain.connect(audioCtx.destination);
-      
-      osc1.frequency.setValueAtTime(1000, audioCtx.currentTime);
-      osc2.frequency.setValueAtTime(1500, audioCtx.currentTime);
-      
-      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-      
-      osc1.start(audioCtx.currentTime);
-      osc2.start(audioCtx.currentTime);
-      osc1.stop(audioCtx.currentTime + 0.2);
-      osc2.stop(audioCtx.currentTime + 0.2);
+      // Slightly lower and more varied frequencies to simulate sleigh bells
+      playSoundSequence([800, 1200, 1600], 0.1);
     }
 
     function playHoHoHo() {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-      osc.frequency.setValueAtTime(180, audioCtx.currentTime + 0.1);
-      osc.frequency.setValueAtTime(200, audioCtx.currentTime + 0.2);
-      
-      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-      
-      osc.start(audioCtx.currentTime);
-      osc.stop(audioCtx.currentTime + 0.3);
+      // Low frequencies to emulate Santa chuckling 'ho ho ho'
+      playSoundSequence([220, 180, 200], 0.25);
     }
 
     function playMagicSparkle() {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(1500, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(2500, audioCtx.currentTime + 0.15);
-      
-      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-      
-      osc.start(audioCtx.currentTime);
-      osc.stop(audioCtx.currentTime + 0.15);
+      // Rapid ascending tones for a magical sparkle effect
+      playSoundSequence([1500, 1700, 1900, 2100, 2300, 2500], 0.06);
     }
 
     function playSuccess() {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      
-      osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-      osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
-      osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
-      
-      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-      
-      osc.start(audioCtx.currentTime);
-      osc.stop(audioCtx.currentTime + 0.4);
+      // A simple triad for success notification (C major chord)
+      playSoundSequence([523.25, 659.25, 783.99], 0.15);
     }
 
     /**************  UTIL & DECORATION  **************/
@@ -914,9 +741,9 @@
         'Used kind words','Helped set the dinner table','Picked up after themselves','Was a good sport in games','Showed empathy to others'
       ];
       const allNaughtyDeeds = [
-        'Argued with siblings',"Didn't listen the first time",'Left toys scattered around','Complained about bedtime',
+        'Argued with siblings','Didn\'t listen the first time','Left toys scattered around','Complained about bedtime',
         'Forgot to do assigned chores','Talked back occasionally','Needed reminders to clean up','Interrupted adults talking',
-        'Was grumpy in the morning','Fought over screen time',"Didn't finish dinner",'Procrastinated on homework',
+        'Was grumpy in the morning','Fought over screen time','Didn\'t finish dinner','Procrastinated on homework',
         'Made excuses for mistakes','Whined about going outside','Refused to share sometimes','Was too rough with pets',
         'Stayed up past bedtime','Complained about chores','Left wet towels on the floor','Needed multiple reminders'
       ];
@@ -1227,115 +1054,6 @@
     // Initialize advent calendar when page loads
     initAdventCalendar();
 
-    /**************  CHAT WITH SANTA  **************/
-    let chatHistory = [];
-
-    async function sendChatMessage() {
-      const input = document.getElementById('chatInput');
-      const message = input.value.trim();
-      
-      if (!message) return;
-      
-      playHoHoHo(); // Sound effect when sending message
-      
-      // Get child's name from top input
-      const childName = document.getElementById('childName').value.trim() || 'friend';
-      
-      // Add user message to chat
-      addChatMessage(message, 'user');
-      input.value = '';
-      
-      // Disable send button
-      const sendBtn = document.getElementById('chatSendBtn');
-      sendBtn.disabled = true;
-      
-      // Show typing indicator
-      showTypingIndicator();
-      
-      try {
-        // Call our backend API
-        const response = await fetch('/api/santa-chat', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            message: message,
-            childName: childName,
-            chatHistory: chatHistory
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error(`API Error: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        const santaReply = data.reply;
-        
-        // Update chat history
-        chatHistory.push({ role: 'user', content: message });
-        chatHistory.push({ role: 'assistant', content: santaReply });
-        
-        // Remove typing indicator
-        removeTypingIndicator();
-        
-        // Play success sound before showing message
-        playSuccess();
-        
-        // Add Santa's response
-        addChatMessage(santaReply, 'santa');
-        
-      } catch (error) {
-        console.error('Chat error:', error);
-        removeTypingIndicator();
-        addChatMessage("Ho ho ho! My magic crystal ball is a bit foggy right now. Can you try asking me again?", 'santa');
-      }
-      
-      // Re-enable send button
-      sendBtn.disabled = false;
-    }
-
-    function addChatMessage(text, sender) {
-      const messagesDiv = document.getElementById('chatMessages');
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `chat-message ${sender}`;
-      
-      const avatar = sender === 'santa' ? '🎅' : '👤';
-      
-      messageDiv.innerHTML = `
-        <div class="chat-avatar">${avatar}</div>
-        <div class="chat-bubble">${text}</div>
-      `;
-      
-      messagesDiv.appendChild(messageDiv);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    function showTypingIndicator() {
-      const messagesDiv = document.getElementById('chatMessages');
-      const typingDiv = document.createElement('div');
-      typingDiv.className = 'chat-message santa';
-      typingDiv.id = 'typingIndicator';
-      typingDiv.innerHTML = `
-        <div class="chat-avatar">🎅</div>
-        <div class="chat-bubble">
-          <div class="chat-typing">
-            <div class="chat-typing-dot"></div>
-            <div class="chat-typing-dot"></div>
-            <div class="chat-typing-dot"></div>
-          </div>
-        </div>
-      `;
-      messagesDiv.appendChild(typingDiv);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-
-    function removeTypingIndicator() {
-      const indicator = document.getElementById('typingIndicator');
-      if (indicator) indicator.remove();
-    }
-
     /**************  SANTA CAM  **************/
     let camManifest = null;
 
@@ -1361,25 +1079,25 @@
         alert('No videos found for this scene yet.');
         return;
       }
-
+      
       const choice = scene.files[Math.floor(Math.random() * scene.files.length)];
       const src = `${(scene.base || '').replace(/\/$/, '')}/${choice}`;
-
+      
       try { video.pause(); } catch {}
       video.removeAttribute('src');
       video.innerHTML = '';
       video.load();
-
+      
       const source = document.createElement('source');
       source.src = src;
       source.type = 'video/mp4';
       video.appendChild(source);
-
+      
       title.textContent = scene.title || 'Santa Cam';
       video.muted = false;
       muteBtn.textContent = '🔊 Mute';
       modal.classList.add('open');
-
+      
       video.play().catch(() => {
         video.muted = true;
         muteBtn.textContent = '🔇 Unmute';
@@ -1387,7 +1105,7 @@
           alert('This video format may not be supported by the browser.');
         });
       });
-
+      
       video.onerror = () => {
         console.warn('Video error; check path/codec:', src);
       };
@@ -1416,6 +1134,18 @@
     document.getElementById('videoModal').addEventListener('click', (e) => {
       if (e.target.id === 'videoModal') closeModal();
     });
+
+    /**************  HIDE ADVENT TAB UNTIL DEC 1 **************/
+    (function hideAdventTabUntilDecember() {
+      const now = new Date();
+      // Show the advent calendar only from December 1st onwards (month 11 in zero-based index)
+      if (!(now.getMonth() === 11 && now.getDate() >= 1)) {
+        const adventTab = document.getElementById('adventTab');
+        if (adventTab) {
+          adventTab.style.display = 'none';
+        }
+      }
+    })();
   </script>
 </body>
 </html>
