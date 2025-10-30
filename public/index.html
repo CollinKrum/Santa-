@@ -659,6 +659,105 @@
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
+    /**************  SOUND EFFECTS  **************/
+    // Create audio context for sound effects
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+
+    // Sound effect functions using Web Audio API
+    function playJingleBell() {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.1);
+      
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+      
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.3);
+    }
+
+    function playSleighBell() {
+      const osc1 = audioCtx.createOscillator();
+      const osc2 = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc1.frequency.setValueAtTime(1000, audioCtx.currentTime);
+      osc2.frequency.setValueAtTime(1500, audioCtx.currentTime);
+      
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+      
+      osc1.start(audioCtx.currentTime);
+      osc2.start(audioCtx.currentTime);
+      osc1.stop(audioCtx.currentTime + 0.2);
+      osc2.stop(audioCtx.currentTime + 0.2);
+    }
+
+    function playHoHoHo() {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+      osc.frequency.setValueAtTime(180, audioCtx.currentTime + 0.1);
+      osc.frequency.setValueAtTime(200, audioCtx.currentTime + 0.2);
+      
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+      
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.3);
+    }
+
+    function playMagicSparkle() {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1500, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(2500, audioCtx.currentTime + 0.15);
+      
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+      
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.15);
+    }
+
+    function playSuccess() {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+      osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+      osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+      
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+      
+      osc.start(audioCtx.currentTime);
+      osc.stop(audioCtx.currentTime + 0.4);
+    }
+
     /**************  UTIL & DECORATION  **************/
     // Snowflakes
     const snowflakesContainer = document.getElementById('snowflakes');
@@ -676,6 +775,7 @@
 
     // Tabs
     function switchTab(btnEl, tabName) {
+      playJingleBell(); // Sound effect when switching tabs
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
       btnEl.classList.add('active');
@@ -719,6 +819,12 @@
         <span style="font-size: 30px;">${msg.emoji}</span>
       `;
       btn.onclick = () => speakMessage(msg.text);
+      
+      // Add hover sound effect
+      btn.addEventListener('mouseenter', () => {
+        if (!btn.disabled) playSleighBell();
+      });
+      
       messageButtonsContainer.appendChild(btn);
     });
 
@@ -792,6 +898,8 @@
 
     /**************  REPORT CARD  **************/
     function generateReport() {
+      playMagicSparkle(); // Sound effect when generating
+      
       const name = (document.getElementById('childName').value || '').trim() || 'this child';
       const niceScore = Math.floor(Math.random() * 40) + 60;
       const naughtyScore = 100 - niceScore;
@@ -815,6 +923,9 @@
 
       const goodDeeds = [...allGoodDeeds].sort(()=>0.5-Math.random()).slice(0,4);
       const naughtyDeeds = [...allNaughtyDeeds].sort(()=>0.5-Math.random()).slice(0, Math.floor(Math.random()*2)+2);
+
+      // Play success sound after a short delay
+      setTimeout(() => playSuccess(), 300);
 
       document.getElementById('reportResult').innerHTML = `
         <div class="report-card">
@@ -871,6 +982,8 @@
         return;
       }
       
+      playSuccess(); // Sound effect on save
+      
       const letterText = `Letter to Santa from ${name}\n${new Date().toLocaleDateString()}\n\n${content}`;
       const blob = new Blob([letterText], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
@@ -899,9 +1012,12 @@
         return;
       }
       
+      playMagicSparkle(); // Sound effect when sending
+      
       showLetterStatus('📮 Sending to the North Pole...', '#fbbf24');
       
       setTimeout(() => {
+        playSuccess(); // Success sound when delivered
         showLetterStatus(`
           <div style="text-align: center;">
             <div style="font-size: 64px; margin-bottom: 16px; animation: bounce 1s ease-in-out;">🎅✨</div>
@@ -942,6 +1058,8 @@
         return;
       }
 
+      playMagicSparkle(); // Sound effect when generating
+
       const prefixes = [
         'Sparkle', 'Jingle', 'Twinkle', 'Sugar', 'Jolly', 'Merry', 'Cocoa', 'Candy',
         'Ginger', 'Snowflake', 'Peppermint', 'Holly', 'Frosty', 'Tinsel', 'Glitter',
@@ -973,6 +1091,9 @@
       const elfNumber = (nameHash % 999) + 1;
 
       const elfName = `${prefix}${suffix}`;
+      
+      // Play success sound after brief delay
+      setTimeout(() => playSuccess(), 200);
       
       const resultDiv = document.getElementById('elfNameResult');
       resultDiv.innerHTML = `
@@ -1066,6 +1187,8 @@
     }
 
     function openAdventDay(day) {
+      playMagicSparkle(); // Sound effect when opening
+      
       const surprise = adventSurprises[day - 1];
       const modal = document.getElementById('adventModal');
       const content = document.getElementById('adventSurpriseContent');
@@ -1081,6 +1204,9 @@
       `;
       
       modal.classList.add('open');
+      
+      // Play success sound after brief delay
+      setTimeout(() => playSuccess(), 200);
       
       // Mark as opened
       const openedDays = JSON.parse(localStorage.getItem('adventOpened') || '[]');
@@ -1109,6 +1235,8 @@
       const message = input.value.trim();
       
       if (!message) return;
+      
+      playHoHoHo(); // Sound effect when sending message
       
       // Get child's name from top input
       const childName = document.getElementById('childName').value.trim() || 'friend';
@@ -1151,6 +1279,9 @@
         
         // Remove typing indicator
         removeTypingIndicator();
+        
+        // Play success sound before showing message
+        playSuccess();
         
         // Add Santa's response
         addChatMessage(santaReply, 'santa');
@@ -1217,6 +1348,8 @@
     }
 
     async function openCam(key) {
+      playJingleBell(); // Sound effect when opening camera
+      
       const modal = document.getElementById('videoModal');
       const video = document.getElementById('modalVideo');
       const title = document.getElementById('modalTitle');
