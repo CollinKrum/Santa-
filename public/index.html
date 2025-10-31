@@ -837,6 +837,31 @@
       margin-top: 12px;
     }
     .quiz-restart:hover { transform: scale(1.05); }
+
+    /* Reindeer selection buttons */
+    .reindeer-select {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .reindeer-select button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: white;
+      transition: transform .2s;
+    }
+    .reindeer-select button:hover {
+      transform: scale(1.05);
+    }
+    .reindeer-select button.active {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
   </style>
 </head>
 <body>
@@ -1044,7 +1069,13 @@
                 <button type="button" onclick="selectOrnamentPattern('solid')" id="patternSolid" class="active">Solid</button>
                 <button type="button" onclick="selectOrnamentPattern('striped')" id="patternStriped">Stripes</button>
                 <button type="button" onclick="selectOrnamentPattern('dotted')" id="patternDotted">Dots</button>
+                  <button type="button" onclick="selectOrnamentPattern('paint')" id="patternPaint">Paint</button>
               </div>
+                <!-- Brush size control for paint pattern; hidden by default -->
+                <label id="brushSizeLabel" style="display:none; align-items:center; justify-content:space-between; color:#374151; font-weight:600; background:#f9fafb; padding:10px 14px; border-radius:12px; border:2px solid #e5e7eb;">
+                  Brush Size:
+                  <input type="range" id="ornamentBrushSize" min="2" max="10" value="4" oninput="updateOrnamentPreview()" style="flex:1; margin-left:10px;">
+                </label>
               <label>
                 Base Color:
                 <input type="color" id="ornamentBaseColor" value="#ef4444" onchange="updateOrnamentPreview()">
@@ -1142,6 +1173,7 @@
             <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">🏇 Reindeer Race</h2>
             <p style="font-size: 14px; opacity: 0.8;">Pick your favorite reindeer and start the race!</p>
           </div>
+          <div id="reindeerSelect" class="reindeer-select"></div>
           <div id="raceContainer" class="race-container"></div>
           <button id="raceStartBtn" onclick="startReindeerRace()" class="race-start">Start Race</button>
           <div id="raceResult" class="race-result"></div>
@@ -1987,13 +2019,20 @@
     // Handle selection of ornament patterns. Highlight the active button and update the preview.
     function selectOrnamentPattern(pattern) {
       currentOrnamentPattern = pattern;
-      ['patternSolid','patternStriped','patternDotted'].forEach(id => {
+      // Remove active state from all pattern buttons (including paint)
+      ['patternSolid','patternStriped','patternDotted','patternPaint'].forEach(id => {
         const btn = document.getElementById(id);
         if (btn) btn.classList.remove('active');
       });
+      // Compute button id by capitalizing first letter
       const activeBtnId = 'pattern' + pattern.charAt(0).toUpperCase() + pattern.slice(1);
       const activeBtn = document.getElementById(activeBtnId);
       if (activeBtn) activeBtn.classList.add('active');
+      // Show or hide brush size slider based on pattern
+      const brushLabel = document.getElementById('brushSizeLabel');
+      if (brushLabel) {
+        brushLabel.style.display = (pattern === 'paint' ? 'flex' : 'none');
+      }
       updateOrnamentPreview();
     }
     function selectOrnamentShape(shape) {
@@ -2050,6 +2089,19 @@
                   '<circle cx="45" cy="115" r="5" fill="' + decoColor + '" />' +
                   '<circle cx="75" cy="120" r="5" fill="' + decoColor + '" />' +
                   '</g>';
+      } else if (currentOrnamentPattern === 'paint') {
+        // Paint pattern: draw random brush strokes clipped to the ornament shape
+        const brushSize = parseInt(document.getElementById('ornamentBrushSize')?.value || '4', 10);
+        let strokes = '';
+        // Generate a number of random strokes proportional to the shape size
+        for (let i = 0; i < 12; i++) {
+          const x1 = (Math.random() * 120).toFixed(1);
+          const y1 = (Math.random() * 160).toFixed(1);
+          const x2 = (parseFloat(x1) + (Math.random() * 30 - 15)).toFixed(1);
+          const y2 = (parseFloat(y1) + (Math.random() * 30 - 15)).toFixed(1);
+          strokes += '<line x1="' + x1 + '" y1="' + y1 + '" x2="' + x2 + '" y2="' + y2 + '" stroke="' + decoColor + '" stroke-width="' + brushSize + '" stroke-linecap="round" />';
+        }
+        overlay = '<g clip-path="url(#ornamentClip)">' + strokes + '</g>';
       } else {
         // Solid pattern: no overlay
         overlay = '';
@@ -2215,6 +2267,8 @@
 
     /************** REINDEER RACE **************/
     const reindeerNames = ['Dasher','Dancer','Prancer','Vixen','Comet','Cupid','Donner','Blitzen','Rudolph'];
+    // User's selected reindeer. When null, no reindeer has been chosen yet.
+    let selectedReindeer = null;
     function buildReindeerRace() {
       const container = document.getElementById('raceContainer');
       if (!container) return;
@@ -2233,6 +2287,30 @@
         row.appendChild(icon);
         row.appendChild(track);
         container.appendChild(row);
+      });
+    }
+    }
+
+    /**
+     * Populate the reindeer selection area with buttons.  Each button allows
+     * the user to choose a favorite reindeer before starting the race.  The
+     * selected button receives an `.active` class to indicate selection.
+     */
+    function buildReindeerSelect() {
+      const selectContainer = document.getElementById('reindeerSelect');
+      if (!selectContainer) return;
+      selectContainer.innerHTML = '';
+      reindeerNames.forEach(name => {
+        const btn = document.createElement('button');
+        btn.textContent = name;
+        btn.onclick = () => {
+          selectedReindeer = name;
+          // Highlight the selected button
+          const allBtns = selectContainer.querySelectorAll('button');
+          allBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        };
+        selectContainer.appendChild(btn);
       });
     }
     let raceInProgress = false;
@@ -2258,9 +2336,30 @@
           results.push({ name: reindeerNames[idx], time: duration });
           finished++;
           if (finished === rows.length) {
+            // Sort results by ascending time to determine finishing order
             results.sort((a, b) => a.time - b.time);
             const winner = results[0].name;
-            if (resultEl) resultEl.textContent = winner + ' wins the race!';
+            if (resultEl) {
+              // If the user chose a reindeer, include their placement in the message
+              if (selectedReindeer) {
+                const pos = results.findIndex(r => r.name === selectedReindeer) + 1;
+                if (winner === selectedReindeer) {
+                  resultEl.textContent = 'You chose ' + selectedReindeer + ' and they won the race!';
+                } else {
+                  // ordinal suffix helper
+                  const ordinal = (n) => {
+                    const mod10 = n % 10, mod100 = n % 100;
+                    if (mod10 === 1 && mod100 !== 11) return n + 'st';
+                    if (mod10 === 2 && mod100 !== 12) return n + 'nd';
+                    if (mod10 === 3 && mod100 !== 13) return n + 'rd';
+                    return n + 'th';
+                  };
+                  resultEl.textContent = winner + ' wins the race! Your reindeer ' + selectedReindeer + ' came in ' + ordinal(pos) + ' place.';
+                }
+              } else {
+                resultEl.textContent = winner + ' wins the race!';
+              }
+            }
             raceInProgress = false;
           }
         });
@@ -2483,6 +2582,7 @@
     updateCookiePreview();
     updateSnowflakePreview();
     initSnowGlobes();
+    buildReindeerSelect();
     buildReindeerRace();
     loadQuiz();
     initTracker();
