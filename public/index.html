@@ -601,6 +601,242 @@
       font-size:12px;
       text-shadow:1px 1px 2px rgba(0,0,0,0.7);
     }
+    /* Additional styles for new interactive experiences */
+    /* Snow Globe Explorer styles */
+    .globe-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 16px;
+    }
+    .snow-globe {
+      position: relative;
+      width: 100px;
+      height: 120px;
+      border-radius: 50% 50% 40% 40% / 60% 60% 40% 40%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #ffffff 0%, #e5e7eb 50%, #d1d5db 100%);
+      box-shadow: 0 4px 10px rgba(0,0,0,.3);
+      cursor: pointer;
+      transition: transform .2s;
+    }
+    .snow-globe:hover { transform: scale(1.05); }
+    .globe-inner {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    .snow-dot {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.8);
+      animation: floatSnow linear infinite;
+    }
+    @keyframes floatSnow {
+      0% { transform: translateY(100%); opacity: 1; }
+      100% { transform: translateY(-150%); opacity: 0; }
+    }
+    .globe-label {
+      position: absolute;
+      bottom: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: #fff;
+      text-align: center;
+    }
+    /* Cookie Decorator styles */
+    .cookie-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .cookie-preview {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+      width: 180px;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cookie-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 300px;
+    }
+    .cookie-shapes, .cookie-patterns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .cookie-shapes button, .cookie-patterns button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      background: linear-gradient(135deg,#dc2626,#991b1b);
+      color: white;
+      transition: transform .2s;
+    }
+    .cookie-shapes button.active, .cookie-patterns button.active {
+      background: linear-gradient(135deg,#10b981,#059669);
+    }
+    /* Reindeer Race styles */
+    .race-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .race-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .race-icon {
+      font-size: 24px;
+    }
+    .race-track {
+      flex: 1;
+      background: rgba(255,255,255,.2);
+      height: 16px;
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+    }
+    .race-progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(135deg,#fbbf24,#f97316);
+      transition: width 0.3s linear;
+    }
+    .race-start {
+      margin-top: 8px;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg,#3b82f6,#2563eb);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform .2s;
+    }
+    .race-start:hover {
+      transform: scale(1.05);
+    }
+    .race-result {
+      margin-top: 8px;
+      font-size: 16px;
+      color: #fbbf24;
+      text-align: center;
+    }
+    /* Snowflake Maker styles */
+    .snowflake-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .snowflake-preview {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+      width: 180px;
+      height: 220px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .snowflake-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      max-width: 300px;
+    }
+    .snowflake-templates {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .snowflake-templates button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      background: linear-gradient(135deg,#dc2626,#991b1b);
+      color: white;
+      transition: transform .2s;
+    }
+    .snowflake-templates button.active {
+      background: linear-gradient(135deg,#10b981,#059669);
+    }
+    /* Quiz styles */
+    .quiz-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .quiz-question {
+      font-size: 18px;
+      font-weight: 600;
+      color: #dc2626;
+    }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .quiz-options button {
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg,#3b82f6,#2563eb);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform .2s;
+      text-align: left;
+    }
+    .quiz-options button:hover {
+      transform: scale(1.03);
+    }
+    .quiz-feedback {
+      font-size: 16px;
+      color: #fbbf24;
+      text-align: center;
+    }
+    .quiz-score {
+      font-size: 18px;
+      color: #10b981;
+      text-align: center;
+      margin-top: 12px;
+    }
+    .quiz-restart {
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg,#dc2626,#16a34a);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform .2s;
+      margin-top: 12px;
+    }
+    .quiz-restart:hover { transform: scale(1.05); }
   </style>
 </head>
 <body>
@@ -676,10 +912,6 @@
           <span>Elf Name</span>
         </button>
         <!-- New feature tabs -->
-        <button class="tab" onclick="switchTab(this,'map')">
-          <span class="tab-icon">🗺️</span>
-          <span>Map</span>
-        </button>
         <button class="tab" onclick="switchTab(this,'ornament')">
           <span class="tab-icon">🎄</span>
           <span>Ornament</span>
@@ -687,6 +919,27 @@
         <button class="tab" onclick="switchTab(this,'tracker')">
           <span class="tab-icon">🛰️</span>
           <span>Tracker</span>
+        </button>
+        <!-- New interactive experiences -->
+        <button class="tab" onclick="switchTab(this,'globes')">
+          <span class="tab-icon">🌐</span>
+          <span>Globes</span>
+        </button>
+        <button class="tab" onclick="switchTab(this,'cookies')">
+          <span class="tab-icon">🍪</span>
+          <span>Cookies</span>
+        </button>
+        <button class="tab" onclick="switchTab(this,'race')">
+          <span class="tab-icon">🏇</span>
+          <span>Race</span>
+        </button>
+        <button class="tab" onclick="switchTab(this,'snowflake')">
+          <span class="tab-icon">❄️</span>
+          <span>Snowflake</span>
+        </button>
+        <button class="tab" onclick="switchTab(this,'quiz')">
+          <span class="tab-icon">❓</span>
+          <span>Quiz</span>
         </button>
         <button class="tab" onclick="switchTab(this,'themes')">
           <span class="tab-icon">🎨</span>
@@ -766,14 +1019,7 @@
           </div>
         </div>
 
-        <!-- Santa Cam Map -->
-        <div id="map" class="tab-pane">
-          <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">🗺️ Santa Cam Map</h2>
-            <p style="font-size: 14px; opacity: 0.8;">Explore the North Pole and click a marker to watch a live camera feed!</p>
-          </div>
-          <div class="map-container" id="interactiveMap"></div>
-        </div>
+        
 
         <!-- Ornament Designer -->
         <div id="ornament" class="tab-pane">
@@ -830,7 +1076,7 @@
         <div id="themes" class="tab-pane">
           <div style="text-align: center; margin-bottom: 20px;">
             <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">🎨 Customize Theme</h2>
-            <p style="font-size: 14px; opacity: 0.8;">Choose a background and music for your experience!</p>
+            <p style="font-size: 14px; opacity: 0.8;">Choose a background theme for your experience!</p>
           </div>
           <div class="theme-options">
             <div>
@@ -842,18 +1088,102 @@
                 <button class="theme-btn" data-theme="candy" onclick="applyTheme('candy')" style="background:linear-gradient(135deg,#ec4899,#f43f5e);">Candy Cane</button>
               </div>
             </div>
-            <div>
-              <h3 style="font-size: 18px; color: white; margin-top: 16px; margin-bottom: 8px;">Background Music</h3>
-              <div class="music-options">
-                <select id="musicSelect" onchange="loadSelectedMusic()">
-                  <option value="">None</option>
-                  <option value="song1">Jingle Bells</option>
-                  <option value="song2">We Wish You</option>
-                </select>
-                <button onclick="toggleMusic()">⏯️ Play/Pause</button>
+            <!-- Background music customization has been removed to simplify the experience -->
+          </div>
+        </div>
+        
+        <!-- Snow Globe Explorer -->
+        <div id="globes" class="tab-pane">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">❄️ Snow Globe Explorer</h2>
+            <p style="font-size: 14px; opacity: 0.8;">Click a snow globe to visit a North Pole location!</p>
+          </div>
+          <div id="globeGrid" class="globe-grid"></div>
+        </div>
+
+        <!-- Cookie Decorating -->
+        <div id="cookies" class="tab-pane">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <div style="font-size: 64px; margin-bottom: 12px;">🍪🎨</div>
+            <h2 style="font-size: 28px; font-weight: bold; color: #d97706;">Cookie Decorator</h2>
+            <p style="font-size: 14px; color: #6b7280; margin-top: 8px;">Design your own sweet holiday cookie!</p>
+          </div>
+          <div class="cookie-container">
+            <div class="cookie-preview">
+              <svg id="cookiePreview" width="120" height="160" viewBox="0 0 120 160"></svg>
+            </div>
+            <div class="cookie-controls">
+              <div class="cookie-shapes">
+                <button type="button" onclick="selectCookieShape('round')" id="cookieShapeRound" class="active">⚪ Round</button>
+                <button type="button" onclick="selectCookieShape('star')" id="cookieShapeStar">⭐ Star</button>
+                <button type="button" onclick="selectCookieShape('tree')" id="cookieShapeTree">🎄 Tree</button>
               </div>
+              <div class="cookie-patterns">
+                <button type="button" onclick="selectCookiePattern('solid')" id="cookiePatternSolid" class="active">Solid</button>
+                <button type="button" onclick="selectCookiePattern('striped')" id="cookiePatternStriped">Stripes</button>
+                <button type="button" onclick="selectCookiePattern('dotted')" id="cookiePatternDotted">Dots</button>
+              </div>
+              <label>
+                Cookie Color:
+                <input type="color" id="cookieBaseColor" value="#f5c16c" onchange="updateCookiePreview()">
+              </label>
+              <label>
+                Frosting Color:
+                <input type="color" id="cookieFrostColor" value="#ffffff" onchange="updateCookiePreview()">
+              </label>
+              <button onclick="saveCookieLocally()" style="padding:12px; margin-top:8px; border:none; border-radius:12px; background:linear-gradient(135deg,#3b82f6,#2563eb); color:white; font-weight:bold; cursor:pointer; transition:transform .2s;">💾 Save Cookie</button>
             </div>
           </div>
+        </div>
+
+        <!-- Reindeer Race Game -->
+        <div id="race" class="tab-pane">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">🏇 Reindeer Race</h2>
+            <p style="font-size: 14px; opacity: 0.8;">Pick your favorite reindeer and start the race!</p>
+          </div>
+          <div id="raceContainer" class="race-container"></div>
+          <button id="raceStartBtn" onclick="startReindeerRace()" class="race-start">Start Race</button>
+          <div id="raceResult" class="race-result"></div>
+        </div>
+
+        <!-- Snowflake Maker -->
+        <div id="snowflake" class="tab-pane">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">❄️ Snowflake Maker</h2>
+            <p style="font-size: 14px; opacity: 0.8;">Craft a unique snowflake masterpiece!</p>
+          </div>
+          <div class="snowflake-container">
+            <div class="snowflake-preview">
+              <svg id="snowflakePreview" width="140" height="160" viewBox="0 0 140 160"></svg>
+            </div>
+            <div class="snowflake-controls">
+              <div class="snowflake-templates">
+                <button type="button" onclick="selectSnowflakeTemplate('simple')" id="flakeSimple" class="active">Template 1</button>
+                <button type="button" onclick="selectSnowflakeTemplate('star')" id="flakeStar">Template 2</button>
+                <button type="button" onclick="selectSnowflakeTemplate('petal')" id="flakePetal">Template 3</button>
+              </div>
+              <label>
+                Flake Color:
+                <input type="color" id="flakeColor" value="#60a5fa" onchange="updateSnowflakePreview()">
+              </label>
+              <label>
+                Accent Color:
+                <input type="color" id="flakeAccentColor" value="#ffffff" onchange="updateSnowflakePreview()">
+              </label>
+              <button type="button" onclick="randomizeSnowflake()" style="padding:12px; margin-top:8px; border:none; border-radius:12px; background:linear-gradient(135deg,#10b981,#059669); color:white; font-weight:bold; cursor:pointer; transition:transform .2s;">🎲 Randomize</button>
+              <button type="button" onclick="saveSnowflakeLocally()" style="padding:12px; margin-top:8px; border:none; border-radius:12px; background:linear-gradient(135deg,#3b82f6,#2563eb); color:white; font-weight:bold; cursor:pointer; transition:transform .2s;">💾 Save Snowflake</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Holiday Trivia Quiz -->
+        <div id="quiz" class="tab-pane">
+          <div style="text-align: center; margin-bottom: 20px;">
+            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">❓ Holiday Quiz</h2>
+            <p style="font-size: 14px; opacity: 0.8;">Test your Christmas knowledge!</p>
+          </div>
+          <div id="quizContent" class="quiz-container"></div>
         </div>
 
         <!-- Advent Calendar -->
@@ -924,9 +1254,6 @@
   </div>
 
   <!-- The Info Modal has been removed because the map markers now open the Santa Cam directly -->
-
-  <!-- Background music audio element -->
-  <audio id="backgroundMusic" loop></audio>
 
   <script>
     /**************  COUNTDOWN TO CHRISTMAS  **************/
@@ -1756,6 +2083,336 @@
       });
     }
 
+    /************** SNOW GLOBE EXPLORER **************/
+    function initSnowGlobes() {
+      const grid = document.getElementById('globeGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      const locations = [
+        { key: 'workshop', name: 'Workshop', emoji: '🎁' },
+        { key: 'office', name: 'Office', emoji: '📋' },
+        { key: 'stable', name: 'Stable', emoji: '🦌' },
+        { key: 'kitchen', name: 'Kitchen', emoji: '🍪' },
+        { key: 'mailroom', name: 'Mail Room', emoji: '✉️' },
+        { key: 'lab', name: 'Toy Lab', emoji: '🧸' }
+      ];
+      locations.forEach(loc => {
+        const globe = document.createElement('div');
+        globe.className = 'snow-globe';
+        globe.onclick = () => openCam(loc.key);
+        const inner = document.createElement('div');
+        inner.className = 'globe-inner';
+        // Create snow dots
+        for (let i = 0; i < 15; i++) {
+          const dot = document.createElement('div');
+          dot.className = 'snow-dot';
+          dot.style.left = Math.random() * 100 + '%';
+          dot.style.top = Math.random() * 100 + '%';
+          dot.style.animationDuration = (3 + Math.random() * 5) + 's';
+          dot.style.animationDelay = (-Math.random() * 5) + 's';
+          inner.appendChild(dot);
+        }
+        // Add emoji inside the globe
+        const emojiSpan = document.createElement('div');
+        emojiSpan.style.fontSize = '32px';
+        emojiSpan.style.position = 'absolute';
+        emojiSpan.style.left = '50%';
+        emojiSpan.style.top = '45%';
+        emojiSpan.style.transform = 'translate(-50%, -50%)';
+        emojiSpan.textContent = loc.emoji;
+        inner.appendChild(emojiSpan);
+        // Label beneath the globe
+        const label = document.createElement('div');
+        label.className = 'globe-label';
+        label.textContent = loc.name;
+        globe.appendChild(inner);
+        globe.appendChild(label);
+        grid.appendChild(globe);
+      });
+    }
+
+    /************** COOKIE DECORATOR **************/
+    let currentCookieShape = 'round';
+    let currentCookiePattern = 'solid';
+    function selectCookieShape(shape) {
+      currentCookieShape = shape;
+      ['cookieShapeRound','cookieShapeStar','cookieShapeTree'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('active');
+      });
+      const id = shape === 'round' ? 'cookieShapeRound' : shape === 'star' ? 'cookieShapeStar' : 'cookieShapeTree';
+      const activeBtn = document.getElementById(id);
+      if (activeBtn) activeBtn.classList.add('active');
+      updateCookiePreview();
+    }
+    function selectCookiePattern(pattern) {
+      currentCookiePattern = pattern;
+      ['cookiePatternSolid','cookiePatternStriped','cookiePatternDotted'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('active');
+      });
+      const id = pattern === 'solid' ? 'cookiePatternSolid' : pattern === 'striped' ? 'cookiePatternStriped' : 'cookiePatternDotted';
+      const activeBtn = document.getElementById(id);
+      if (activeBtn) activeBtn.classList.add('active');
+      updateCookiePreview();
+    }
+    function updateCookiePreview() {
+      const svg = document.getElementById('cookiePreview');
+      if (!svg) return;
+      const baseColor = document.getElementById('cookieBaseColor')?.value || '#f5c16c';
+      const frostColor = document.getElementById('cookieFrostColor')?.value || '#ffffff';
+      let baseShape = '';
+      let clipDef = '';
+      if (currentCookieShape === 'round') {
+        baseShape = '<circle cx="60" cy="80" r="50" fill="' + baseColor + '" />';
+        clipDef = '<clipPath id="cookieClip"><circle cx="60" cy="80" r="50" /></clipPath>';
+      } else if (currentCookieShape === 'star') {
+        const starPts = '60,10 72,52 115,52 82,78 94,120 60,95 26,120 38,78 5,52 48,52';
+        baseShape = '<polygon points="' + starPts + '" fill="' + baseColor + '" />';
+        clipDef = '<clipPath id="cookieClip"><polygon points="' + starPts + '" /></clipPath>';
+      } else {
+        // tree shape
+        baseShape = '<polygon points="60,20 95,80 25,80" fill="' + baseColor + '" />' +
+                    '<polygon points="60,60 100,120 20,120" fill="' + baseColor + '" />' +
+                    '<rect x="50" y="120" width="20" height="30" fill="' + baseColor + '" />';
+        clipDef = '<clipPath id="cookieClip"><polygon points="60,20 95,80 25,80" /><polygon points="60,60 100,120 20,120" /><rect x="50" y="120" width="20" height="30" /></clipPath>';
+      }
+      let overlay = '';
+      if (currentCookiePattern === 'striped') {
+        overlay = '<g clip-path="url(#cookieClip)">' +
+                  '<rect x="0" y="40" width="120" height="10" fill="' + frostColor + '" />' +
+                  '<rect x="0" y="80" width="120" height="10" fill="' + frostColor + '" />' +
+                  '<rect x="0" y="120" width="120" height="10" fill="' + frostColor + '" />' +
+                  '</g>';
+      } else if (currentCookiePattern === 'dotted') {
+        overlay = '<g clip-path="url(#cookieClip)">' +
+                  '<circle cx="30" cy="60" r="5" fill="' + frostColor + '" />' +
+                  '<circle cx="60" cy="90" r="5" fill="' + frostColor + '" />' +
+                  '<circle cx="90" cy="70" r="5" fill="' + frostColor + '" />' +
+                  '<circle cx="45" cy="115" r="5" fill="' + frostColor + '" />' +
+                  '<circle cx="75" cy="120" r="5" fill="' + frostColor + '" />' +
+                  '</g>';
+      } else {
+        overlay = '';
+      }
+      const defs = '<defs>' + clipDef + '</defs>';
+      svg.innerHTML = defs + baseShape + overlay;
+    }
+    function saveCookieLocally() {
+      const svgEl = document.getElementById('cookiePreview');
+      if (!svgEl) return;
+      const svgData = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 160">' + svgEl.innerHTML + '</svg>';
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'custom_cookie.svg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    /************** REINDEER RACE **************/
+    const reindeerNames = ['Dasher','Dancer','Prancer','Vixen','Comet','Cupid','Donner','Blitzen','Rudolph'];
+    function buildReindeerRace() {
+      const container = document.getElementById('raceContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      reindeerNames.forEach(name => {
+        const row = document.createElement('div');
+        row.className = 'race-row';
+        const icon = document.createElement('div');
+        icon.className = 'race-icon';
+        icon.textContent = '🦌';
+        const track = document.createElement('div');
+        track.className = 'race-track';
+        const progress = document.createElement('div');
+        progress.className = 'race-progress';
+        track.appendChild(progress);
+        row.appendChild(icon);
+        row.appendChild(track);
+        container.appendChild(row);
+      });
+    }
+    let raceInProgress = false;
+    function startReindeerRace() {
+      if (raceInProgress) return;
+      raceInProgress = true;
+      const resultEl = document.getElementById('raceResult');
+      if (resultEl) resultEl.textContent = '';
+      const rows = Array.from(document.querySelectorAll('.race-row'));
+      const results = [];
+      let finished = 0;
+      rows.forEach((row, idx) => {
+        const progress = row.querySelector('.race-progress');
+        if (!progress) return;
+        progress.style.width = '0%';
+        const duration = Math.random() * 8000 + 4000;
+        progress.style.transition = 'width ' + duration + 'ms linear';
+        setTimeout(() => {
+          progress.style.width = '100%';
+        }, 50);
+        progress.addEventListener('transitionend', function handler() {
+          progress.removeEventListener('transitionend', handler);
+          results.push({ name: reindeerNames[idx], time: duration });
+          finished++;
+          if (finished === rows.length) {
+            results.sort((a, b) => a.time - b.time);
+            const winner = results[0].name;
+            if (resultEl) resultEl.textContent = winner + ' wins the race!';
+            raceInProgress = false;
+          }
+        });
+      });
+    }
+
+    /************** SNOWFLAKE MAKER **************/
+    let currentSnowflakeTemplate = 'simple';
+    function selectSnowflakeTemplate(template) {
+      currentSnowflakeTemplate = template;
+      ['flakeSimple','flakeStar','flakePetal'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('active');
+      });
+      const id = template === 'simple' ? 'flakeSimple' : template === 'star' ? 'flakeStar' : 'flakePetal';
+      const active = document.getElementById(id);
+      if (active) active.classList.add('active');
+      updateSnowflakePreview();
+    }
+    function updateSnowflakePreview() {
+      const svg = document.getElementById('snowflakePreview');
+      if (!svg) return;
+      const color = document.getElementById('flakeColor')?.value || '#60a5fa';
+      const accent = document.getElementById('flakeAccentColor')?.value || '#ffffff';
+      let content = '';
+      if (currentSnowflakeTemplate === 'simple') {
+        content = '<g stroke="' + color + '" stroke-width="4">' +
+                  '<line x1="70" y1="20" x2="70" y2="140" />' +
+                  '<line x1="20" y1="80" x2="120" y2="80" />' +
+                  '<line x1="30" y1="35" x2="110" y2="125" />' +
+                  '<line x1="110" y1="35" x2="30" y2="125" />' +
+                  '</g>' +
+                  '<g fill="' + accent + '">' +
+                  '<circle cx="70" cy="20" r="5" />' +
+                  '<circle cx="70" cy="140" r="5" />' +
+                  '<circle cx="20" cy="80" r="5" />' +
+                  '<circle cx="120" cy="80" r="5" />' +
+                  '<circle cx="30" cy="35" r="5" />' +
+                  '<circle cx="110" cy="125" r="5" />' +
+                  '<circle cx="110" cy="35" r="5" />' +
+                  '<circle cx="30" cy="125" r="5" />' +
+                  '<circle cx="70" cy="80" r="4" />' +
+                  '</g>';
+      } else if (currentSnowflakeTemplate === 'star') {
+        content = '<polygon points="70,20 78,55 115,55 84,75 92,110 70,90 48,110 56,75 25,55 62,55" fill="' + color + '" stroke="' + accent + '" stroke-width="3" />';
+      } else {
+        content = '<g fill="' + color + '">' +
+                  '<ellipse cx="70" cy="40" rx="10" ry="25" />' +
+                  '<ellipse cx="70" cy="120" rx="10" ry="25" />' +
+                  '<ellipse cx="40" cy="80" rx="25" ry="10" />' +
+                  '<ellipse cx="100" cy="80" rx="25" ry="10" />' +
+                  '</g>' +
+                  '<circle cx="70" cy="80" r="8" fill="' + accent + '" />';
+      }
+      svg.innerHTML = content;
+    }
+    function randomizeSnowflake() {
+      const templates = ['simple','star','petal'];
+      currentSnowflakeTemplate = templates[Math.floor(Math.random() * templates.length)];
+      const colorInput = document.getElementById('flakeColor');
+      const accentInput = document.getElementById('flakeAccentColor');
+      if (colorInput) colorInput.value = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6,'0');
+      if (accentInput) accentInput.value = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6,'0');
+      selectSnowflakeTemplate(currentSnowflakeTemplate);
+      updateSnowflakePreview();
+    }
+    function saveSnowflakeLocally() {
+      const svgEl = document.getElementById('snowflakePreview');
+      if (!svgEl) return;
+      const svgData = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 160">' + svgEl.innerHTML + '</svg>';
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'custom_snowflake.svg';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    /************** HOLIDAY QUIZ **************/
+    const quizQuestions = [
+      { question: 'Where does Santa Claus live?', options: ['South Pole','North Pole','Finland','Iceland'], answer: 1, explanation: 'Santa lives at the North Pole with Mrs. Claus and the elves.' },
+      { question: 'What reindeer has a red nose?', options: ['Dasher','Prancer','Rudolph','Comet'], answer: 2, explanation: 'Rudolph the Red-Nosed Reindeer guides the sleigh with his shiny nose.' },
+      { question: 'Which famous drink company popularized the modern image of Santa Claus?', options: ['Pepsi','Coca-Cola','Dr Pepper','Sprite'], answer: 1, explanation: 'Coca-Cola advertisements helped shape Santa’s red-suited image.' },
+      { question: 'What do children traditionally leave out for Santa on Christmas Eve?', options: ['Candy canes','Fruitcake','Milk and cookies','Eggnog'], answer: 2, explanation: 'Milk and cookies are a classic treat for Santa.' },
+      { question: 'Which holiday character famously steals Christmas?', options: ['Frosty','The Grinch','Jack Frost','Scrooge'], answer: 1, explanation: 'The Grinch tries to steal Christmas in Dr. Seuss’s story.' }
+    ];
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+    function loadQuiz() {
+      currentQuizIndex = 0;
+      quizScore = 0;
+      showQuizQuestion();
+    }
+    function showQuizQuestion() {
+      const container = document.getElementById('quizContent');
+      if (!container) return;
+      container.innerHTML = '';
+      if (currentQuizIndex >= quizQuestions.length) {
+        const scoreEl = document.createElement('div');
+        scoreEl.className = 'quiz-score';
+        scoreEl.textContent = 'You scored ' + quizScore + ' out of ' + quizQuestions.length + '!';
+        container.appendChild(scoreEl);
+        const restartBtn = document.createElement('button');
+        restartBtn.className = 'quiz-restart';
+        restartBtn.textContent = 'Restart Quiz';
+        restartBtn.onclick = () => { loadQuiz(); };
+        container.appendChild(restartBtn);
+        return;
+      }
+      const q = quizQuestions[currentQuizIndex];
+      const qEl = document.createElement('div');
+      qEl.className = 'quiz-question';
+      qEl.textContent = q.question;
+      container.appendChild(qEl);
+      const optionsEl = document.createElement('div');
+      optionsEl.className = 'quiz-options';
+      q.options.forEach((opt, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = opt;
+        btn.onclick = () => { checkQuizAnswer(i); };
+        optionsEl.appendChild(btn);
+      });
+      container.appendChild(optionsEl);
+      const feedbackEl = document.createElement('div');
+      feedbackEl.className = 'quiz-feedback';
+      feedbackEl.id = 'quizFeedback';
+      container.appendChild(feedbackEl);
+    }
+    function checkQuizAnswer(index) {
+      const q = quizQuestions[currentQuizIndex];
+      const feedbackEl = document.getElementById('quizFeedback');
+      if (index === q.answer) {
+        quizScore++;
+        if (feedbackEl) {
+          feedbackEl.textContent = 'Correct! ' + q.explanation;
+          feedbackEl.style.color = '#10b981';
+        }
+      } else {
+        if (feedbackEl) {
+          feedbackEl.textContent = 'Oops! ' + q.explanation;
+          feedbackEl.style.color = '#ef4444';
+        }
+      }
+      currentQuizIndex++;
+      setTimeout(() => {
+        showQuizQuestion();
+      }, 2000);
+    }
+
     /************** SANTA TRACKER **************/
     let trackerInterval = null;
     const trackerStops = ['North Pole','Greenland','New York','London','Paris','Rome','Cairo','Tokyo','Sydney','Your Town'];
@@ -1803,35 +2460,7 @@
         document.body.style.background = style;
       }
     }
-    const musicSources = {
-      song1: 'https://cdn.pixabay.com/download/audio/2022/11/25/audio_a81187c439.mp3?filename=christmas-loop-122978.mp3',
-      song2: 'https://cdn.pixabay.com/download/audio/2022/10/31/audio_1f005f884c.mp3?filename=we-wish-you-a-merry-christmas-instrumental-12220.mp3'
-    };
-    function loadSelectedMusic() {
-      const select = document.getElementById('musicSelect');
-      const audio = document.getElementById('backgroundMusic');
-      if (!audio || !select) return;
-      const key = select.value;
-      if (!key) {
-        audio.pause();
-        audio.removeAttribute('src');
-        return;
-      }
-      const src = musicSources[key];
-      if (src) {
-        audio.src = src;
-        audio.load();
-      }
-    }
-    function toggleMusic() {
-      const audio = document.getElementById('backgroundMusic');
-      if (!audio) return;
-      if (audio.paused) {
-        audio.play().catch(()=>{});
-      } else {
-        audio.pause();
-      }
-    }
+    // Background music functionality removed; themes now only change the page background.
 
     /************** ADVENT VISIBILITY **************/
     function setupAdventVisibility() {
@@ -1850,8 +2479,12 @@
 
     // Initialize custom features on page load
     setDailyTidbit();
-    initInteractiveMap();
     updateOrnamentPreview();
+    updateCookiePreview();
+    updateSnowflakePreview();
+    initSnowGlobes();
+    buildReindeerRace();
+    loadQuiz();
     initTracker();
     setupAdventVisibility();
     // Set default theme
