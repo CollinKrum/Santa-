@@ -479,6 +479,128 @@
       transition:transform .2s;
     }
     .music-options button:hover{ transform:scale(1.05); }
+
+    /* Ornament designer styles */
+    .ornament-container{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:20px;
+    }
+    .ornament-preview{
+      background:white;
+      border-radius:20px;
+      padding:20px;
+      box-shadow:0 4px 12px rgba(0,0,0,.3);
+      width:180px;
+      height:220px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .ornament-controls{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      width:100%;
+      max-width:300px;
+    }
+    .ornament-controls label{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      color:#374151;
+      font-weight:600;
+      background:#f9fafb;
+      padding:10px 14px;
+      border-radius:12px;
+      border:2px solid #e5e7eb;
+    }
+    .ornament-controls input[type="color"]{
+      width:50px;
+      height:30px;
+      border:none;
+      padding:0;
+      cursor:pointer;
+    }
+    .ornament-shapes{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      margin-bottom:12px;
+    }
+    .ornament-shapes button{
+      padding:10px 14px;
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:bold;
+      transition:transform .2s;
+      background:linear-gradient(135deg,#dc2626,#991b1b);
+      color:white;
+    }
+    .ornament-shapes button.active{
+      background:linear-gradient(135deg,#10b981,#059669);
+    }
+
+    /* Ornament pattern selector styles */
+    .ornament-patterns{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      margin-bottom:12px;
+    }
+    .ornament-patterns button{
+      padding:8px 12px;
+      border:none;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:bold;
+      background:linear-gradient(135deg,#dc2626,#991b1b);
+      color:white;
+      transition: transform .2s;
+    }
+    .ornament-patterns button:hover{
+      transform: scale(1.05);
+    }
+    .ornament-patterns button.active{
+      background:linear-gradient(135deg,#10b981,#059669);
+    }
+
+    /* Interactive map styles */
+    .map-container{
+      position:relative;
+      width:100%;
+      height:300px;
+      border-radius:20px;
+      /* Stylized background: snowy ice fading into blue tones to resemble a dreamy North Pole map */
+      background: radial-gradient(circle at 50% 50%, #ffffff 0%, #e0f2fe 40%, #bae6fd 75%, #7dd3fc 100%);
+      border: 4px solid rgba(255,255,255,0.3);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      backdrop-filter: blur(6px);
+      overflow:hidden;
+    }
+    .map-marker{
+      position:absolute;
+      transform:translate(-50%, -50%);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      cursor:pointer;
+      color:white;
+    }
+    .map-marker .marker-icon{
+      font-size:32px;
+      /* Give markers a festive look with a soft gradient and rounded shape */
+      background: linear-gradient(135deg,#dc2626,#10b981);
+      padding:6px;
+      border-radius:50%;
+      margin-bottom:2px;
+    }
+    .map-marker .marker-label{
+      font-size:12px;
+      text-shadow:1px 1px 2px rgba(0,0,0,0.7);
+    }
   </style>
 </head>
 <body>
@@ -558,9 +680,9 @@
           <span class="tab-icon">🗺️</span>
           <span>Map</span>
         </button>
-        <button class="tab" onclick="switchTab(this,'avatar')">
-          <span class="tab-icon">🧝‍♂️</span>
-          <span>Avatar</span>
+        <button class="tab" onclick="switchTab(this,'ornament')">
+          <span class="tab-icon">🎄</span>
+          <span>Ornament</span>
         </button>
         <button class="tab" onclick="switchTab(this,'tracker')">
           <span class="tab-icon">🛰️</span>
@@ -644,34 +766,47 @@
           </div>
         </div>
 
-        <!-- North Pole Map -->
+        <!-- Santa Cam Map -->
         <div id="map" class="tab-pane">
           <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">🗺️ North Pole Map</h2>
-            <p style="font-size: 14px; opacity: 0.8;">Explore Santa's Village!</p>
+            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">🗺️ Santa Cam Map</h2>
+            <p style="font-size: 14px; opacity: 0.8;">Explore the North Pole and click a marker to watch a live camera feed!</p>
           </div>
-          <div class="map-grid" id="mapGrid"></div>
+          <div class="map-container" id="interactiveMap"></div>
         </div>
 
-        <!-- Elf Avatar Creator -->
-        <div id="avatar" class="tab-pane">
+        <!-- Ornament Designer -->
+        <div id="ornament" class="tab-pane">
           <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">🧝‍♂️ Create Your Elf Avatar</h2>
-            <p style="font-size: 14px; opacity: 0.8;">Customize your own elf look!</p>
+            <div style="font-size: 64px; margin-bottom: 12px;">🎄✨🧸</div>
+            <h2 style="font-size: 28px; font-weight: bold; color: #16a34a;">Ornament Designer</h2>
+            <p style="font-size: 14px; color: #6b7280; margin-top: 8px;">Create your own festive ornament!</p>
           </div>
-          <div class="avatar-container">
-            <div class="avatar-preview">
-              <svg id="avatarSVG" width="120" height="170" viewBox="0 0 120 170">
-                <polygon id="avatarHat" points="60,0 100,50 20,50" fill="#dc2626"></polygon>
-                <circle id="avatarHead" cx="60" cy="80" r="25" fill="#fff5e5"></circle>
-                <rect id="avatarBody" x="30" y="110" width="60" height="50" rx="10" fill="#16a34a"></rect>
-              </svg>
+          <div class="ornament-container">
+            <div class="ornament-preview">
+              <svg id="ornamentPreview" width="120" height="160" viewBox="0 0 120 160"></svg>
             </div>
-            <div class="avatar-controls">
-              <label>Hat Color: <input type="color" id="hatColor" value="#dc2626" onchange="applyAvatarColors()"></label>
-              <label>Outfit Color: <input type="color" id="outfitColor" value="#16a34a" onchange="applyAvatarColors()"></label>
-              <button onclick="generateAvatarName()" style="padding:12px; border:none; border-radius:12px; background:linear-gradient(135deg,#16a34a,#059669); color:white; font-size:16px; font-weight:bold; cursor:pointer; margin-top:10px;">🎉 Generate Elf Name</button>
-              <div id="avatarName" class="avatar-name" style="display:none;"></div>
+            <div class="ornament-controls">
+              <div class="ornament-shapes">
+                <button type="button" onclick="selectOrnamentShape('ball')" id="shapeBall" class="active">⚪ Ball</button>
+                <button type="button" onclick="selectOrnamentShape('star')" id="shapeStar">⭐ Star</button>
+                <button type="button" onclick="selectOrnamentShape('tree')" id="shapeTree">🎄 Tree</button>
+              </div>
+
+              <!-- Ornament pattern selection -->
+              <div class="ornament-patterns">
+                <button type="button" onclick="selectOrnamentPattern('solid')" id="patternSolid" class="active">Solid</button>
+                <button type="button" onclick="selectOrnamentPattern('striped')" id="patternStriped">Stripes</button>
+                <button type="button" onclick="selectOrnamentPattern('dotted')" id="patternDotted">Dots</button>
+              </div>
+              <label>
+                Base Color:
+                <input type="color" id="ornamentBaseColor" value="#ef4444" onchange="updateOrnamentPreview()">
+              </label>
+              <label>
+                Decoration Color:
+                <input type="color" id="ornamentDecoColor" value="#fbbf24" onchange="updateOrnamentPreview()">
+              </label>
             </div>
           </div>
         </div>
@@ -756,6 +891,7 @@
       </div>
     </div>
 
+
     <div class="footer">
       Made with holiday magic & Christmas spirit<br />
       © 2024 North Pole Technologies
@@ -787,13 +923,7 @@
     </div>
   </div>
 
-  <!-- Info Modal for map and other details -->
-  <div id="infoModal" class="info-modal">
-    <div class="info-modal-content">
-      <button class="info-close" onclick="closeInfoModal()">×</button>
-      <div id="infoContent"></div>
-    </div>
-  </div>
+  <!-- The Info Modal has been removed because the map markers now open the Santa Cam directly -->
 
   <!-- Background music audio element -->
   <audio id="backgroundMusic" loop></audio>
@@ -1512,63 +1642,118 @@
     }
 
     /************** NORTH POLE MAP **************/
-    const mapLocations = {
-      workshop: { icon:'🎁', title:'Workshop', description:'Where Santa\'s elves work tirelessly to make toys for children all around the world.' },
-      office: { icon:'📋', title:'Office', description:'Santa\'s office where he reads letters and checks his lists.' },
-      stable: { icon:'🦌', title:'Stable', description:'Home of the reindeer that pull Santa’s sleigh.' },
-      kitchen: { icon:'🍪', title:'Kitchen', description:'Where Mrs. Claus bakes cookies and prepares treats.' },
-      mailroom: { icon:'✉️', title:'Mail Room', description:'Every letter from children arrives here to be sorted.' },
-      lab: { icon:'🧸', title:'Toy Lab', description:'Innovative elves dream up new toys here.' },
-      tree: { icon:'🎄', title:'Tree Room', description:'The magical room where the North Pole tree is decorated.' },
-      northpole: { icon:'🧊', title:'North Pole', description:'The northernmost point and heart of Santa’s world.' }
-    };
-    function initMap() {
-      const grid = document.getElementById('mapGrid');
-      if (!grid) return;
-      grid.innerHTML = '';
-      for (const key in mapLocations) {
-        const loc = mapLocations[key];
-        const item = document.createElement('div');
-        item.className = 'map-item';
-        item.innerHTML = '<div class="map-icon">' + loc.icon + '</div><div class="map-name">' + loc.title + '</div>';
-        item.onclick = () => openInfoModal(loc.title, loc.icon, loc.description);
-        grid.appendChild(item);
+    /*
+      The original map implementation used a grid and an info modal to display
+      descriptions about various North Pole locations. That approach felt
+      disconnected from the Santa Cam experience. To make the map more exciting
+      and interactive, the map markers now directly open the corresponding
+      Santa Cam when clicked. The grid and info modal have been removed and
+      are no longer used.
+    */
+
+
+    /************** ORNAMENT DESIGNER **************/
+    let currentOrnamentShape = 'ball';
+    // Add pattern state for ornaments. Patterns can be 'solid', 'striped', or 'dotted'.
+    let currentOrnamentPattern = 'solid';
+
+    // Handle selection of ornament patterns. Highlight the active button and update the preview.
+    function selectOrnamentPattern(pattern) {
+      currentOrnamentPattern = pattern;
+      ['patternSolid','patternStriped','patternDotted'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('active');
+      });
+      const activeBtnId = 'pattern' + pattern.charAt(0).toUpperCase() + pattern.slice(1);
+      const activeBtn = document.getElementById(activeBtnId);
+      if (activeBtn) activeBtn.classList.add('active');
+      updateOrnamentPreview();
+    }
+    function selectOrnamentShape(shape) {
+      currentOrnamentShape = shape;
+      ['shapeBall','shapeStar','shapeTree'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) btn.classList.remove('active');
+      });
+      const activeBtn = document.getElementById('shape' + shape.charAt(0).toUpperCase() + shape.slice(1));
+      if (activeBtn) activeBtn.classList.add('active');
+      updateOrnamentPreview();
+    }
+    function updateOrnamentPreview() {
+      const svg = document.getElementById('ornamentPreview');
+      if (!svg) return;
+      const baseColor = document.getElementById('ornamentBaseColor')?.value || '#ef4444';
+      const decoColor = document.getElementById('ornamentDecoColor')?.value || '#fbbf24';
+      let baseShape = '';
+      let clipPathDef = '';
+      let overlay = '';
+      // Construct base shape and clipping definition for patterns
+      if (currentOrnamentShape === 'ball') {
+        baseShape = '<circle cx="60" cy="80" r="50" fill="' + baseColor + '" stroke="' + decoColor + '" stroke-width="6" />';
+        clipPathDef = '<clipPath id="ornamentClip"><circle cx="60" cy="80" r="50" /></clipPath>';
+      } else if (currentOrnamentShape === 'star') {
+        const starPts = '60,10 72,52 115,52 82,78 94,120 60,95 26,120 38,78 5,52 48,52';
+        baseShape = '<polygon points="' + starPts + '" fill="' + baseColor + '" stroke="' + decoColor + '" stroke-width="6" />';
+        clipPathDef = '<clipPath id="ornamentClip"><polygon points="' + starPts + '" /></clipPath>';
+      } else if (currentOrnamentShape === 'tree') {
+        // tree made of two triangles and a trunk; combine for clip path
+        baseShape = '<polygon points="60,20 95,80 25,80" fill="' + baseColor + '" stroke="' + decoColor + '" stroke-width="6" />' +
+                    '<polygon points="60,60 100,120 20,120" fill="' + baseColor + '" stroke="' + decoColor + '" stroke-width="6" />' +
+                    '<rect x="50" y="120" width="20" height="30" fill="' + decoColor + '" />';
+        clipPathDef = '<clipPath id="ornamentClip">' +
+                      '<polygon points="60,20 95,80 25,80" />' +
+                      '<polygon points="60,60 100,120 20,120" />' +
+                      '<rect x="50" y="120" width="20" height="30" />' +
+                      '</clipPath>';
       }
-    }
-    function openInfoModal(title, icon, description) {
-      const modal = document.getElementById('infoModal');
-      const content = document.getElementById('infoContent');
-      content.innerHTML = '<div style="font-size:48px; margin-bottom:12px;">' + icon + '</div>' +
-        '<h2 style="font-size:24px; font-weight:bold; color:#dc2626; margin-bottom:8px;">' + title + '</h2>' +
-        '<p style="font-size:16px; color:#374151;">' + description + '</p>';
-      modal.classList.add('open');
-    }
-    function closeInfoModal() {
-      const modal = document.getElementById('infoModal');
-      if (modal) modal.classList.remove('open');
+      // Add overlay based on selected pattern
+      if (currentOrnamentPattern === 'striped') {
+        // Horizontal stripes across the ornament
+        overlay = '<g clip-path="url(#ornamentClip)">' +
+                  '<rect x="0" y="40" width="120" height="10" fill="' + decoColor + '" />' +
+                  '<rect x="0" y="80" width="120" height="10" fill="' + decoColor + '" />' +
+                  '<rect x="0" y="120" width="120" height="10" fill="' + decoColor + '" />' +
+                  '</g>';
+      } else if (currentOrnamentPattern === 'dotted') {
+        // Polka dots at preset positions within the shape
+        overlay = '<g clip-path="url(#ornamentClip)">' +
+                  '<circle cx="30" cy="60" r="5" fill="' + decoColor + '" />' +
+                  '<circle cx="60" cy="90" r="5" fill="' + decoColor + '" />' +
+                  '<circle cx="90" cy="70" r="5" fill="' + decoColor + '" />' +
+                  '<circle cx="45" cy="115" r="5" fill="' + decoColor + '" />' +
+                  '<circle cx="75" cy="120" r="5" fill="' + decoColor + '" />' +
+                  '</g>';
+      } else {
+        // Solid pattern: no overlay
+        overlay = '';
+      }
+      // Combine definitions and shapes
+      const defs = '<defs>' + clipPathDef + '</defs>';
+      svg.innerHTML = defs + baseShape + overlay;
     }
 
-    /************** AVATAR CREATOR **************/
-    function applyAvatarColors() {
-      const hat = document.getElementById('avatarHat');
-      const body = document.getElementById('avatarBody');
-      const hatColor = document.getElementById('hatColor').value;
-      const outfitColor = document.getElementById('outfitColor').value;
-      if (hat) hat.setAttribute('fill', hatColor);
-      if (body) body.setAttribute('fill', outfitColor);
-    }
-    function generateAvatarName() {
-      let name = document.getElementById('childName').value.trim();
-      if (!name) name = 'Little One';
-      const prefixes = ['Sparkle','Jingle','Twinkle','Sugar','Jolly','Merry','Cocoa','Candy','Ginger','Snowflake','Peppermint','Holly','Frosty','Tinsel','Glitter','Cinnamon','Cookie','Mistletoe','Starlight','Chestnut','Nutmeg','Angel','Berry','Sparkly','Cheery','Snowy','Elfie','Pudding','Caramel','Zippy'];
-      const suffixes = ['toes','bells','shine','plum','whiskers','bright','flakes','paws','nose','sparkle','jingles','cheeks','buttons','wings','giggles','twirl','bounce','dash','frost','sweet','star','berry','shoes','hat','ears','glow','hop','skip','jump','smile'];
-      const nameHash = name.split('').reduce((acc,c)=>acc + c.charCodeAt(0), 0);
-      const prefix = prefixes[nameHash % prefixes.length];
-      const suffix = suffixes[(nameHash * 7) % suffixes.length];
-      const elfName = prefix + suffix;
-      const avatarNameEl = document.getElementById('avatarName');
-      avatarNameEl.textContent = elfName;
-      avatarNameEl.style.display = 'block';
+    /************** INTERACTIVE MAP **************/
+    function initInteractiveMap() {
+      const mapEl = document.getElementById('interactiveMap');
+      if (!mapEl) return;
+      mapEl.innerHTML = '';
+      const markers = [
+        { key:'workshop', icon:'🎁', label:'Workshop', x:20, y:30 },
+        { key:'office', icon:'📋', label:'Office', x:70, y:25 },
+        { key:'stable', icon:'🦌', label:'Stable', x:30, y:75 },
+        { key:'kitchen', icon:'🍪', label:'Kitchen', x:80, y:60 },
+        { key:'mailroom', icon:'✉️', label:'Mail Room', x:50, y:50 },
+        { key:'lab', icon:'🧸', label:'Toy Lab', x:15, y:60 }
+      ];
+      markers.forEach(marker => {
+        const el = document.createElement('div');
+        el.className = 'map-marker';
+        el.style.left = marker.x + '%';
+        el.style.top = marker.y + '%';
+        el.innerHTML = '<div class="marker-icon">' + marker.icon + '</div><div class="marker-label">' + marker.label + '</div>';
+        el.onclick = () => openCam(marker.key);
+        mapEl.appendChild(el);
+      });
     }
 
     /************** SANTA TRACKER **************/
@@ -1665,7 +1850,8 @@
 
     // Initialize custom features on page load
     setDailyTidbit();
-    initMap();
+    initInteractiveMap();
+    updateOrnamentPreview();
     initTracker();
     setupAdventVisibility();
     // Set default theme
