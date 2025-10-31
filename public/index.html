@@ -9,14 +9,6 @@
   <title>Santa's Command Center</title>
 
   <style>
-    /*
-      The majority of the base styles were retained from the original
-      implementation.  Structural changes were kept minimal so the page
-      retains its festive look and feel.  The chat tab and panel have been
-      completely removed to satisfy the request.  A unique id was added
-      to the advent tab so it can be toggled based on the date.  Sound
-      functions have been revised for improved fidelity and reliability.
-    */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -32,16 +24,15 @@
       100% { transform: translateY(110vh) translateX(0); opacity: 0; }
     }
     @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
+    @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+
     .snowflake { position: fixed; top: -50px; color: white; font-size: 20px; opacity: 0.2; pointer-events: none; animation: float linear infinite; z-index: 1; }
     .container { max-width: 800px; margin: 0 auto; position: relative; z-index: 10; }
     .header { text-align: center; margin-bottom: 30px; }
     .header h1 { font-size: clamp(32px, 5vw, 48px); font-weight: bold; margin-bottom: 8px; }
     .santa-icon { display: inline-block; font-size: 64px; animation: wiggle 2s ease-in-out infinite; }
     .subtitle { color: #fecaca; font-size: 18px; }
+
     .card { background: rgba(255,255,255,.1); backdrop-filter: blur(10px); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
     .name-input-section { background: linear-gradient(to right, #dc2626, #ef4444, #16a34a); padding: 24px; }
     .name-input-section label { display:block; color:white; font-size:12px; font-weight:bold; letter-spacing:1px; margin-bottom:12px; }
@@ -104,7 +95,8 @@
     .control-btn:hover{ background:#4b5563; }
 
     .footer{ text-align:center; margin-top:40px; opacity:.6; font-size:14px; }
-    
+
+    /* Countdown styles */
     .countdown-banner { 
       background: linear-gradient(135deg, #dc2626, #991b1b); 
       padding: 20px; 
@@ -177,7 +169,8 @@
       background: linear-gradient(135deg, #16a34a, #059669);
       animation: glow 2s ease-in-out infinite;
     }
-    
+
+    /* Advent */
     .advent-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
@@ -200,75 +193,39 @@
       border: 3px solid #7f1d1d;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
-    .advent-day:hover:not(.locked):not(.opened) {
-      transform: scale(1.05);
-      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4);
-    }
-    .advent-day.locked {
-      background: linear-gradient(135deg, #6b7280, #4b5563);
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-    .advent-day.opened {
-      background: linear-gradient(135deg, #16a34a, #059669);
-      border-color: #14532d;
-    }
-    .advent-day.today {
-      animation: glow 2s ease-in-out infinite;
-      border-color: #fbbf24;
-    }
-    .advent-number {
-      font-size: 28px;
-      font-weight: bold;
-      color: white;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    .advent-icon {
-      font-size: 20px;
-      margin-top: 4px;
-    }
-    .advent-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.9);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .advent-modal.open {
-      display: flex;
-    }
-    .advent-modal-content {
-      background: white;
-      border-radius: 24px;
-      padding: 32px;
-      max-width: 500px;
-      width: 100%;
-      text-align: center;
+    .advent-day:hover:not(.locked):not(.opened) { transform: scale(1.05); box-shadow: 0 6px 16px rgba(220, 38, 38, 0.4); }
+    .advent-day.locked { background: linear-gradient(135deg, #6b7280, #4b5563); cursor: not-allowed; opacity: 0.6; }
+    .advent-day.opened { background: linear-gradient(135deg, #16a34a, #059669); border-color: #14532d; }
+    .advent-day.today { animation: glow 2s ease-in-out infinite; border-color: #fbbf24; }
+    .advent-number { font-size: 28px; font-weight: bold; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+    .advent-icon { font-size: 20px; margin-top: 4px; }
+    .advent-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
+    .advent-modal.open { display: flex; }
+    .advent-modal-content { background: white; border-radius: 24px; padding: 32px; max-width: 500px; width: 100%; text-align: center; position: relative; color: #1f2937; }
+    .advent-close { position: absolute; top: 16px; right: 16px; background: #dc2626; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 18px; font-weight: bold; }
+    .advent-surprise { font-size: 64px; margin: 20px 0; animation: bounce 1s ease-out; }
+
+    /* Chat (unused now) styles can be omitted; keeping only used ones */
+
+    /* Daily card */
+    .daily-card{
+      background: linear-gradient(135deg,#991b1b,#7f1d1d);
+      padding: 18px 20px;
+      border-radius: 18px;
+      margin: 16px 0 24px 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
       position: relative;
-      color: #1f2937;
+      overflow: hidden;
     }
-    .advent-close {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: #dc2626;
-      color: white;
-      border: none;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 18px;
-      font-weight: bold;
+    .daily-card::before{
+      content:'🎁';
+      position:absolute; right:-12px; top:-10px; font-size:80px; opacity:.08;
     }
-    .advent-surprise {
-      font-size: 64px;
-      margin: 20px 0;
-      animation: bounce 1s ease-out;
+    .daily-title{
+      font-size:14px; letter-spacing:1px; text-transform:uppercase;
+      color:#fecaca; font-weight:700; margin-bottom:8px;
     }
+    .daily-text{ font-size:18px; line-height:1.5; color:#fff; }
   </style>
 </head>
 <body>
@@ -282,6 +239,12 @@
       </div>
       <h1>Santa's Command Center</h1>
       <p class="subtitle">Live from the North Pole • Powered by ElevenLabs AI</p>
+
+      <!-- Daily Christmas Tidbit -->
+      <div id="dailyCard" class="daily-card" aria-live="polite">
+        <div class="daily-title">🎅 Today's Christmas Tidbit</div>
+        <div id="dailyText" class="daily-text">Loading…</div>
+      </div>
     </div>
 
     <!-- Countdown to Christmas -->
@@ -314,13 +277,12 @@
         <input type="text" id="childName" placeholder="Enter name here..." />
       </div>
 
-      <!-- Tabs -->
+      <!-- Tabs (Chat removed; Advent hidden until Dec 1) -->
       <div class="tabs">
         <button class="tab active" onclick="switchTab(this,'soundboard')">
           <span class="tab-icon">🔊</span>
           <span>Soundboard</span>
         </button>
-        <!-- Chat with Santa has been removed -->
         <button class="tab" onclick="switchTab(this,'report')">
           <span class="tab-icon">📄</span>
           <span>Report Card</span>
@@ -329,7 +291,7 @@
           <span class="tab-icon">✉️</span>
           <span>Letter to Santa</span>
         </button>
-        <button class="tab" id="adventTab" onclick="switchTab(this,'advent')">
+        <button id="adventTabBtn" class="tab" onclick="switchTab(this,'advent')">
           <span class="tab-icon">🎁</span>
           <span>Advent Calendar</span>
         </button>
@@ -403,15 +365,13 @@
               <input type="text" id="elfNameInput" placeholder="Your name..." style="width: 100%; padding: 14px; border: 2px solid #e5e7eb; border-radius: 12px; font-size: 18px; outline: none; transition: 0.2s;" onfocus="this.style.borderColor='#16a34a'" onblur="this.style.borderColor='#e5e7eb'" />
             </div>
             
-            <button onclick="generateElfName()" style="width: 100%; padding: 18px; border: none; border-radius: 12px; background: linear-gradient(135deg, #16a34a, #059669); color: white; font-size: 18px; font-weight: bold; cursor: pointer; transition: transform 0.2s; margin-bottom: 24px;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
-              ✨ Generate My Elf Name
-            </button>
+            <button onclick="generateElfName()" style="width: 100%; padding: 18px; border: none; border-radius: 12px; background: linear-gradient(135deg, #16a34a, #059669); color: white; font-size: 18px; font-weight: bold; cursor: pointer; transition: transform 0.2s; margin-bottom: 24px;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"> ✨ Generate My Elf Name </button>
             
             <div id="elfNameResult" style="display: none;"></div>
           </div>
         </div>
 
-        <!-- Advent Calendar -->
+        <!-- Advent Calendar (hidden until Dec 1) -->
         <div id="advent" class="tab-pane">
           <div style="text-align: center; margin-bottom: 20px;">
             <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 8px;">🎄 Advent Calendar 🎁</h2>
@@ -482,30 +442,20 @@
     function updateCountdown() {
       const now = new Date();
       const currentYear = now.getFullYear();
-      
-      // Set Christmas date (December 25 at midnight)
       let christmas = new Date(currentYear, 11, 25, 0, 0, 0);
-      
-      // If Christmas has passed this year, set to next year
-      if (now > christmas) {
-        christmas = new Date(currentYear + 1, 11, 25, 0, 0, 0);
-      }
-      
+      if (now > christmas) christmas = new Date(currentYear + 1, 11, 25, 0, 0, 0);
+
       const diff = christmas - now;
-      
-      // Calculate time units
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      
-      // Update display
+
       document.getElementById('days').textContent = days;
       document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
       document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
       document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
-      
-      // Special handling for Christmas Day
+
       const banner = document.getElementById('countdownBanner');
       if (days === 0 && hours === 0) {
         banner.classList.add('christmas-day');
@@ -514,79 +464,10 @@
         banner.classList.remove('christmas-day');
       }
     }
-    
-    // Update countdown immediately and every second
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
-    /**************  SOUND EFFECTS  **************/
-    // Create audio context for sound effects
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioCtx = new AudioContext();
-
-    // Ensure the audio context is resumed before playing.  Some browsers
-    // suspend the context until a user gesture is registered.
-    function ensureAudioContext() {
-      if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-      }
-    }
-
-    // Helper to play a sequence of tones.  Each tone in the array is
-    // scheduled back-to-back for a given duration.  This makes the
-    // resulting sound more melodic and less like a single beep.
-    function playSoundSequence(frequencies, duration) {
-      ensureAudioContext();
-      const now = audioCtx.currentTime;
-      let time = now;
-      frequencies.forEach((freq) => {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, time);
-        gain.gain.setValueAtTime(0.3, time);
-        gain.gain.exponentialRampToValueAtTime(0.01, time + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(time);
-        osc.stop(time + duration);
-        time += duration;
-      });
-    }
-
-    // Revised sound effect functions.  These functions now call
-    // playSoundSequence with different frequency patterns to better
-    // emulate their intended sounds.  The original oscillator-based
-    // implementations produced simple beeps that didn't match the
-    // descriptions (for example, jingle bells).  These patterns
-    // approximate chimes and simple melodies.
-    function playJingleBell() {
-      // High-pitched bell tones
-      playSoundSequence([1500, 2000, 2500], 0.12);
-    }
-
-    function playSleighBell() {
-      // Slightly lower and more varied frequencies to simulate sleigh bells
-      playSoundSequence([800, 1200, 1600], 0.1);
-    }
-
-    function playHoHoHo() {
-      // Low frequencies to emulate Santa chuckling 'ho ho ho'
-      playSoundSequence([220, 180, 200], 0.25);
-    }
-
-    function playMagicSparkle() {
-      // Rapid ascending tones for a magical sparkle effect
-      playSoundSequence([1500, 1700, 1900, 2100, 2300, 2500], 0.06);
-    }
-
-    function playSuccess() {
-      // A simple triad for success notification (C major chord)
-      playSoundSequence([523.25, 659.25, 783.99], 0.15);
-    }
-
     /**************  UTIL & DECORATION  **************/
-    // Snowflakes
     const snowflakesContainer = document.getElementById('snowflakes');
     (function makeSnowflakes(){
       for (let i = 0; i < 20; i++) {
@@ -602,7 +483,6 @@
 
     // Tabs
     function switchTab(btnEl, tabName) {
-      playJingleBell(); // Sound effect when switching tabs
       document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
       btnEl.classList.add('active');
@@ -637,7 +517,7 @@
       });
     }
 
-    // Build buttons
+    // Build buttons (no hover sounds)
     messages.forEach((msg) => {
       const btn = document.createElement('button');
       btn.className = `message-btn ${msg.type}`;
@@ -646,33 +526,19 @@
         <span style="font-size: 30px;">${msg.emoji}</span>
       `;
       btn.onclick = () => speakMessage(msg.text);
-      
-      // Add hover sound effect
-      btn.addEventListener('mouseenter', () => {
-        if (!btn.disabled) playSleighBell();
-      });
-      
       messageButtonsContainer.appendChild(btn);
     });
 
     document.getElementById('childName').addEventListener('input', updateButtonText);
 
-    // Auto-fill name across all sections
+    // Auto-fill name across sections
     document.getElementById('childName').addEventListener('input', function() {
       const name = this.value;
-      updateButtonText(); // Update soundboard buttons
-      
-      // Update letter name if empty
+      updateButtonText();
       const letterNameInput = document.getElementById('letterName');
-      if (letterNameInput) {
-        letterNameInput.value = name;
-      }
-      
-      // Update elf name input if empty
+      if (letterNameInput) letterNameInput.value = name;
       const elfNameInput = document.getElementById('elfNameInput');
-      if (elfNameInput) {
-        elfNameInput.value = name;
-      }
+      if (elfNameInput) elfNameInput.value = name;
     });
 
     // ElevenLabs via serverless endpoint: /api/santa-voice
@@ -725,8 +591,6 @@
 
     /**************  REPORT CARD  **************/
     function generateReport() {
-      playMagicSparkle(); // Sound effect when generating
-      
       const name = (document.getElementById('childName').value || '').trim() || 'this child';
       const niceScore = Math.floor(Math.random() * 40) + 60;
       const naughtyScore = 100 - niceScore;
@@ -741,18 +605,15 @@
         'Used kind words','Helped set the dinner table','Picked up after themselves','Was a good sport in games','Showed empathy to others'
       ];
       const allNaughtyDeeds = [
-        'Argued with siblings','Didn\'t listen the first time','Left toys scattered around','Complained about bedtime',
+        'Argued with siblings',"Didn't listen the first time",'Left toys scattered around','Complained about bedtime',
         'Forgot to do assigned chores','Talked back occasionally','Needed reminders to clean up','Interrupted adults talking',
-        'Was grumpy in the morning','Fought over screen time','Didn\'t finish dinner','Procrastinated on homework',
+        'Was grumpy in the morning','Fought over screen time',"Didn't finish dinner",'Procrastinated on homework',
         'Made excuses for mistakes','Whined about going outside','Refused to share sometimes','Was too rough with pets',
         'Stayed up past bedtime','Complained about chores','Left wet towels on the floor','Needed multiple reminders'
       ];
 
       const goodDeeds = [...allGoodDeeds].sort(()=>0.5-Math.random()).slice(0,4);
       const naughtyDeeds = [...allNaughtyDeeds].sort(()=>0.5-Math.random()).slice(0, Math.floor(Math.random()*2)+2);
-
-      // Play success sound after a short delay
-      setTimeout(() => playSuccess(), 300);
 
       document.getElementById('reportResult').innerHTML = `
         <div class="report-card">
@@ -798,19 +659,9 @@
     function saveLetterLocally() {
       let name = document.getElementById('letterName').value.trim();
       const content = document.getElementById('letterContent').value.trim();
-      
-      // Use main name if letter name is empty
-      if (!name) {
-        name = document.getElementById('childName').value.trim();
-      }
-      
-      if (!name || !content) {
-        alert('Please fill in both your name and letter content!');
-        return;
-      }
-      
-      playSuccess(); // Sound effect on save
-      
+      if (!name) name = document.getElementById('childName').value.trim();
+      if (!name || !content) { alert('Please fill in both your name and letter content!'); return; }
+
       const letterText = `Letter to Santa from ${name}\n${new Date().toLocaleDateString()}\n\n${content}`;
       const blob = new Blob([letterText], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
@@ -821,30 +672,17 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
       showLetterStatus('💾 Letter saved to your device!', '#3b82f6');
     }
     
     function sendLetterToSanta() {
       let name = document.getElementById('letterName').value.trim();
       const content = document.getElementById('letterContent').value.trim();
-      
-      // Use main name if letter name is empty
-      if (!name) {
-        name = document.getElementById('childName').value.trim();
-      }
-      
-      if (!name || !content) {
-        alert('Please fill in both your name and letter content!');
-        return;
-      }
-      
-      playMagicSparkle(); // Sound effect when sending
-      
+      if (!name) name = document.getElementById('childName').value.trim();
+      if (!name || !content) { alert('Please fill in both your name and letter content!'); return; }
+
       showLetterStatus('📮 Sending to the North Pole...', '#fbbf24');
-      
       setTimeout(() => {
-        playSuccess(); // Success sound when delivered
         showLetterStatus(`
           <div style="text-align: center;">
             <div style="font-size: 64px; margin-bottom: 16px; animation: bounce 1s ease-in-out;">🎅✨</div>
@@ -853,7 +691,6 @@
             <p style="font-size: 14px; color: #6b7280; margin-top: 8px;">He's checking it twice and adding it to his special list. 🎄</p>
           </div>
         `, 'linear-gradient(135deg, #d1fae5, #a7f3d0)');
-        
         setTimeout(() => {
           document.getElementById('letterName').value = '';
           document.getElementById('letterContent').value = '';
@@ -863,65 +700,27 @@
     
     function showLetterStatus(message, bgColor) {
       const statusDiv = document.getElementById('letterStatus');
-      statusDiv.innerHTML = `
-        <div style="background: ${bgColor}; color: #1f2937; border-radius: 16px; padding: 20px; text-align: center; font-weight: 600;">
-          ${message}
-        </div>
-      `;
+      statusDiv.innerHTML = `<div style="background: ${bgColor}; color: #1f2937; border-radius: 16px; padding: 20px; text-align: center; font-weight: 600;">${message}</div>`;
       statusDiv.style.display = 'block';
     }
 
     /**************  ELF NAME GENERATOR  **************/
     function generateElfName() {
       let name = document.getElementById('elfNameInput').value.trim();
-      
-      // Use main name if elf name input is empty
-      if (!name) {
-        name = document.getElementById('childName').value.trim();
-      }
-      
-      if (!name) {
-        alert('Please enter your name in the name field at the top!');
-        return;
-      }
+      if (!name) name = document.getElementById('childName').value.trim();
+      if (!name) { alert('Please enter your name in the name field at the top!'); return; }
 
-      playMagicSparkle(); // Sound effect when generating
+      const prefixes = ['Sparkle','Jingle','Twinkle','Sugar','Jolly','Merry','Cocoa','Candy','Ginger','Snowflake','Peppermint','Holly','Frosty','Tinsel','Glitter','Cinnamon','Cookie','Mistletoe','Starlight','Chestnut','Nutmeg','Angel','Berry','Sparkly','Cheery','Snowy','Elfie','Pudding','Caramel','Zippy'];
+      const suffixes = ['toes','bells','shine','plum','whiskers','bright','flakes','paws','nose','sparkle','jingles','cheeks','buttons','wings','giggles','twirl','bounce','dash','frost','sweet','star','berry','shoes','hat','ears','glow','hop','skip','jump','smile'];
+      const titles = ['Chief Toy Inspector','Master Gift Wrapper','Head Cookie Taster','Lead Reindeer Trainer','Senior Sleigh Engineer','Top Tinsel Arranger','Premier Present Sorter','Chief Snow Sculptor','Master List Checker','Head Jingle Composer','Lead Stocking Stuffer','Senior Candy Cane Maker','Top Ornament Designer','Chief Wish Granter','Master Elf Motivator','Head Chimney Navigator','Lead Magic Distributor','Senior Joy Spreader'];
 
-      const prefixes = [
-        'Sparkle', 'Jingle', 'Twinkle', 'Sugar', 'Jolly', 'Merry', 'Cocoa', 'Candy',
-        'Ginger', 'Snowflake', 'Peppermint', 'Holly', 'Frosty', 'Tinsel', 'Glitter',
-        'Cinnamon', 'Cookie', 'Mistletoe', 'Starlight', 'Chestnut', 'Nutmeg', 'Angel',
-        'Berry', 'Sparkly', 'Cheery', 'Snowy', 'Elfie', 'Pudding', 'Caramel', 'Zippy'
-      ];
-
-      const suffixes = [
-        'toes', 'bells', 'shine', 'plum', 'whiskers', 'bright', 'flakes', 'paws',
-        'nose', 'sparkle', 'jingles', 'cheeks', 'buttons', 'wings', 'giggles',
-        'twirl', 'bounce', 'dash', 'frost', 'sweet', 'star', 'berry', 'shoes',
-        'hat', 'ears', 'glow', 'hop', 'skip', 'jump', 'smile'
-      ];
-
-      const titles = [
-        'Chief Toy Inspector', 'Master Gift Wrapper', 'Head Cookie Taster',
-        'Lead Reindeer Trainer', 'Senior Sleigh Engineer', 'Top Tinsel Arranger',
-        'Premier Present Sorter', 'Chief Snow Sculptor', 'Master List Checker',
-        'Head Jingle Composer', 'Lead Stocking Stuffer', 'Senior Candy Cane Maker',
-        'Top Ornament Designer', 'Chief Wish Granter', 'Master Elf Motivator',
-        'Head Chimney Navigator', 'Lead Magic Distributor', 'Senior Joy Spreader'
-      ];
-
-      // Generate consistent name based on input
-      const nameHash = name.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const nameHash = name.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
       const prefix = prefixes[nameHash % prefixes.length];
       const suffix = suffixes[(nameHash * 7) % suffixes.length];
       const title = titles[(nameHash * 13) % titles.length];
       const elfNumber = (nameHash % 999) + 1;
-
       const elfName = `${prefix}${suffix}`;
-      
-      // Play success sound after brief delay
-      setTimeout(() => playSuccess(), 200);
-      
+
       const resultDiv = document.getElementById('elfNameResult');
       resultDiv.innerHTML = `
         <div style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); padding: 24px; border-radius: 16px; text-align: center; animation: bounce 0.5s ease-out;">
@@ -947,14 +746,14 @@
     const adventSurprises = [
       { icon: '🎅', title: 'Santa Fact', content: 'Santa has over 2 billion children to visit on Christmas Eve!' },
       { icon: '🦌', title: 'Reindeer Fact', content: 'Rudolph was almost named Rollo or Reginald!' },
-      { icon: '🍪', title: 'Cookie Recipe', content: 'Santa\'s favorite cookies are chocolate chip with a glass of cold milk!' },
+      { icon: '🍪', title: 'Cookie Recipe', content: "Santa's favorite cookies are chocolate chip with a glass of cold milk!" },
       { icon: '⛄', title: 'Snowman Joke', content: 'What do snowmen eat for breakfast? Frosted Flakes!' },
       { icon: '🎄', title: 'Tree Fact', content: 'The tradition of Christmas trees started in Germany over 400 years ago!' },
       { icon: '🎁', title: 'Gift Fact', content: 'The biggest Christmas gift ever was the Statue of Liberty from France!' },
       { icon: '🔔', title: 'Jingle Bells', content: 'Jingle Bells was originally written for Thanksgiving, not Christmas!' },
-      { icon: '🧝', title: 'Elf Fact', content: 'Santa\'s elves work in 8-hour shifts around the clock making toys!' },
+      { icon: '🧝', title: 'Elf Fact', content: "Santa's elves work in 8-hour shifts around the clock making toys!" },
       { icon: '✨', title: 'North Pole Fact', content: 'The North Pole temperature can drop to -40°F in winter!' },
-      { icon: '🎅', title: 'Santa\'s Age', content: 'Santa Claus is over 1,750 years old!' },
+      { icon: '🎅', title: "Santa's Age", content: 'Santa Claus is over 1,750 years old!' },
       { icon: '🥛', title: 'Milk & Cookies', content: 'Children around the world leave out over 500 million cookies for Santa!' },
       { icon: '🎵', title: 'Carol Fact', content: 'Silent Night has been translated into over 300 languages!' },
       { icon: '⭐', title: 'Christmas Star', content: 'The star on top of the tree represents the Star of Bethlehem!' },
@@ -969,7 +768,7 @@
       { icon: '🎀', title: 'Wrapping Fact', content: 'Americans spend over $2 billion on Christmas wrapping paper!' },
       { icon: '🏠', title: 'Gingerbread', content: 'Gingerbread houses started in Germany in the 1800s!' },
       { icon: '🎊', title: 'Almost Christmas!', content: 'Only 1 day left! Santa is packing his sleigh right now!' },
-      { icon: '🎅', title: 'MERRY CHRISTMAS!', content: 'It\'s Christmas Day! Santa visited last night while you were sleeping! 🎄✨' }
+      { icon: '🎅', title: 'MERRY CHRISTMAS!', content: "It's Christmas Day! Santa visited last night while you were sleeping! 🎄✨" }
     ];
 
     function initAdventCalendar() {
@@ -977,82 +776,67 @@
       const now = new Date();
       const currentMonth = now.getMonth();
       const currentDay = now.getDate();
-      
-      // Get opened days from localStorage
       const openedDays = JSON.parse(localStorage.getItem('adventOpened') || '[]');
-      
+
       for (let day = 1; day <= 25; day++) {
         const dayDiv = document.createElement('div');
         dayDiv.className = 'advent-day';
         
         const isOpened = openedDays.includes(day);
-        const isDecember = currentMonth === 11; // December is month 11
+        const isDecember = currentMonth === 11;
         const canOpen = isDecember && currentDay >= day;
         const isToday = isDecember && currentDay === day;
         
-        if (!canOpen) {
-          dayDiv.classList.add('locked');
-        } else if (isOpened) {
-          dayDiv.classList.add('opened');
-        }
+        if (!canOpen) dayDiv.classList.add('locked');
+        else if (isOpened) dayDiv.classList.add('opened');
+        if (isToday && !isOpened) dayDiv.classList.add('today');
         
-        if (isToday && !isOpened) {
-          dayDiv.classList.add('today');
-        }
-        
-        dayDiv.innerHTML = `
-          <div class="advent-number">${day}</div>
-          <div class="advent-icon">${isOpened ? '✨' : canOpen ? '🎁' : '🔒'}</div>
-        `;
-        
-        if (canOpen && !isOpened) {
-          dayDiv.onclick = () => openAdventDay(day);
-        }
-        
+        dayDiv.innerHTML = `<div class="advent-number">${day}</div><div class="advent-icon">${isOpened ? '✨' : canOpen ? '🎁' : '🔒'}</div>`;
+        if (canOpen && !isOpened) dayDiv.onclick = () => openAdventDay(day);
         grid.appendChild(dayDiv);
       }
     }
 
     function openAdventDay(day) {
-      playMagicSparkle(); // Sound effect when opening
-      
       const surprise = adventSurprises[day - 1];
       const modal = document.getElementById('adventModal');
       const content = document.getElementById('adventSurpriseContent');
-      
       content.innerHTML = `
         <div class="advent-surprise">${surprise.icon}</div>
         <h2 style="font-size: 28px; font-weight: bold; color: #dc2626; margin-bottom: 12px;">Day ${day}</h2>
         <h3 style="font-size: 22px; font-weight: 600; color: #16a34a; margin-bottom: 16px;">${surprise.title}</h3>
         <p style="font-size: 18px; color: #374151; line-height: 1.6;">${surprise.content}</p>
-        <button onclick="closeAdventModal()" style="margin-top: 24px; padding: 12px 32px; background: linear-gradient(135deg, #dc2626, #16a34a); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer;">
-          Close
-        </button>
+        <button onclick="closeAdventModal()" style="margin-top: 24px; padding: 12px 32px; background: linear-gradient(135deg, #dc2626, #16a34a); color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer;">Close</button>
       `;
-      
       modal.classList.add('open');
-      
-      // Play success sound after brief delay
-      setTimeout(() => playSuccess(), 200);
-      
-      // Mark as opened
+
       const openedDays = JSON.parse(localStorage.getItem('adventOpened') || '[]');
       if (!openedDays.includes(day)) {
         openedDays.push(day);
         localStorage.setItem('adventOpened', JSON.stringify(openedDays));
       }
-      
-      // Refresh calendar to show opened state
       document.getElementById('adventGrid').innerHTML = '';
       initAdventCalendar();
     }
 
-    function closeAdventModal() {
-      document.getElementById('adventModal').classList.remove('open');
-    }
+    function closeAdventModal() { document.getElementById('adventModal').classList.remove('open'); }
 
-    // Initialize advent calendar when page loads
-    initAdventCalendar();
+    // Initialize advent calendar when page loads (only if December; tab also hidden until Dec 1)
+    function setupAdventVisibility() {
+      const now = new Date();
+      const isDecember = now.getMonth() === 11;
+      const adventTabBtn = document.getElementById('adventTabBtn');
+      const adventPane = document.getElementById('advent');
+      if (!isDecember) {
+        adventTabBtn.style.display = 'none';
+        adventPane.style.display = 'none';
+      } else {
+        adventTabBtn.style.display = '';
+        adventPane.style.display = '';
+        // If user clicks Advent, it will render; we can pre-build too:
+        initAdventCalendar();
+      }
+    }
 
     /**************  SANTA CAM  **************/
     let camManifest = null;
@@ -1066,8 +850,6 @@
     }
 
     async function openCam(key) {
-      playJingleBell(); // Sound effect when opening camera
-      
       const modal = document.getElementById('videoModal');
       const video = document.getElementById('modalVideo');
       const title = document.getElementById('modalTitle');
@@ -1079,25 +861,25 @@
         alert('No videos found for this scene yet.');
         return;
       }
-      
+
       const choice = scene.files[Math.floor(Math.random() * scene.files.length)];
       const src = `${(scene.base || '').replace(/\/$/, '')}/${choice}`;
-      
+
       try { video.pause(); } catch {}
       video.removeAttribute('src');
       video.innerHTML = '';
       video.load();
-      
+
       const source = document.createElement('source');
       source.src = src;
       source.type = 'video/mp4';
       video.appendChild(source);
-      
+
       title.textContent = scene.title || 'Santa Cam';
       video.muted = false;
       muteBtn.textContent = '🔊 Mute';
       modal.classList.add('open');
-      
+
       video.play().catch(() => {
         video.muted = true;
         muteBtn.textContent = '🔇 Unmute';
@@ -1105,10 +887,8 @@
           alert('This video format may not be supported by the browser.');
         });
       });
-      
-      video.onerror = () => {
-        console.warn('Video error; check path/codec:', src);
-      };
+
+      video.onerror = () => { console.warn('Video error; check path/codec:', src); };
     }
 
     function toggleMute() {
@@ -1135,17 +915,53 @@
       if (e.target.id === 'videoModal') closeModal();
     });
 
-    /**************  HIDE ADVENT TAB UNTIL DEC 1 **************/
-    (function hideAdventTabUntilDecember() {
+    /**************  DAILY TIDBIT (Joke/Fact) **************/
+    const CHRISTMAS_JOKES = [
+      "Why did Santa go to music school? Because he wanted to improve his wrapping skills!",
+      "What do snowmen eat for breakfast? Frosted Flakes!",
+      "Why is it so cold at Christmas? Because it’s Decem-brrr!",
+      "What do you call an elf that sings? A wrapper.",
+      "Why did the turkey join the band? He had the drumsticks!",
+      "What do you call a kid who doesn’t believe in Santa? A rebel without a Claus.",
+      "How much did Santa pay for his sleigh? Nothing — it was on the house!",
+      "Why did the ornament go to school? It wanted to be a little brighter.",
+      "What do you call a snowman with a six-pack? An abdominal snowman.",
+      "Why did Santa’s helper see the doctor? He had low elf-esteem."
+    ];
+    const CHRISTMAS_FACTS = [
+      "“Jingle Bells” was originally written for Thanksgiving, not Christmas.",
+      "Rudolph almost had a different name: Rollo or Reginald were early options.",
+      "Germany popularized Christmas trees in the 16th century.",
+      "The largest gingerbread house ever built was over 21 feet tall.",
+      "Candy canes were reportedly created to keep children quiet in church.",
+      "The Statue of Liberty is the largest Christmas gift ever given (from France to the U.S.).",
+      "The first artificial Christmas trees were made from dyed goose feathers in Germany.",
+      "NORAD has tracked Santa on Christmas Eve since 1955 due to a misprinted phone number.",
+      "The song “Silent Night” has been translated into 300+ languages.",
+      "“Xmas” isn’t anti-Christmas—“X” comes from the Greek letter Chi, the first letter of “Christ.”"
+    ];
+
+    function setDailyTidbit(){
+      const today = new Date();
+      const y = today.getFullYear(), m = today.getMonth()+1, d = today.getDate();
+      const key = `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+      let hash = 0;
+      for (let i=0; i<key.length; i++) hash = ((hash << 5) - hash + key.charCodeAt(i)) >>> 0;
+      const pool = [...CHRISTMAS_JOKES, ...CHRISTMAS_FACTS];
+      const pick = pool[hash % pool.length];
+      const el = document.getElementById('dailyText');
+      if (el) el.textContent = pick;
+    }
+    setDailyTidbit();
+    const msUntilMidnight = (()=> {
       const now = new Date();
-      // Show the advent calendar only from December 1st onwards (month 11 in zero-based index)
-      if (!(now.getMonth() === 11 && now.getDate() >= 1)) {
-        const adventTab = document.getElementById('adventTab');
-        if (adventTab) {
-          adventTab.style.display = 'none';
-        }
-      }
+      const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 0,0,0,0);
+      return midnight - now;
     })();
+    setTimeout(()=>setDailyTidbit(), msUntilMidnight + 1000);
+
+    // On load: set up advent visibility
+    setupAdventVisibility();
   </script>
 </body>
 </html>
